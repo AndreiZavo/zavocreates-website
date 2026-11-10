@@ -38,14 +38,24 @@ breakpoint widths in `content/tokens.json` (desktop 1200, tablet 810, phone 390)
 
     node scripts/capture-baseline.ts --base https://zavocreates.com --out tests/visual/baseline
 
-Two consecutive captures of all 9 files were byte-identical. How the script gets there:
+Each image is scroll-stitched. The viewport stays at the breakpoint width x 900 px; the page
+is visited in 900 px steps, and at each step the script waits until the viewport stops
+changing (three identical screenshots in a row) and keeps that frame. The frames are stacked
+into one image as tall as the page, so each 900 px band shows what a visitor sees with that
+part of the page on screen: count-ups finished ("About me" reads 5 / 100+ / 20+), the pricing
+timeline cards revealed, sticky images present.
 
+Reading the images:
+
+- Fixed and sticky elements repeat once per band. The "Available for work" nav pill appears
+  every 900 px; that is expected, not a layout bug.
+- Scroll-linked effects are frozen at each band's scroll position. The pricing timeline line,
+  for example, is filled as far as it is at that position, so the fill can step at a band edge.
 - Parts that never stop moving are hidden with `visibility: hidden` (their space is kept):
   the logo marquee track, the avatar badge content that cycles between "Hi" and a waving
-  hand, the pulsing "available" dot, and the Turnstile widget on the rebuild.
-- The pricing pages are captured with the viewport grown to the full page height, so the
-  timeline cards (which hide again when they leave the viewport) are all revealed.
-- The home page layout depends on viewport height, so it is captured with a 900 px viewport
-  at scroll position 0. In that state the three "About me" counters read 0 and the sticky
-  image beside "What I can do for you" is not shown; both only appear while their section is
-  in the viewport.
+  hand, the pulsing glow around the "available" dot, and the Turnstile widget on the rebuild.
+
+Reproducibility: no frame hit the stability cap. Across two full captures, 8 of the 9 files
+were byte-identical. `home-tablet.png` differs between some loads by 1 to 4 pixels, each by
+1/255 in one colour channel, on the edges of the tilted project cards (y 3800 to 4950).
+Comparisons against these baselines need a small tolerance for that reason.
