@@ -1,0 +1,169 @@
+{
+  "lang": "ro",
+  "title": "Andrei Zavo | Videograf de promo și social media pentru branduri în creștere",
+  "description": "Sunt Andrei Zavo, videograf de promo și social media. Creez clipuri scurte, reels și conținut TikTok care ajută brandurile să crească, să-și implice publicul și să iasă în evidență online.",
+  "intro": {
+    "eyebrow": "Servicii",
+    "heading": "Hai să vă spunem povestea, lună de lună.",
+    "text": "Voi vă concentrați pe meseria voastră. Eu mă ocup de cameră, montaj și livrare."
+  },
+  "points": [
+    {
+      "number": "01",
+      "title": "Filmat la fața locului, mereu",
+      "body": "Fiecare cadru e filmat la tine. Nimic din stock, nimic generic."
+    },
+    {
+      "number": "02",
+      "title": "Un ritm creativ constant",
+      "body": "Un set fix de videoclipuri în fiecare lună, ca povestea voastră să continue."
+    },
+    {
+      "number": "03",
+      "title": "Doar voi și eu",
+      "body": "Filmez, editez și livrez totul eu, de la primul cadru la montajul final."
+    }
+  ],
+  "processIntro": {
+    "eyebrow": "Cum vom lucra împreună",
+    "heading": "De la primul apel la montajul final."
+  },
+  "process": [
+    {
+      "number": "01",
+      "title": "Vorbim",
+      "body": "Vorbim despre ce vreți să transmită brandul vostru, apoi stabilim programul de filmare. De obicei filmez în serii de 3–4 videoclipuri pe sesiune.",
+      "side": "left"
+    },
+    {
+      "number": "02",
+      "title": "Scenarii și idei",
+      "body": "Înainte de fiecare filmare, vă trimit scenariile și ideile pe care le vom filma. Fără surprize în ziua filmării.",
+      "side": "right"
+    },
+    {
+      "number": "03",
+      "title": "Filmăm",
+      "body": "Vin la voi și filmăm seria într-o singură sesiune relaxată. Voi veniți așa cum sunteți, eu mă ocup de rest.",
+      "side": "left"
+    },
+    {
+      "number": "04",
+      "title": "Editez",
+      "body": "Editez, apoi ajustăm împreună până când fiecare videoclip e exact cum trebuie.",
+      "side": "right"
+    },
+    {
+      "number": "05",
+      "title": "Livrare și postare",
+      "body": "Primiți videoclipurile finale. Le postați voi sau vă ajut eu cu publicarea.",
+      "side": "left"
+    }
+  ],
+  "faqIntro": {
+    "eyebrow": "Bine de știut",
+    "heading": "Întrebări pe care le primesc des."
+  },
+  "faq": [
+    {
+      "q": "1. Ce fel de videoclipuri faci?",
+      "lines": [
+        "Videoclipuri scurte, cu poveste, despre produsul și oamenii voștri",
+        "Filmate la fața locului. Spațiul vostru, echipa voastră",
+        "Editate pentru platformele unde vă urmărește publicul"
+      ],
+      "tabletPhone": {
+        "lines": [
+          "Videoclipuri scurte, cu poveste, despre produsul și oamenii voștri",
+          "Filmate la fața locului — spațiul vostru, echipa voastră",
+          "Editate pentru platformele unde vă urmărește publicul"
+        ]
+      }
+    },
+    {
+      "q": "2. Cum funcționează ritmul lunar?",
+      "lines": [
+        "O zi de filmare pe lună acoperă întregul pachet",
+        "Editez și livrez după un program constant",
+        "Aveți mereu conținut nou, gata de postat"
+      ]
+    },
+    {
+      "q": "3. Trebuie să pregătesc ceva?",
+      "lines": [
+        "Nu chiar. Voi veniți cu povestea voastră",
+        "Eu vin cu camera și cu planul",
+        "Fără surprize în ziua filmării"
+      ],
+      "tabletPhone": {
+        "lines": [
+          "Nu prea — voi veniți cu povestea voastră",
+          "Eu vin cu camera și cu planul",
+          "Fără surprize în ziua filmării"
+        ]
+      }
+    },
+    {
+      "q": "4. Putem face un pachet personalizat?",
+      "lines": [
+        "Pachetele sunt doar un punct de plecare",
+        "Spuneți-mi de ce aveți nevoie",
+        "Construim ceva împreună"
+      ]
+    }
+  ],
+  "packagesIntro": {
+    "eyebrow": "Prețuri",
+    "heading": "Alegeți ritmul care vi se potrivește."
+  },
+  "packages": [
+    {
+      "name": "Test",
+      "videos": "1 videoclip",
+      "price": "500 RON",
+      "blurb": "Un videoclip, zero presiune. O metodă simplă să vedem dacă ne potrivim.",
+      "cta": "Rezervă Test",
+      "href": "https://calendly.com/zavocreates/discovery-call?a1=Test%20-%201%20test%20video",
+      "progress": "8%",
+      "featured": false
+    },
+    {
+      "name": "Starter",
+      "videos": "4 videoclipuri",
+      "price": "1400 RON",
+      "blurb": "Un ritm lunar blând, perfect dacă abia începeți să vă spuneți povestea.",
+      "cta": "Rezervă Starter",
+      "href": "https://calendly.com/zavocreates/discovery-call?a1=Starter%20-%204%20videos%20subscription",
+      "progress": "33%",
+      "featured": false
+    },
+    {
+      "name": "Growth",
+      "videos": "8 videoclipuri",
+      "price": "2400 RON",
+      "blurb": "Aici ajung majoritatea clienților mei. Suficiente videoclipuri pentru o prezență reală.",
+      "cta": "Rezervă Growth",
+      "href": "https://calendly.com/zavocreates/discovery-call?a1=Growth%20-%208%20videos%20subscription",
+      "progress": "67%",
+      "featured": true,
+      "badge": "Cel mai ales"
+    },
+    {
+      "name": "Premium",
+      "videos": "12 videoclipuri",
+      "price": "3300 RON",
+      "blurb": "Material proaspăt în fiecare săptămână, ca să aveți mereu ceva de împărtășit.",
+      "cta": "Rezervă Premium",
+      "href": "https://calendly.com/zavocreates/discovery-call?a1=Premium%20-%2012%20videos%20subscription",
+      "progress": "100%",
+      "featured": false
+    }
+  ],
+  "footnote": "Fiecare pachet include filmare, montaj și livrare.",
+  "cta": {
+    "heading": "Nu știți de unde să începeți?",
+    "text": "Spuneți-mi ce creați și găsim împreună ritmul potrivit.",
+    "label": "Hai să lucrăm împreună",
+    "href": "/#contact"
+  }
+}

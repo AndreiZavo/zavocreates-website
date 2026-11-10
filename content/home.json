@@ -1,0 +1,329 @@
+{
+  "hero": {
+    "name": "Andrei Zavo",
+    "headingLeft": "Video",
+    "headingRight": "Producer",
+    "tagline": "I'm a Romanian based videographer for creators & businesses",
+    "avatarFront": {
+      "src": "/images/andrei-portrait-hero.jpg",
+      "width": 4000,
+      "height": 6000,
+      "alt": "Andrei Zavo"
+    },
+    "avatarBack": {
+      "src": "/images/avatar-card-back.jpg",
+      "width": 6000,
+      "height": 4000,
+      "alt": ""
+    },
+    "badge": {
+      "text": "Hi",
+      "lottie": "/lottie/hand-wave.json"
+    }
+  },
+  "servicesIntro": {
+    "heading": "what I can do for you",
+    "text": "As a product videographer, I tell stories through movement and detail, turning everyday products into compelling visual experiences that inspire, engage, and resonate."
+  },
+  "services": [
+    {
+      "title": "1. Creative Direction",
+      "bullets": [
+        "Shape clear, engaging video concepts",
+        "Write scripts and outline visual flow",
+        "Align creative with brand and purpose"
+      ]
+    },
+    {
+      "title": "2. Production Management",
+      "bullets": [
+        "Plan shoots based on brief and product",
+        "Set up gear and scenes in-house or studio",
+        "Handle all logistics remotely"
+      ]
+    },
+    {
+      "title": "3. Content Creation",
+      "bullets": [
+        "Film clean, intentional visuals",
+        "Direct action and product shots",
+        "Capture supporting B-roll"
+      ],
+      "tabletPhone": {
+        "bullets": [
+          "Film clean, intentional visuals",
+          "Direct action and product shots",
+          "Capture supporting b-roll"
+        ]
+      }
+    },
+    {
+      "title": "4. Post-Production & Delivery",
+      "bullets": [
+        "Craft a smooth, story-driven edit",
+        "Enhance with color, sound, and motion",
+        "Deliver polished content, platform-ready"
+      ],
+      "tabletPhone": {
+        "title": "4. Post-Production"
+      }
+    }
+  ],
+  "about": {
+    "heading": "About me",
+    "word": "zavo",
+    "phonetic": "/ˈzɑː.voʊ/",
+    "partOfSpeech": "noun",
+    "definition": "A product videographer passionate about turning ideas and products into visually striking, story-driven content that connects and inspires.",
+    "line": [
+      {
+        "text": "Worked with "
+      },
+      {
+        "text": "20+",
+        "bold": true
+      },
+      {
+        "text": " brands worldwide. "
+      },
+      {
+        "text": "100+",
+        "bold": true
+      },
+      {
+        "text": " projects delivered."
+      }
+    ],
+    "counters": [
+      {
+        "value": 5,
+        "suffix": "",
+        "label": "Years of Experience"
+      },
+      {
+        "value": 100,
+        "suffix": "+",
+        "label": "Completed Projects"
+      },
+      {
+        "value": 20,
+        "suffix": "+",
+        "label": "Clients on Worldwide"
+      }
+    ],
+    "phoneCard": {
+      "label": "Call Today :",
+      "text": "+(40) 799 853 625",
+      "href": "tel:+40 799 853 625"
+    },
+    "emailCard": {
+      "label": "Email :",
+      "text": "zavocreates@gmail.com",
+      "href": "mailto:zavocreates@gmail.com"
+    }
+  },
+  "collaboratorsIntro": {
+    "heading": "Some of my collaborators",
+    "text": "Over the years, I’ve had the chance to collaborate with a variety of brands and creative teams, from software startups to product-focused studios. These partnerships have shaped my approach and pushed me to create work that’s both intentional and impactful."
+  },
+  "collaborators": [
+    {
+      "src": "/images/logo-relume.png",
+      "width": 1732,
+      "height": 1921,
+      "alt": "Relume"
+    },
+    {
+      "src": "/images/logo-demmers.png",
+      "width": 768,
+      "height": 768,
+      "alt": "Demmers"
+    },
+    {
+      "src": "/images/logo-framer.png",
+      "width": 1024,
+      "height": 1024,
+      "alt": "Framer"
+    },
+    {
+      "src": "/images/logo-blitz.svg",
+      "width": 295,
+      "height": 59,
+      "alt": "Blitz"
+    },
+    {
+      "src": "/images/logo-envato.jpg",
+      "width": 400,
+      "height": 400,
+      "alt": "Envato"
+    },
+    {
+      "src": "/images/logo-kittl.png",
+      "width": 193,
+      "height": 192,
+      "alt": "Kittl"
+    },
+    {
+      "src": "/images/logo-moft.svg",
+      "width": 198,
+      "height": 60,
+      "alt": "Moft"
+    },
+    {
+      "src": "/images/logo-pacdora.png",
+      "width": 200,
+      "height": 200,
+      "alt": "Pacdora"
+    }
+  ],
+  "projectsIntro": {
+    "heading": "Featured Projects",
+    "text": "These selected projects reflect my passion for blending strategy with creativity, solving real problems through thoughtful video production and impactful storytelling."
+  },
+  "projects": [
+    {
+      "id": "envato",
+      "href": "https://www.instagram.com/reel/DBjJ352N_Tj/",
+      "image": {
+        "src": "/images/project-envato.png",
+        "width": 1080,
+        "height": 1920,
+        "alt": "Envato project video thumbnail"
+      },
+      "badge": {
+        "src": "/images/logo-envato.jpg",
+        "width": 400,
+        "height": 400,
+        "alt": "Envato"
+      }
+    },
+    {
+      "id": "life",
+      "href": "https://www.instagram.com/reel/DEz92ZSt50j/",
+      "image": {
+        "src": "/images/project-life.png",
+        "width": 1080,
+        "height": 1920,
+        "alt": "Life project video thumbnail"
+      }
+    },
+    {
+      "id": "blitz",
+      "href": "https://www.instagram.com/p/DdoffHFEovk/",
+      "image": {
+        "src": "/images/project-blitz.jpg",
+        "width": 1080,
+        "height": 1920,
+        "alt": "Blitz project video thumbnail"
+      },
+      "badge": {
+        "src": "/images/badge-blitz.svg",
+        "width": 109,
+        "height": 99,
+        "alt": "Blitz"
+      }
+    },
+    {
+      "id": "eye",
+      "href": "https://www.instagram.com/reel/C2KaENWNp4J/",
+      "image": {
+        "src": "/images/project-eye.png",
+        "width": 1080,
+        "height": 1920,
+        "alt": "Eye project video thumbnail"
+      }
+    },
+    {
+      "id": "demmers",
+      "href": "https://www.instagram.com/p/Dev81usK4GN/",
+      "image": {
+        "src": "/images/project-demmers.jpg",
+        "width": 720,
+        "height": 1280,
+        "alt": "Demmers project video thumbnail"
+      },
+      "badge": {
+        "src": "/images/logo-demmers.png",
+        "width": 768,
+        "height": 768,
+        "alt": "Demmers"
+      }
+    },
+    {
+      "id": "kittl",
+      "href": "https://www.instagram.com/reel/DQi-St2jJF1/?igsh=M2Z6YjQyaXB1MjRk",
+      "image": {
+        "src": "/images/project-kittl.png",
+        "width": 3096,
+        "height": 5496,
+        "alt": "Kittl project video thumbnail"
+      },
+      "overlay": "linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.3) 100%)"
+    }
+  ],
+  "projectOrder": {
+    "desktop": [
+      "envato",
+      "life",
+      "blitz",
+      "eye",
+      "demmers",
+      "kittl"
+    ],
+    "tablet": [
+      "envato",
+      "life",
+      "eye",
+      "blitz",
+      "demmers",
+      "kittl"
+    ],
+    "phone": [
+      "life",
+      "demmers",
+      "blitz"
+    ]
+  },
+  "contact": {
+    "heading": "Let's work together",
+    "text": "Let’s build something impactful together! Whether it’s your brand, your website, or your next big idea.",
+    "avatar": {
+      "src": "/images/andrei-portrait-contact.jpg",
+      "width": 4000,
+      "height": 6000,
+      "alt": "Portrait of portfolio creator"
+    },
+    "fields": {
+      "name": {
+        "label": "Name",
+        "placeholder": "John Smith",
+        "inputName": "Name"
+      },
+      "email": {
+        "label": "Email",
+        "placeholder": "johnsmith@gmail.com",
+        "inputName": "Email"
+      },
+      "service": {
+        "label": "Service Needed ?",
+        "placeholder": "Select…",
+        "inputName": "Service"
+      },
+      "message": {
+        "label": "What Can I Help You...",
+        "placeholder": "Hello, I'd like to enquire about...",
+        "inputName": "Text Area"
+      },
+      "submit": "Submit"
+    },
+    "serviceOptions": [
+      "Scripting",
+      "Filming",
+      "Video Editing",
+      "Video Production",
+      "All of the above"
+    ],
+    "success": "Thank you",
+    "error": "Something went wrong"
+  }
+}
