@@ -7,8 +7,9 @@
     "node": ">=22"
   },
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
+    "gen:tokens": "node --experimental-strip-types scripts/gen-tokens.ts",
+    "dev": "npm run gen:tokens && astro dev",
+    "build": "npm run gen:tokens && astro build",
     "preview": "wrangler dev --local --port 8787",
     "test:unit": "vitest run --config vitest.config.ts --passWithNoTests",
     "test:worker": "vitest run --config vitest.workers.config.ts --passWithNoTests",

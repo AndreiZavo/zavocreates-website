@@ -1,0 +1,12 @@
+---
+// Stub so the SEO layout can be tested: Task 7 builds the pricing page.
+import Base from "../layouts/Base.astro";
+import { getPricing } from "../content/load";
+import { PRICING_ALTERNATES } from "../content/routes";
+
+const pricing = getPricing("en");
+---
+
+<Base lang={pricing.lang} title={pricing.title} description={pricing.description} path="/pricing" alternates={PRICING_ALTERNATES}>
+  <main></main>
+</Base>

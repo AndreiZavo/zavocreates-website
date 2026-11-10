@@ -1,0 +1,80 @@
+---
+import antonioHero from "@fontsource/antonio/files/antonio-latin-700-normal.woff2?url";
+import interHero from "@fontsource/inter/files/inter-latin-300-normal.woff2?url";
+import { getMotion, getSite } from "../content/load";
+import type { Transition } from "../content/schema";
+import "../styles/tokens.css";
+import "../styles/global.css";
+
+interface Props {
+  lang: "en" | "ro";
+  title: string;
+  description: string;
+  path: string;
+  alternates?: { lang: string; path: string }[];
+}
+
+const { lang, title, description, path, alternates = [] } = Astro.props;
+const site = getSite();
+const abs = (p: string): string => new URL(p, site.url).href;
+const canonical = abs(path);
+const ogImage = abs(site.ogImage.src);
+
+// Page fade: every number comes from the "page" effect in content/motion.json.
+const pageEffect = getMotion("page");
+if (pageEffect.kind !== "page") throw new Error('motion "page" must be a page effect');
+const timing = (t: Transition): { duration: string; ease: string; delay: string } => {
+  if (t.type !== "tween") throw new Error(`Page transition must be a tween, got "${t.type}"`);
+  return { duration: `${t.duration}s`, ease: `cubic-bezier(${t.ease.join(", ")})`, delay: `${t.delay ?? 0}s` };
+};
+const opacity = (value: number | undefined, where: string): number => {
+  if (value === undefined) throw new Error(`motion "page" ${where} has no opacity`);
+  return value;
+};
+const enter = timing(pageEffect.enter.transition);
+const exit = timing(pageEffect.exit.transition);
+const pageVars = Object.entries({
+  "--page-enter-duration": enter.duration,
+  "--page-enter-ease": enter.ease,
+  "--page-enter-delay": enter.delay,
+  "--page-enter-from-opacity": opacity(pageEffect.enter.from.opacity, "enter.from"),
+  "--page-enter-to-opacity": opacity(pageEffect.enter.to.opacity, "enter.to"),
+  "--page-exit-duration": exit.duration,
+  "--page-exit-ease": exit.ease,
+  "--page-exit-delay": exit.delay,
+  "--page-exit-to-opacity": opacity(pageEffect.exit.to.opacity, "exit.to"),
+})
+  .map(([name, value]) => `${name}:${value}`)
+  .join(";");
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {alternates.map((a) => <link rel="alternate" hreflang={a.lang} href={abs(a.path)} />)}
+    <link rel="icon" type="image/png" href={site.favicon.src} />
+    <link rel="preload" as="font" type="font/woff2" href={antonioHero} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={interHero} crossorigin />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content={String(site.ogImage.width)} />
+    <meta property="og:image:height" content={String(site.ogImage.height)} />
+    <meta property="og:image:alt" content={site.ogImage.alt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <style is:inline set:html={`:root{${pageVars}}`} />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

@@ -1,12 +1,11 @@
 ---
+// Placeholder body: Task 6 builds the home page.
+import Base from "../layouts/Base.astro";
+import { getSite } from "../content/load";
+
+const site = getSite();
 ---
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Zavo Creates</title>
-  </head>
-  <body>
-    <main>Placeholder</main>
-  </body>
-</html>
+
+<Base lang="en" title={site.title} description={site.description} path="/">
+  <main></main>
+</Base>
