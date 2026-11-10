@@ -1,0 +1,3 @@
+# Copy to .dev.vars for local preview. Dummy values only; real secrets live in Cloudflare.
+TURNSTILE_SECRET=1x0000000000000000000000000000000AA
+RESEND_API_KEY=re_dummy_key_for_local_dev

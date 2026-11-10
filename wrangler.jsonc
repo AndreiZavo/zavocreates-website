@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "zavocreates",
+  "main": "worker/index.ts",
+  "compatibility_date": "2025-10-01",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  },
+  "ai": { "binding": "AI" },
+  "vars": {
+    "CONTACT_TO": "zavocreates@gmail.com",
+    "CONTACT_FROM": "Zavo Website <onboarding@resend.dev>"
+  }
+}
