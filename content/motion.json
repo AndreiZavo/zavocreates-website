@@ -70,7 +70,8 @@
         1
       ],
       "delay": 0.0
-    }
+    },
+    "trigger": "navigation"
   },
   "smoothScroll": {
     "kind": "smoothScroll",
@@ -86,7 +87,8 @@
     },
     "transition": {
       "type": "instant"
-    }
+    },
+    "trigger": "scroll"
   },
   "home.hero.sticky": {
     "kind": "sticky",
@@ -100,7 +102,8 @@
     "note": "Sticky Wrap (300vh) and the absolutely positioned 'Content' column (hero, service, about sections, 100vh each) overlap; the avatar stays pinned while the three sections scroll past.",
     "transition": {
       "type": "instant"
-    }
+    },
+    "trigger": "scroll"
   },
   "home.avatar.appear": {
     "kind": "appear",
@@ -435,7 +438,8 @@
       "damping": 60,
       "mass": 1,
       "delay": 0.0
-    }
+    },
+    "trigger": "timer"
   },
   "home.counter": {
     "kind": "counter",
@@ -600,7 +604,8 @@
       "damping": 60,
       "mass": 1,
       "delay": 0.0
-    }
+    },
+    "trigger": "click"
   },
   "home.logos.marquee": {
     "kind": "marquee",
@@ -629,7 +634,8 @@
     },
     "transition": {
       "type": "instant"
-    }
+    },
+    "trigger": "always"
   },
   "pricing.timeline.lineFill": {
     "kind": "scroll",
@@ -1013,7 +1019,8 @@
       "bounce": 0.2,
       "duration": 0.3,
       "delay": 0.0
-    }
+    },
+    "trigger": "hover"
   },
   "pricing.card.featured.hover": {
     "kind": "hover",
@@ -1036,7 +1043,8 @@
       "bounce": 0.2,
       "duration": 0.3,
       "delay": 0.0
-    }
+    },
+    "trigger": "hover"
   },
   "pricing.button.hover": {
     "kind": "hover",
@@ -1064,7 +1072,8 @@
         1
       ],
       "delay": 0.0
-    }
+    },
+    "trigger": "hover"
   },
   "pricing.button.featured.hover": {
     "kind": "hover",
@@ -1091,7 +1100,8 @@
         1
       ],
       "delay": 0.0
-    }
+    },
+    "trigger": "hover"
   },
   "pricing.faq.accordion": {
     "kind": "variant",
@@ -1203,7 +1213,8 @@
       "damping": 60,
       "mass": 1,
       "delay": 0.0
-    }
+    },
+    "trigger": "click"
   },
   "button.primary.hover": {
     "kind": "hover",
@@ -1243,7 +1254,8 @@
       "damping": 60,
       "mass": 1,
       "delay": 0.0
-    }
+    },
+    "trigger": "hover"
   },
   "button.secondary.hover": {
     "kind": "hover",
@@ -1273,7 +1285,8 @@
       "damping": 60,
       "mass": 1,
       "delay": 0.0
-    }
+    },
+    "trigger": "hover"
   },
   "button.submit.hover": {
     "kind": "hover",
@@ -1319,7 +1332,8 @@
       "damping": 60,
       "mass": 1,
       "delay": 0.0
-    }
+    },
+    "trigger": "hover"
   },
   "button.submit.spinner": {
     "kind": "loop",
@@ -1341,7 +1355,8 @@
         1
       ],
       "delay": 0.0
-    }
+    },
+    "trigger": "always"
   },
   "nav.link.hover": {
     "kind": "hover",
@@ -1368,7 +1383,8 @@
       "bounce": 0,
       "duration": 0.4,
       "delay": 0.0
-    }
+    },
+    "trigger": "hover"
   },
   "nav.scroll": {
     "kind": "scrollVariant",
@@ -1547,7 +1563,8 @@
     },
     "returnTransition": {
       "type": "instant"
-    }
+    },
+    "trigger": "timer"
   },
   "link.hover": {
     "kind": "hover",
@@ -1568,7 +1585,8 @@
         0.77
       ],
       "delay": 0.0
-    }
+    },
+    "trigger": "hover"
   },
   "cursor": {
     "kind": "cursor",
@@ -1601,6 +1619,7 @@
       "bounce": 0.2,
       "duration": 0.4,
       "delay": 0.0
-    }
+    },
+    "trigger": "pointerMove"
   }
 }

@@ -22,6 +22,10 @@ How `content/*.json`, `public/images/`, `public/icons/` and `public/lottie/` wer
 
 The live site (zavocreates.com) was fetched once, only to cross-check (prices, dark-mode CSS, the RO page meta). The live HTML contains hidden text too, for example "Interaction design and micro-animations" under every FAQ, so it was never used as a source.
 
+## Which variant a desktop visitor sees (verified against the published build)
+
+Static HTML scrapes of the live site show the **Closed** variant. That variant still holds the collapsed bullets (height 1px, overflow hidden, so invisible), and for some items they are older values. Example: /pricing-ro FAQ 3 line 1 is "Nu prea — voi veniți cu povestea voastră" in the HTML, with "Nu chiar" nowhere in the HTML. To check what a visitor actually sees when they open an item, the published JavaScript bundles were downloaded from `framerusercontent.com/sites/…/*.mjs` and searched. The Service Accordion instance there carries the Closed values as defaults, plus per-variant overrides. FAQ 3 in RO is the clearest case: its default `P092R1VCI` is "Nu prea — …", and the published variant of "Desktop / Open - 3" overrides it to "Nu chiar. Voi veniți cu povestea voastră". EN FAQ 2's open override is "One, two or three shoot days per month depending on your package". Home service 4's open overrides are "Craft a smooth, story-driven edit" and the other two bullets. So the published site matches the project, and the rule below (title from Closed, bullets from "Open - N") is what a desktop visitor sees. Pages render the desktop copy at every breakpoint (controller ruling); `tabletPhone` values are kept as data only.
+
 ## Hidden-content rule
 
 A string counts as content only if a visitor sees it:
@@ -62,8 +66,8 @@ Vectors drawn in Framer (Moft logo, Blitz logo, Blitz project badge, play icon) 
 - `site.json`: SEO meta, contact data, the nav and footer from the layout template.
 - `home.json`, `pricing.en.json`, `pricing.ro.json`: visible text, links and images. Where Framer's Tablet & Phone variants show different copy, it is under `tabletPhone` (services, FAQ) or `footnotePhone`. Project order per breakpoint is in `home.projectOrder`.
 - `tokens.json`: breakpoints, colours (light **and** dark: the live site switches on `prefers-color-scheme: dark`), text presets per breakpoint, link styles, the gaps/paddings/radii in use, and shadows.
-- `motion.json`: every effect, keyed by a stable id. Times are in seconds and distances in px/deg. Accordion, nav and button states are given as property diffs between Framer variants (`[from, to]`).
-- `layout.json`: per page and breakpoint, the visible layer tree with layout values (sizes, stacks/grids, gaps, padding, fills, radii, borders, positions, z-index, sticky), plus every used component per variant. Colours are written as `var(--color-<token>)`.
+- `motion.json`: every effect, keyed by a stable id, each with a `trigger` (Framer's own where it has one, otherwise the one implied by the Framer feature: hover, click, timer, always, navigation, scroll, pointerMove). Times are in seconds and distances in px/deg. Accordion, nav and button states are given as property diffs between Framer variants (`[from, to]`).
+- `layout.json`: per page and breakpoint, the visible layer tree with layout values (sizes, stacks/grids, gaps, padding, fills, radii, borders, positions, z-index, sticky), plus every used component per variant. Colours are written as `var(--color-<token>)`. `layout-index.md` lists the sections of each page and breakpoint in order, with their JSON path, size and contents, and every component variant with its path.
 
 ## Content addition (intentional)
 
@@ -71,9 +75,9 @@ Vectors drawn in Framer (Moft logo, Blitz logo, Blitz project badge, play icon) 
 
 ## Uncertainties
 
-- **Breakpoint-specific copy.** Framer's Tablet & Phone accordion variants contain copy edits: "Capture supporting b-roll", "4. Post-Production" (closed title only), FAQ 2 "How does the schedule work?" (closed title only) with a double space in "your  package", and two RO lines with dashes. The files record these exactly, as visitors see them. They look like unfinished edits; the owner may want one version.
+- **Breakpoint-specific copy** (pages render the desktop copy everywhere, per controller ruling). Framer's Tablet & Phone accordion variants contain copy edits: "Capture supporting b-roll", "4. Post-Production" (closed title only), FAQ 2 "How does the schedule work?" (closed title only) with a double space in "your  package", and two RO lines with dashes. The files record these exactly, as visitors see them. They look like unfinished edits; the owner may want one version.
 - **Title changes with state on tablet/phone.** There the title of service 4 / FAQ 2 differs between the Closed variant and the other variants, so it changes once another item is opened. The content keeps the initial (Closed) title.
-- **Footer phone link** is `tel:+1 (555) 123-4567`, a template default. The visible text is "+40 799 853 625". It is copied as Framer has it (`site.footer.phoneHref`) and flagged for the owner.
+- **Footer phone link.** Framer has `tel:+1 (555) 123-4567`, a template default, while the footer text shows "+40 799 853 625". Controller ruling: this is a template bug, so `site.footer.phoneHref` is `tel:+40799853625`. This is the second deliberate deviation from Framer.
 - **Missing scroll target.** The hero badge's "Scroll Section In" target (`fsscpsFUj`) no longer exists in Framer, so the badge never reappears after shrinking at the Service section. On `/pricing-ro` the timeline line-fill targets still point at the EN page's rows. Both are noted in `motion.json`.
 - **Scroll reveals.** The spec mentions "9 elements" for home scroll reveals. Framer has 3 appear effects on home (avatar flip, hero left, hero right), all on load, plus scroll-linked transforms on the avatar card and the badge. There are no other appear effects on `/`.
 - Brief vs Framer: the Test package costs **500 RON** in Framer and on the live site, not 450.

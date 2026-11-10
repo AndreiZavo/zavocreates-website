@@ -299,11 +299,12 @@ export const Effect = z.discriminatedUnion("kind", [
   z.strictObject({
     ...base,
     kind: z.literal("page"),
+    trigger: z.literal("navigation"),
     enter: z.strictObject({ from: Pose, to: Pose, transition: Transition }),
     exit: z.strictObject({ to: Pose, transition: Transition }),
   }),
-  z.strictObject({ ...base, kind: z.literal("smoothScroll"), intensity: z.number(), perPage: z.record(z.string(), z.number()) }),
-  z.strictObject({ ...base, kind: z.literal("sticky"), top: text, containerHeight: text, trackHeight: text }),
+  z.strictObject({ ...base, kind: z.literal("smoothScroll"), trigger: z.literal("scroll"), intensity: z.number(), perPage: z.record(z.string(), z.number()) }),
+  z.strictObject({ ...base, kind: z.literal("sticky"), trigger: z.literal("scroll"), top: text, containerHeight: text, trackHeight: text }),
   z.strictObject({
     ...base,
     kind: z.literal("appear"),
@@ -337,6 +338,7 @@ export const Effect = z.discriminatedUnion("kind", [
   z.strictObject({
     ...base,
     kind: z.literal("variant"),
+    trigger: z.enum(["click", "timer"]),
     states: z.union([BpStateDiff, StateDiff]).optional(),
     hover: StateDiff.optional(),
     cycle: z
@@ -359,6 +361,7 @@ export const Effect = z.discriminatedUnion("kind", [
   z.strictObject({
     ...base,
     kind: z.literal("hover"),
+    trigger: z.literal("hover"),
     to: Pose.optional(),
     states: StateDiff.optional(),
     pressed: StateDiff.optional(),
@@ -366,6 +369,7 @@ export const Effect = z.discriminatedUnion("kind", [
   z.strictObject({
     ...base,
     kind: z.literal("marquee"),
+    trigger: z.literal("always"),
     speed: z.number(),
     direction: z.enum(["left", "right", "top", "bottom"]),
     gap: z.number(),
@@ -393,7 +397,7 @@ export const Effect = z.discriminatedUnion("kind", [
     font: z.strictObject({ desktop: CounterFont, phone: CounterFont }),
     color: text,
   }),
-  z.strictObject({ ...base, kind: z.literal("loop"), to: Pose, repeat: z.enum(["loop", "mirror", "reverse"]) }),
+  z.strictObject({ ...base, kind: z.literal("loop"), trigger: z.literal("always"), to: Pose, repeat: z.enum(["loop", "mirror", "reverse"]) }),
   z.strictObject({
     ...base,
     kind: z.literal("scrollVariant"),
@@ -405,6 +409,7 @@ export const Effect = z.discriminatedUnion("kind", [
   z.strictObject({
     ...base,
     kind: z.literal("cursor"),
+    trigger: z.literal("pointerMove"),
     default: z.strictObject({ size: z.number(), fill: text, radius: text }),
     blending: z.strictObject({ size: z.number(), fill: text, blendMode: text, usedOn: z.array(text) }),
     follow: z.boolean(),

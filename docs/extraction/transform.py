@@ -234,8 +234,10 @@ site = {
         "emailLabel": text("pfzLLR13F"),
         "emailHref": node("OgVBfqyjt")["link"]["href"],
         "phoneLabel": text("MSfon9Twr"),
-        # Framer's footer phone link still points at the template default (see README / report)
-        "phoneHref": node("reFHU3wNN")["link"]["href"],
+        # Framer's footer link (reFHU3wNN) still points at the template default
+        # "tel:+1 (555) 123-4567". Controller ruling (task 2 review): that is a template bug;
+        # the link must dial the number the footer shows. Asserted below.
+        "phoneHref": "tel:" + ctrl("THypV6AKn", "LKHj_3AuV").replace(" ", ""),
         "socialLabel": text("KGc2MzFHt"),
         "social": [
             {"network": "instagram", "href": ctrl("THypV6AKn", "hEtbsGkw_"), "icon": "/icons/phosphor-instagram-logo-fill.svg"},
@@ -1133,14 +1135,26 @@ def walk_strings(o, acc):
 
 FORBIDDEN = ["Interaction design and micro-animations", "Brand strategy", "UI/UX design", "Typography and color scheme",
              "Visual style guide", "Wireframing", "+1 (555)"]
+# Every effect states what starts it. Values come from Framer's trigger where it has one
+# (appear / scroll / scrollVariant / counter); for the rest the trigger is implied by the
+# Framer feature: hover effects and gesture variants -> hover, accordion onTap -> click,
+# onAppear+delay variant cycles -> timer, Ticker / loopEffect -> always, page effects ->
+# navigation, Smooth Scroll / sticky -> scroll, custom cursor -> pointerMove.
+IMPLIED_TRIGGER = {"page": "navigation", "smoothScroll": "scroll", "sticky": "scroll", "hover": "hover",
+                   "marquee": "always", "loop": "always", "cursor": "pointerMove"}
+VARIANT_TRIGGER = {"home.badge.cycle": "timer", "home.services.accordion": "click", "pricing.faq.accordion": "click",
+                   "nav.status.glow": "timer"}
+for mid, eff in motion.items():
+    if "trigger" in eff:
+        continue
+    eff["trigger"] = VARIANT_TRIGGER[mid] if eff["kind"] == "variant" else IMPLIED_TRIGGER[eff["kind"]]
+assert site["footer"]["phoneHref"] == "tel:+40799853625"
+
 files = {"site.json": site, "home.json": home, "pricing.en.json": pricing_en, "pricing.ro.json": pricing_ro_content,
          "tokens.json": tokens, "motion.json": motion, "layout.json": layout}
 os.makedirs(OUT, exist_ok=True)
 for fname, data in files.items():
-    if fname in ("site.json",):
-        strings = [s for s in walk_strings(data, []) if s != data["footer"]["phoneHref"]]
-    else:
-        strings = walk_strings(data, [])
+    strings = walk_strings(data, [])
     for s in strings:
         for f in (FORBIDDEN if fname not in ("layout.json", "motion.json") else FORBIDDEN[:3]):
             assert f not in s, (fname, f, s)
@@ -1148,3 +1162,91 @@ for fname, data in files.items():
         json.dump(data, fh, ensure_ascii=False, indent=2)
         fh.write("\n")
     print("wrote", fname, os.path.getsize(os.path.join(OUT, fname)), "bytes")
+
+
+# ---------------------------------------------------------------- layout index (docs)
+
+
+def summarize(n, depth=0):
+    kids = n.get("children", []) or []
+    texts = []
+
+    def collect_text(x):
+        if x["kind"] == "text" and x.get("preview") and not x["preview"].startswith("{control"):
+            texts.append(x["preview"][:32])
+        for c in x.get("children", []) or []:
+            collect_text(c)
+
+    collect_text(n)
+    comps = sorted({x for x in _all(n, "component") if x})
+    parts = []
+    if n["props"].get("layout"):
+        lay = n["props"]["layout"]
+        if lay == "grid":
+            parts.append(f"grid {n['props'].get('gridColumnCount')} cols")
+        else:
+            parts.append(f"stack {n['props'].get('stackDirection')}")
+    if n["props"].get("padding") not in (None, "0px"):
+        parts.append("padding " + str(n["props"]["padding"]))
+    if n["props"].get("gap") not in (None, "0px"):
+        parts.append("gap " + str(n["props"]["gap"]))
+    if comps:
+        parts.append("components: " + ", ".join(comps))
+    if texts:
+        parts.append("text: " + " / ".join(f"“{t}”" for t in texts[:3]))
+    return "; ".join(parts) or n["kind"]
+
+
+def _all(n, key):
+    out = [n.get(key)]
+    for c in n.get("children", []) or []:
+        out += _all(c, key)
+    return out
+
+
+def _all_tags(n):
+    out = [n["props"].get("htmlTag")]
+    for c in n.get("children", []) or []:
+        out += _all_tags(c)
+    return out
+
+
+def is_section(n):
+    return n["props"].get("htmlTag") == "section" or n["kind"] == "component"
+
+
+def index_rows(n, path, depth, rows):
+    for i, c in enumerate(n.get("children", []) or []):
+        cp = f"{path}.children[{i}]"
+        rows.append((depth, c, cp))
+        # descend into plain wrappers that hold sections (home OutterWraper / Content)
+        if c["props"].get("htmlTag") != "section" and c["kind"] == "frame" and "section" in _all_tags(c)[1:]:
+            index_rows(c, cp, depth + 1, rows)
+    return rows
+
+
+lines = ["# layout.json index", "",
+         "Generated by `docs/extraction/transform.py` from `content/layout.json`. Paths are JSON paths into "
+         "`content/layout.json`; width/height are Framer's own values (`1fr` = fill, `auto` = hug). "
+         "Hidden layers are not in layout.json. `/pricing-ro` has the same structure as `/pricing`.", ""]
+for page in ("home", "pricing", "template"):
+    for bp in ("desktop", "tablet", "phone"):
+        root = layout["pages"][page][bp]
+        lines += [f"## {page} / {bp}", "",
+                  f"Root `pages.{page}.{bp}`: width {root['props'].get('width')}, height {root['props'].get('height')}.", "",
+                  "| # | Section | Path | Width × height | Contains |", "|---|---|---|---|---|"]
+        for k, (depth, n, path) in enumerate(index_rows(root, f"pages.{page}.{bp}", 0, [])):
+            label = ("↳ " * depth) + n["name"] + (f" (#{n['props']['elementId']})" if n["props"].get("elementId") else "")
+            if n["kind"] == "component":
+                label += f" <{n.get('component')}{' / ' + n['variant'] if n.get('variant') else ''}>"
+            wh = f"{n['props'].get('width', '–')} × {n['props'].get('height', '–')}"
+            lines.append(f"| {k + 1} | {label} | `{path}` | {wh} | {summarize(n).replace('|', '/')} |")
+        lines.append("")
+lines += ["## Components", "", "| Component | Variant | Path | Width × height |", "|---|---|---|---|"]
+for cname, variants in layout["components"].items():
+    for vname, n in variants.items():
+        lines.append(f"| {cname} | {vname} | `components[\"{cname}\"][\"{vname}\"]` | "
+                     f"{n['props'].get('width', '–')} × {n['props'].get('height', '–')} |")
+with open(os.path.join(ROOT, "docs", "extraction", "layout-index.md"), "w", encoding="utf-8") as fh:
+    fh.write("\n".join(lines) + "\n")
+print("wrote docs/extraction/layout-index.md")

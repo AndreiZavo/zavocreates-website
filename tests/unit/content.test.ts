@@ -45,7 +45,7 @@ describe("content files", () => {
 
   it("contains no hidden Framer text or template defaults", () => {
     const strings = files.flatMap((f) => allStrings(read(f)));
-    for (const banned of ["Interaction design and micro-animations", "Brand strategy", "UI/UX design"]) {
+    for (const banned of ["Interaction design and micro-animations", "Brand strategy", "UI/UX design", "+1 (555)"]) {
       expect(strings.filter((s) => s.includes(banned))).toEqual([]);
     }
   });
@@ -113,6 +113,12 @@ describe("pricing content", () => {
     );
   });
 
+  it("uses the copy a desktop visitor sees when an item is open (Framer 'Desktop / Open - N')", () => {
+    // Desktop / Closed carries a collapsed, invisible older value for these lines.
+    expect(getPricing("ro").faq[2]!.lines[0]).toBe("Nu chiar. Voi veniți cu povestea voastră");
+    expect(getPricing("en").faq[1]!.lines[0]).toBe("One, two or three shoot days per month depending on your package");
+  });
+
   it("has the Romanian FAQ", () => {
     const ro = getPricing("ro");
     expect(ro.lang).toBe("ro");
@@ -125,6 +131,8 @@ describe("site, tokens and motion", () => {
     const site = getSite();
     expect(site.phone).toBe("+40 799 853 625");
     expect(site.email).toBe("zavocreates@gmail.com");
+    // Framer still links the template default "tel:+1 (555) 123-4567"; controller ruling: dial the shown number.
+    expect(site.footer.phoneHref).toBe("tel:+40799853625");
   });
 
   it("has the three Framer breakpoints", () => {
@@ -142,6 +150,14 @@ describe("site, tokens and motion", () => {
       ease: [0.27, 0, 0.51, 1],
       delay: 0,
     });
+  });
+
+  it("states a trigger for every effect", () => {
+    const motion = read("motion.json") as Record<string, { kind: string; trigger?: string }>;
+    for (const [id, e] of Object.entries(motion)) expect(e.trigger, id).toBeTruthy();
+    expect(getMotion("pricing.card.hover")).toMatchObject({ trigger: "hover" });
+    expect(getMotion("home.services.accordion")).toMatchObject({ trigger: "click" });
+    expect(getMotion("pricing.timeline.row.appear")).toMatchObject({ trigger: "sectionInView", threshold: 0.5 });
   });
 
   it("throws on an unknown motion id", () => {
