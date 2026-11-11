@@ -1,5 +1,9 @@
 ---
-/** Fixed film-grain layer behind every page (Framer "Noise BG", layout template). */
+/**
+ * Fixed film-grain layer behind every page (Framer "Noise BG", layout template).
+ * fetchpriority="low": the GIF is 756 KB and decorative. At the default (High, in-viewport image)
+ * it competed with the hero portrait (the LCP image) for bandwidth.
+ */
 import { getSite } from "../content/load";
 
 const { noise } = getSite();
@@ -13,6 +17,7 @@ const { noise } = getSite();
   height={noise.height}
   style={`opacity:${noise.opacity};mix-blend-mode:${noise.blendMode}`}
   decoding="async"
+  fetchpriority="low"
 />
 
 <style is:global>

@@ -2,6 +2,8 @@
 import antonioHero from "@fontsource/antonio/files/antonio-latin-700-normal.woff2?url";
 import interHero from "@fontsource/inter/files/inter-latin-300-normal.woff2?url";
 import { getAllMotion, getMotion, getSite, getTokens } from "../content/load";
+import { getImage } from "astro:assets";
+import { rasterOf } from "../content/images";
 import type { Effect, Transition } from "../content/schema";
 import "../styles/tokens.css";
 import "../styles/global.css";
@@ -23,6 +25,14 @@ const site = getSite();
 const abs = (p: string): string => new URL(p, site.url).href;
 const canonical = abs(path);
 const ogImage = abs(site.ogImage.src);
+
+// The favicon original is a 2731 px, 2 MB PNG; browsers show it at 16-32 px (64 px on 2x screens).
+// Serving the original made it the largest download on every page.
+const FAVICON_SIZE = 64;
+const faviconMeta = rasterOf(site.favicon.src);
+const favicon = faviconMeta
+  ? (await getImage({ src: faviconMeta, width: FAVICON_SIZE, height: FAVICON_SIZE, format: "png" })).src
+  : site.favicon.src;
 
 // Page fade: every number comes from the "page" effect in content/motion.json.
 const pageEffect = getMotion("page");
@@ -72,7 +82,7 @@ const media = (name: "desktop" | "tablet" | "phone"): string | undefined => getT
     <meta name="description" content={description} />
     {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
     {alternates.map((a) => <link rel="alternate" hreflang={a.lang} href={abs(a.path)} />)}
-    <link rel="icon" type="image/png" href={site.favicon.src} />
+    <link rel="icon" type="image/png" sizes={`${FAVICON_SIZE}x${FAVICON_SIZE}`} href={favicon} />
     <link rel="preload" as="font" type="font/woff2" href={antonioHero} crossorigin />
     <link rel="preload" as="font" type="font/woff2" href={interHero} crossorigin />
     <meta property="og:type" content="website" />

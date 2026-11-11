@@ -59,3 +59,69 @@ Reproducibility: no frame hit the stability cap. Across two full captures, 8 of 
 were byte-identical. `home-tablet.png` differs between some loads by 1 to 4 pixels, each by
 1/255 in one colour channel, on the edges of the tilted project cards (y 3800 to 4950).
 Comparisons against these baselines need a small tolerance for that reason.
+
+## Rebuild (measured 2026-11-11)
+
+Source: `./dist` served by the Worker preview (`npm run preview`, `wrangler dev --local` on
+http://localhost:8787). The preview runs the same Worker and asset routing as production and
+serves assets Brotli-compressed, so transfer sizes match what Cloudflare sends; a plain static
+server over `./dist` would serve them uncompressed and skip the Worker. The Turnstile script
+loads on `/` from challenges.cloudflare.com, as it does in production.
+
+Same method as the Framer baseline: `@lhci/cli` (Lighthouse 13.6.0), 3 runs per URL and
+preset, default simulated throttling, each number the median of the 3 runs taken per value.
+Mobile is what `npm run lhci` collects (the CI run); desktop was collected separately with
+`npx lhci collect --settings.preset=desktop`. Full data:
+[`rebuild-lighthouse.json`](rebuild-lighthouse.json).
+
+### Lighthouse: Framer vs rebuild
+
+| Page | Preset | Site | Performance | Accessibility | Best practices | SEO | FCP | LCP | TBT | CLS | Speed Index |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `/` | mobile | Framer | 82 | 92 | 100 | 100 | 1.19 s | 1.19 s | 614 ms | 0.003 | 2.78 s |
+| `/` | mobile | rebuild | 92 | 100 | 100 | 100 | 0.92 s | 3.37 s | 0 ms | 0.001 | 0.92 s |
+| `/pricing` | mobile | Framer | 93 | 89 | 100 | 100 | 1.18 s | 1.18 s | 295 ms | 0 | 2.98 s |
+| `/pricing` | mobile | rebuild | 100 | 100 | 100 | 100 | 1.39 s | 1.39 s | 0 ms | 0 | 1.39 s |
+| `/` | desktop | Framer | 100 | 92 | 100 | 100 | 0.50 s | 0.50 s | 12 ms | 0.002 | 0.99 s |
+| `/` | desktop | rebuild | 100 | 100 | 100 | 100 | 0.26 s | 0.50 s | 0 ms | 0 | 0.28 s |
+| `/pricing` | desktop | Framer | 100 | 89 | 100 | 100 | 0.48 s | 0.48 s | 12 ms | 0 | 0.54 s |
+| `/pricing` | desktop | rebuild | 100 | 100 | 100 | 100 | 0.26 s | 0.26 s | 0 ms | 0 | 0.28 s |
+
+Individual mobile performance runs for `/` were 91, 97 and 92: the margin over the 0.90 budget
+is small. What remains on the LCP path is the 756 KB animated noise GIF (the same file Framer
+serves). On localhost it finishes downloading before the hero portrait paints, so Lighthouse's
+simulation counts it against LCP at slow-4G speed; on Framer's CDN it finishes after LCP and is
+not counted.
+
+### Total transfer size: Framer vs rebuild
+
+| Page | Preset | Framer | Rebuild |
+| --- | --- | --- | --- |
+| `/` | mobile | 1,989,224 bytes (1.90 MiB), 59 requests | 1,421,970 bytes (1.36 MiB), 35 requests |
+| `/` | desktop | 2,124,523 bytes (2.03 MiB), 61 requests | 1,382,702 bytes (1.32 MiB), 38 requests |
+| `/pricing` | mobile | 1,741,809 bytes (1.66 MiB), 43 requests | 943,762 bytes (0.90 MiB), 14 requests |
+| `/pricing` | desktop | 1,741,837 bytes (1.66 MiB), 43 requests | 942,590 bytes (0.90 MiB), 14 requests |
+
+The noise GIF is 756 KB of each rebuild total.
+
+### Fixes made to meet the budgets
+
+The first CI run failed: `/` mobile performance 0.77 (LCP 5.7 s, 3.4 MB transferred).
+
+- Favicon: the 2731 px, 2 MB original PNG was linked directly. It is now resized at build to a
+  64 px PNG (11 KB), `src/layouts/Base.astro`.
+- Noise layer: the GIF was fetched at High priority (an in-viewport image) next to the hero
+  portrait, the LCP image. It now has `fetchpriority="low"`, `src/components/Noise.astro`.
+
+### Budgets (`lighthouserc.json`, mobile, median of 3 runs)
+
+Each minimum is the higher of the task's floor and the Framer mobile median above, so the
+rebuild can never score below the site it replaces:
+
+| Page | Performance | Accessibility | Best practices | SEO |
+| --- | --- | --- | --- | --- |
+| floor | 0.90 | 0.95 | 0.95 | 1.00 |
+| `/` Framer median | 0.82 | 0.92 | 1.00 | 1.00 |
+| `/` budget | **0.90** | **0.95** | **1.00** | **1.00** |
+| `/pricing` Framer median | 0.93 | 0.89 | 1.00 | 1.00 |
+| `/pricing` budget | **0.93** | **0.95** | **1.00** | **1.00** |

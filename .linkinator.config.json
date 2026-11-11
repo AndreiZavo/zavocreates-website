@@ -1,0 +1,15 @@
+{
+  "serverRoot": "dist",
+  "recurse": true,
+  "skip": ["^https://zavocreates\\.com/"],
+  "retry": true,
+  "retryErrors": true,
+  "retryErrorsCount": 3,
+  "retryErrorsJitter": 3000,
+  "timeout": 20000,
+  "concurrency": 10,
+  "botBlocks": {
+    "www.instagram.com": [429, 999],
+    "calendly.com": [429, 999]
+  }
+}
