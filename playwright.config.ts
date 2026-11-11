@@ -18,6 +18,8 @@ export default defineConfig({
       use: { ...devices["Desktop Chrome"] },
       // Scroll-stitched captures take about a minute per page and breakpoint.
       timeout: 300_000,
+      // More parallel captures starve the CPU and the stable-frame waits retry for minutes.
+      workers: 3,
       // The expected images are the Framer baselines (the top-level updateSnapshots "none" keeps them).
       snapshotPathTemplate: "{testDir}/baseline/{arg}{ext}",
     },
