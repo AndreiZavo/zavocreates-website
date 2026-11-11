@@ -7,6 +7,10 @@ import { PRICING_ALTERNATES } from "../content/routes";
 const pricing = getPricing("ro");
 ---
 
-<Base lang={pricing.lang} title={pricing.title} description={pricing.description} path="/pricing-ro" alternates={PRICING_ALTERNATES}>
-  <main></main>
+<Base lang={pricing.lang} title={pricing.title} description={pricing.description} path="/pricing-ro" alternates={PRICING_ALTERNATES} motion={["pricing.card.hover"]}>
+  <main>
+    <!-- PLACEHOLDER (Task 5): one empty data-motion element so tests/e2e/reduced-motion.spec.ts has something to check.
+         Task 7 replaces it with the real page. -->
+    <div data-motion="pricing.card.hover"></div>
+  </main>
 </Base>

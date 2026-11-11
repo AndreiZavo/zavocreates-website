@@ -4,6 +4,9 @@
  * The --page-* values are written by Base.astro from getMotion("page").
  */
 
+/* Lenis' own rules (smooth scroll). They only match once the runtime has put .lenis on <html>. */
+@import "lenis/dist/lenis.css";
+
 /* Fonts: Antonio 400/700 and Inter 300/400/500/600, latin + latin-ext (Romanian), woff2 from @fontsource.
    Inter 400 is the body-large text style; Inter 500 is set directly on nodes in content/layout.json.
    The unicode ranges are the ones @fontsource ships for these two subsets. */

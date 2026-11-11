@@ -6,6 +6,10 @@ import { getSite } from "../content/load";
 const site = getSite();
 ---
 
-<Base lang="en" title={site.title} description={site.description} path="/">
-  <main></main>
+<Base lang="en" title={site.title} description={site.description} path="/" motion={["home.hero.left.appear"]}>
+  <main>
+    <!-- PLACEHOLDER (Task 5): one empty data-motion element so tests/e2e/reduced-motion.spec.ts has something to check.
+         Task 6 replaces it with the real page. -->
+    <div data-motion="home.hero.left.appear"></div>
+  </main>
 </Base>
