@@ -14,9 +14,11 @@ interface Props {
   alternates?: { lang: string; path: string }[];
   /** Ids of the content/motion.json effects whose data-motion elements are on this page. */
   motion?: string[];
+  /** Keep the page out of search results (404): robots noindex and no canonical link. */
+  noindex?: boolean;
 }
 
-const { lang, title, description, path, alternates = [], motion = [] } = Astro.props;
+const { lang, title, description, path, alternates = [], motion = [], noindex = false } = Astro.props;
 const site = getSite();
 const abs = (p: string): string => new URL(p, site.url).href;
 const canonical = abs(path);
@@ -68,7 +70,7 @@ const media = (name: "desktop" | "tablet" | "phone"): string | undefined => getT
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
     {alternates.map((a) => <link rel="alternate" hreflang={a.lang} href={abs(a.path)} />)}
     <link rel="icon" type="image/png" href={site.favicon.src} />
     <link rel="preload" as="font" type="font/woff2" href={antonioHero} crossorigin />

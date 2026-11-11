@@ -8,7 +8,7 @@
  * Markup hooks (the one place to look):
  * - data-motion="<effect id>"        element the effect drives (one effect per element; nest wrappers to combine)
  * - data-motion-row="<n>"            appear: use rows[n] from/threshold; scroll: use rows[n-1].sections
- * - data-motion-target="<framerId>"  scroll targets (scrollTransform) and timeline sections (sectionInView appear)
+ * - data-motion-target="<framerId>"  scroll targets (scrollTransform)
  * - data-motion-layer="<layer path>" descendant layer of a Framer variant diff (hover states/pressed,
  *                                    timer glow, nav.scroll), e.g. "Desktop/Color BG"; the root path
  *                                    ("Desktop / Open") is the data-motion element itself

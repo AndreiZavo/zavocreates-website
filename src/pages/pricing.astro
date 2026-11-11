@@ -1,16 +1,6 @@
 ---
-// Stub so the SEO layout can be tested: Task 7 builds the pricing page.
-import Base from "../layouts/Base.astro";
+import PricingPage from "../components/PricingPage.astro";
 import { getPricing } from "../content/load";
-import { PRICING_ALTERNATES } from "../content/routes";
-
-const pricing = getPricing("en");
 ---
 
-<Base lang={pricing.lang} title={pricing.title} description={pricing.description} path="/pricing" alternates={PRICING_ALTERNATES} motion={["pricing.card.hover"]}>
-  <main>
-    <!-- PLACEHOLDER (Task 5): one empty data-motion element so tests/e2e/reduced-motion.spec.ts has something to check.
-         Task 7 replaces it with the real page. -->
-    <div data-motion="pricing.card.hover"></div>
-  </main>
-</Base>
+<PricingPage content={getPricing("en")} />

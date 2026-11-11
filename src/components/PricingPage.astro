@@ -1,0 +1,399 @@
+---
+/**
+ * The pricing page (Framer "/pricing" and "/pricing-ro"). Both routes render this with their own
+ * content (content/pricing.<lang>.json); src/pages/pricing.astro and pricing-ro.astro are one-line wrappers.
+ *
+ * Layout: content/layout.json pages.pricing. Framer's /pricing-ro page is a copy of /pricing with a
+ * few layout edits of its own (read from the same raw dump, docs/extraction/raw/03-…):
+ * - tablet: principles gap 24px, FAQ and CTA button use their "Tablet & Phone" variants
+ *   (/pricing keeps the "Desktop" variants on tablet and phone);
+ * - phone: intro padding 160/160 (not 140/120), principles stacked with gap 24, timeline rows
+ *   horizontal (dot column left), cards in a stack with their natural height, the Growth heading
+ *   wraps, footnote body-medium at 55% (/pricing: body-small plus a second line, footnotePhone).
+ * Those are CSS on .pricing--en / .pricing--ro below.
+ */
+import type { PricingContent } from "../content/schema";
+import { PRICING_ALTERNATES } from "../content/routes";
+import Base from "../layouts/Base.astro";
+import FaqAccordion from "./FaqAccordion.astro";
+import Footer from "./Footer.astro";
+import Nav from "./Nav.astro";
+import Noise from "./Noise.astro";
+import PricingCard from "./PricingCard.astro";
+import PrimaryButton from "./PrimaryButton.astro";
+import Timeline from "./Timeline.astro";
+
+interface Props {
+  content: PricingContent;
+}
+
+const { content } = Astro.props;
+const { lang } = content;
+const path = PRICING_ALTERNATES.find((a) => a.lang === lang)?.path;
+if (!path) throw new Error(`No pricing route for language "${lang}"`);
+const isEn = lang === "en";
+
+// The phone footnote repeats the footnote and adds a line (only /pricing has one).
+const [footnoteFirst, ...footnotePhoneExtra] = (content.footnotePhone ?? content.footnote).split("\n");
+if (footnoteFirst !== content.footnote) throw new Error("footnotePhone must start with the footnote");
+
+/** The content/motion.json effects with data-motion elements on this page (site-wide ones are added by Base). */
+const motion = [
+  "pricing.timeline.lineFill",
+  "pricing.timeline.row.appear",
+  "pricing.timeline.dot.appear",
+  "pricing.faq.accordion",
+  "pricing.card.hover",
+  "pricing.card.featured.hover",
+  "pricing.button.hover",
+  "pricing.button.featured.hover",
+  "button.primary.hover",
+];
+---
+
+<Base lang={lang} title={content.title} description={content.description} path={path} alternates={PRICING_ALTERNATES} motion={motion}>
+  <Noise />
+  <Nav />
+  <main class={`pricing pricing--${lang}`}>
+    <section class="pr-section pr-hero">
+      <div class="pr-inner">
+        <p class="pr-eyebrow">{content.intro.eyebrow}</p>
+        <h1 class="t-heading-2 pr-headline">{content.intro.heading}</h1>
+        <p class="t-body-medium pr-lead">{content.intro.text}</p>
+        <div class="pr-divider"></div>
+        <div class="pr-points">
+          {
+            content.points.map((point) => (
+              <div class="pr-point">
+                <p class="pr-point__num">{point.number}</p>
+                <p class="t-body-medium-bold pr-point__text">{point.title}</p>
+                <p class="t-body-small pr-point__text">{point.body}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="pr-section pr-process">
+      <div class="pr-inner">
+        <p class="pr-eyebrow">{content.processIntro.eyebrow}</p>
+        <h2 class="t-heading-2 pr-headline">{content.processIntro.heading}</h2>
+        <Timeline steps={content.process} />
+      </div>
+    </section>
+
+    <section class="pr-section">
+      <div class="pr-inner">
+        <p class="pr-eyebrow">{content.faqIntro.eyebrow}</p>
+        <h2 class="t-heading-2 pr-headline">{content.faqIntro.heading}</h2>
+        <div class="pr-faq">
+          <FaqAccordion items={content.faq} desktopOnTablet={isEn} />
+        </div>
+      </div>
+    </section>
+
+    <section class="pr-section">
+      <div class="pr-inner">
+        <p class="pr-eyebrow">{content.packagesIntro.eyebrow}</p>
+        <h2 class="t-heading-2 pr-headline">{content.packagesIntro.heading}</h2>
+        <div class="pr-packages">
+          <div class="pr-grid">
+            {content.packages.map((pkg) => <PricingCard pkg={pkg} />)}
+          </div>
+          <div class="pr-note">
+            <p class="pr-note__line">{content.footnote}</p>
+            {footnotePhoneExtra.map((line) => <p class="pr-note__line pr-note__line--phone">{line}</p>)}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pr-section pr-cta">
+      <h2 class="t-heading-2 pr-cta__headline">{content.cta.heading}</h2>
+      <p class="t-body-medium pr-cta__text">{content.cta.text}</p>
+      <PrimaryButton label={content.cta.label} href={content.cta.href} tabletPhoneVariant={!isEn} />
+    </section>
+  </main>
+  <Footer />
+</Base>
+
+<style is:global>
+  .pricing {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
+  .pr-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 48px;
+    width: 100%;
+    padding: 60px 40px 120px;
+    overflow: clip;
+  }
+
+  .pr-hero {
+    gap: 80px;
+    padding: 160px 40px;
+    overflow: visible;
+  }
+
+  .pr-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 32px;
+    width: 100%;
+    max-width: 1120px;
+  }
+
+  .pr-eyebrow {
+    width: 100%;
+    margin: 0;
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 1.2em;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-grey-150);
+  }
+
+  .pr-headline {
+    width: 100%;
+    max-width: 760px;
+  }
+
+  .pr-lead {
+    width: 100%;
+    max-width: 620px;
+    text-wrap: balance;
+  }
+
+  .pr-divider {
+    width: 100%;
+    height: 1px;
+    background: var(--color-grey-100);
+  }
+
+  .pr-points {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(220px, 1fr));
+    justify-content: center;
+    align-items: start;
+    gap: 40px;
+    width: 100%;
+    padding-top: 16px;
+  }
+
+  .pr-point {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .pr-point__num {
+    margin: 0;
+    font-family: "Antonio", sans-serif;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 1.2em;
+    color: var(--color-purple-green);
+  }
+
+  .pr-point__text {
+    width: 100%;
+  }
+
+  .pr-faq {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding-top: 16px;
+  }
+
+  .pr-packages {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    width: 100%;
+    max-width: 1120px;
+  }
+
+  .pr-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(230px, 1fr));
+    /* Framer row height "auto" (min 200px): every row is as tall as the tallest card. */
+    grid-auto-rows: minmax(200px, 1fr);
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+  }
+
+  .pr-note {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 55%;
+  }
+
+  .pr-note__line {
+    margin: 0;
+    font-family: var(--text-body-medium-family);
+    font-weight: var(--text-body-medium-weight);
+    font-size: var(--text-body-medium-size);
+    line-height: var(--text-body-medium-line);
+    letter-spacing: var(--text-body-medium-tracking);
+    color: var(--text-body-medium-color);
+    text-align: center;
+    text-wrap: balance;
+  }
+
+  .pr-note__line--phone {
+    display: none;
+  }
+
+  .pr-cta {
+    gap: 24px;
+    padding: 60px 40px 160px;
+  }
+
+  .pr-cta__headline {
+    width: 100%;
+    max-width: 760px;
+    text-align: center;
+  }
+
+  .pr-cta__text {
+    width: 100%;
+    max-width: 620px;
+    text-align: center;
+    text-wrap: balance;
+  }
+
+  /* ------------------------------------------------------------ tablet */
+  @media (min-width: 810px) and (max-width: 1199.98px) {
+    .pr-grid {
+      grid-template-columns: repeat(2, minmax(230px, 1fr));
+    }
+
+    .pricing--ro .pr-points {
+      gap: 24px;
+    }
+  }
+
+  /* ------------------------------------------------------------ phone */
+  @media (max-width: 809.98px) {
+    .pr-points {
+      grid-template-columns: minmax(220px, 1fr);
+    }
+
+    .pr-grid {
+      grid-template-columns: minmax(230px, 1fr);
+    }
+
+    /* /pricing: rows stack (dot column, card, spacer), with a line above dots 2–5 and under dot 5. */
+    .pricing--en .pr-hero {
+      padding: 140px 40px 120px;
+    }
+
+    .pricing--en .tl-row {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .pricing--en .tl-row .tl-progress {
+      order: 1;
+    }
+
+    .pricing--en .tl-row .tl-card {
+      order: 2;
+      width: 100%;
+    }
+
+    .pricing--en .tl-row .tl-spacer {
+      order: 3;
+    }
+
+    .pricing--en .tl-row--right .tl-spacer {
+      order: 0;
+    }
+
+    .pricing--en .tl-line {
+      height: 120px;
+    }
+
+    .pricing--en .tl-line--before,
+    .pricing--en .tl-line--last {
+      display: block;
+    }
+
+    .pricing--en .pr-note {
+      max-width: none;
+    }
+
+    .pricing--en .pr-note__line {
+      font-family: var(--text-body-small-family);
+      font-weight: var(--text-body-small-weight);
+      font-size: var(--text-body-small-size);
+      line-height: var(--text-body-small-line);
+      letter-spacing: var(--text-body-small-tracking);
+      color: var(--text-body-small-color);
+    }
+
+    .pricing--en .pr-note__line--phone {
+      display: block;
+      margin-top: var(--text-body-small-paragraph);
+    }
+
+    /* /pricing-ro: rows stay horizontal with the dot column first; principles and cards stack. */
+    .pricing--ro .pr-points {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 24px;
+    }
+
+    .pricing--ro .pr-point {
+      width: 100%;
+    }
+
+    .pricing--ro .tl-row .tl-progress {
+      order: 1;
+    }
+
+    .pricing--ro .tl-row .tl-card {
+      order: 2;
+      flex: 1 1 0;
+      width: auto;
+      min-width: 0;
+    }
+
+    .pricing--ro .tl-spacer {
+      display: none;
+    }
+
+    .pricing--ro .pr-grid {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .pricing--ro .card {
+      width: 100%;
+    }
+
+    .pricing--ro .card__tier {
+      flex-wrap: wrap;
+    }
+  }
+</style>

@@ -1,0 +1,186 @@
+---
+/**
+ * "How we'll work together" timeline (Framer "Process List", Timeline Row 01–05).
+ *
+ * Each row holds the step card, the progress column (numbered dot + grey line with a purple
+ * "Line Fill") and an empty spacer. Desktop and tablet: cards alternate left/right of the centre
+ * column. Phone: /pricing stacks each row vertically and adds a second line above the dot (rows 2–5)
+ * and a line under dot 5; /pricing-ro keeps rows horizontal with the dot column on the left. Those
+ * per-page differences are CSS on .pricing--en / .pricing--ro (PricingPage.astro).
+ *
+ * Motion (content/motion.json):
+ * - pricing.timeline.lineFill: scroll-linked; data-motion-row picks the row whose section target
+ *   drives it (Framer: each fill targets its own row; the phone-only fills of row 5 target row 4).
+ * - pricing.timeline.row.appear / pricing.timeline.dot.appear: replaying reveals per row.
+ * The row elements carry the Framer node ids the fills target (data-motion-target). /pricing-ro uses
+ * the same ids so its fills follow its own rows (controller ruling R9).
+ */
+import { getMotion } from "../content/load";
+import type { PricingContent } from "../content/schema";
+
+interface Props {
+  steps: PricingContent["process"];
+}
+
+const { steps } = Astro.props;
+
+const lineFill = getMotion("pricing.timeline.lineFill");
+if (lineFill.kind !== "scroll" || !lineFill.rows) throw new Error("pricing.timeline.lineFill must be a scroll effect with rows");
+/** Framer node id of each row the fills target, by row number (1-based). */
+const targets = lineFill.rows.map((row) => row.sections.find((s) => s.target)?.target?.framerNodeId);
+const fillRows = targets.length;
+const targetOf = (n: number): string | undefined => targets[n - 1];
+/** Row whose fill sections a line in row n uses (rows past the last fill row reuse the last one). */
+const fillRowOf = (n: number): number => Math.min(n, fillRows);
+---
+
+<div class="tl">
+  {
+    steps.map((step, i) => {
+      const n = i + 1;
+      return (
+        <div class:list={["tl-row", `tl-row--${step.side}`]} id={`process-step-${n}`} data-motion-target={targetOf(n)}>
+          <div class="tl-card" data-motion="pricing.timeline.row.appear" data-motion-row={n}>
+            <p class="t-body-medium-bold">{step.title}</p>
+            <p class="t-body-medium">{step.body}</p>
+          </div>
+          <div class="tl-progress">
+            {n > 1 && (
+              <span class="tl-line tl-line--before">
+                <span class="tl-fill" data-motion="pricing.timeline.lineFill" data-motion-row={fillRowOf(n)} />
+              </span>
+            )}
+            <div class="tl-dot" data-motion="pricing.timeline.dot.appear" data-motion-row={n}>
+              <span class="tl-dot__num">{step.number}</span>
+            </div>
+            <span class:list={["tl-line", "tl-line--after", n > fillRows && "tl-line--last"]}>
+              <span class="tl-fill" data-motion="pricing.timeline.lineFill" data-motion-row={fillRowOf(n)} />
+            </span>
+          </div>
+          <div class="tl-spacer" />
+        </div>
+      );
+    })
+  }
+</div>
+
+<style is:global>
+  .tl {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding-top: 16px;
+  }
+
+  .tl-row {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .tl-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 45%;
+    padding: 28px;
+    overflow: clip;
+    border-radius: 16px;
+    background: var(--color-grey-50-dark);
+  }
+
+  /* Framer borders are drawn over the box and take no space. */
+  .tl-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 1px solid var(--color-grey-100);
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  .tl-card > p {
+    width: 100%;
+  }
+
+  .tl-progress {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    width: 10%;
+  }
+
+  .tl-dot {
+    display: flex;
+    flex: none;
+    justify-content: center;
+    align-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--color-purple-green);
+  }
+
+  .tl-dot__num {
+    font-family: "Antonio", sans-serif;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 1.2em;
+    text-align: center;
+    color: var(--color-white-dark);
+  }
+
+  .tl-line {
+    position: relative;
+    display: block;
+    flex: none;
+    width: 2px;
+    height: 180px;
+    overflow: clip;
+    background: var(--color-grey-100);
+  }
+
+  .tl-fill {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 2px;
+    height: 180px;
+    background: var(--color-purple-green);
+  }
+
+  .tl-spacer {
+    width: 45%;
+    height: 1px;
+  }
+
+  /* Desktop layout (every breakpoint unless a page overrides it): card | progress | spacer, mirrored
+     on "right" rows; one line under each dot, none under the last. */
+  .tl-card {
+    order: 1;
+  }
+
+  .tl-progress {
+    order: 2;
+  }
+
+  .tl-spacer {
+    order: 3;
+  }
+
+  .tl-row--right .tl-spacer {
+    order: 0;
+  }
+
+  .tl-row--right .tl-card {
+    order: 4;
+  }
+
+  .tl-line--before,
+  .tl-line--last {
+    display: none;
+  }
+</style>

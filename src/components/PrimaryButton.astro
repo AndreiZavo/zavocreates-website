@@ -1,0 +1,78 @@
+---
+/**
+ * Framer "Primary Button": outlined pill whose purple circle ("Color BG") grows from the bottom-left
+ * corner on hover while the label turns white (button.primary.hover). Its "Tablet & Phone" variant is
+ * a filled pill with no hover; `tabletPhoneVariant` switches to it below the desktop breakpoint
+ * (/pricing-ro uses it there, /pricing keeps the Desktop variant at every breakpoint).
+ */
+interface Props {
+  label: string;
+  href: string;
+  tabletPhoneVariant?: boolean;
+}
+
+const { label, href, tabletPhoneVariant = false } = Astro.props;
+---
+
+<a class:list={["btn-primary", tabletPhoneVariant && "btn-primary--tp"]} href={href} data-motion="button.primary.hover">
+  <span class="btn-primary__bg" data-motion-layer="Desktop/Color BG"></span>
+  <span class="t-heading-4 btn-primary__text" data-motion-layer="Desktop/RichText">{label}</span>
+</a>
+
+<style is:global>
+  .btn-primary {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 40px 8px;
+    overflow: hidden;
+    border-radius: 99px;
+    text-decoration: none;
+  }
+
+  /* Framer borders are drawn over the box and take no space. */
+  .btn-primary::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    border: 1px solid var(--color-purple-green);
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  .btn-primary__bg {
+    position: absolute;
+    bottom: -15px;
+    left: -19px;
+    z-index: 1;
+    width: 15px;
+    height: 15px;
+    border-radius: 99px;
+    background: var(--color-purple-green);
+    transform-origin: 100% 0%;
+  }
+
+  .btn-primary__text {
+    position: relative;
+    z-index: 1;
+    white-space: nowrap;
+    color: var(--color-purple-green);
+  }
+
+  @media (max-width: 1199.98px) {
+    .btn-primary--tp {
+      background: var(--color-purple-green);
+    }
+
+    .btn-primary--tp .btn-primary__bg {
+      display: none;
+    }
+
+    /* This variant has no hover: the label stays white whatever the hover runtime writes inline. */
+    .btn-primary--tp .btn-primary__text {
+      color: var(--color-white-dark) !important;
+    }
+  }
+</style>

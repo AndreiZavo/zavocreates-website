@@ -88,9 +88,26 @@ test.describe("motion allowed", () => {
       await page.goto(path, { waitUntil: "load" });
       await expect(page.locator("html")).toHaveClass(/motion-ready/);
       await expect(page.locator("html")).toHaveClass(/lenis/);
+      // Scroll-triggered reveals (replaying appear effects) are hidden while out of view by design:
+      // they are checked once scrolled into view, every other element right away.
+      const scrollReveals = await page.evaluate(() => {
+        const config = JSON.parse(document.getElementById("motion-config")?.textContent ?? "{}") as Record<string, { kind: string; trigger: string }>;
+        return Object.entries(config)
+          .filter(([, e]) => e.kind === "appear" && e.trigger !== "load")
+          .map(([id]) => id);
+      });
       await expect
-        .poll(async () => (await motionState(page)).elements.every((el) => el.opacity === 1), { timeout: 5000 })
+        .poll(
+          async () => (await motionState(page)).elements.every((el) => el.opacity === 1 || scrollReveals.includes(el.id ?? "")),
+          { timeout: 5000 },
+        )
         .toBe(true);
+      for (const id of scrollReveals) {
+        for (const el of await page.locator(`[data-motion="${id}"]`).all()) {
+          await el.evaluate((node) => node.scrollIntoView({ block: "center", behavior: "instant" }));
+          await expect(el).toHaveCSS("opacity", "1", { timeout: 5000 });
+        }
+      }
     });
   }
 });
