@@ -17,8 +17,8 @@ type Section = Scroll["sections"][number];
 type NumericPose = Record<string, number>;
 export type Stop = { y: number; pose: NumericPose };
 export type Box = { top: number; height: number };
-/** Media queries of the tablet and phone breakpoints (content/tokens.json). */
-export type BreakpointMedia = { tablet?: string; phone?: string };
+/** Media queries of the breakpoints (content/tokens.json). */
+export type BreakpointMedia = { desktop?: string; tablet?: string; phone?: string };
 
 /** Share of the viewport height at which Framer places each viewport line. */
 const VIEWPORT_LINE: Record<Scroll["viewport"], number> = { start: 0, middle: 1 / 2, end: 1 };

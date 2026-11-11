@@ -1,7 +1,7 @@
 ---
 import antonioHero from "@fontsource/antonio/files/antonio-latin-700-normal.woff2?url";
 import interHero from "@fontsource/inter/files/inter-latin-300-normal.woff2?url";
-import { getMotion, getSite, getTokens } from "../content/load";
+import { getAllMotion, getMotion, getSite, getTokens } from "../content/load";
 import type { Effect, Transition } from "../content/schema";
 import "../styles/tokens.css";
 import "../styles/global.css";
@@ -49,12 +49,16 @@ const pageVars = Object.entries({
   .map(([name, value]) => `${name}:${value}`)
   .join(";");
 
-// Motion runtime config: Smooth Scroll runs on every page, the rest is what the page declares.
+// Motion runtime config: every page:"all" effect (smooth scroll, nav, cursor; the "page" fade is CSS)
+// plus the ids the page declares.
+const siteWide = Object.entries(getAllMotion())
+  .filter(([, e]) => e.page === "all" && e.kind !== "page")
+  .map(([id]) => id);
 const effects: Record<string, Effect> = Object.fromEntries(
-  [...new Set(["smoothScroll", ...motion])].map((id) => [id, getMotion(id)]),
+  [...new Set([...siteWide, ...motion])].map((id) => [id, getMotion(id)]),
 );
 const motionConfig = JSON.stringify(effects).replaceAll("<", "\\u003c");
-const media = (name: "tablet" | "phone"): string | undefined => getTokens().breakpoints.find((b) => b.name === name)?.media;
+const media = (name: "desktop" | "tablet" | "phone"): string | undefined => getTokens().breakpoints.find((b) => b.name === name)?.media;
 ---
 
 <!doctype html>
@@ -85,7 +89,7 @@ const media = (name: "tablet" | "phone"): string | undefined => getTokens().brea
   </head>
   <body>
     <slot />
-    <script is:inline type="application/json" id="motion-config" data-tablet={media("tablet")} data-phone={media("phone")} set:html={motionConfig} />
+    <script is:inline type="application/json" id="motion-config" data-desktop={media("desktop")} data-tablet={media("tablet")} data-phone={media("phone")} set:html={motionConfig} />
     <script>
       import { initMotion, type BreakpointMedia } from "../motion";
       import type { Effect } from "../content/schema";
@@ -93,6 +97,7 @@ const media = (name: "tablet" | "phone"): string | undefined => getTokens().brea
       const config = document.getElementById("motion-config");
       if (config?.textContent) {
         const media: BreakpointMedia = {};
+        if (config.dataset["desktop"]) media.desktop = config.dataset["desktop"];
         if (config.dataset["tablet"]) media.tablet = config.dataset["tablet"];
         if (config.dataset["phone"]) media.phone = config.dataset["phone"];
         initMotion(JSON.parse(config.textContent) as Record<string, Effect>, media);

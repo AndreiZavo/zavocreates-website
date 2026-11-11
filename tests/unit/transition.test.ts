@@ -93,9 +93,13 @@ describe("toSpringOptions", () => {
     });
   });
 
-  it("returns undefined for transitions that are not physics springs", () => {
+  it("passes a duration spring's duration in ms, the unit springValue resolves it in", () => {
+    // cursor: { type: "spring", bounce: 0.2, duration: 0.4 }
+    expect(toSpringOptions({ type: "spring", duration: 0.4, bounce: 0.2, delay: 0 })).toEqual({ duration: 400, bounce: 0.2 });
+  });
+
+  it("returns undefined for tweens and instant transitions", () => {
     expect(toSpringOptions({ type: "instant" })).toBeUndefined();
-    expect(toSpringOptions({ type: "spring", duration: 1, bounce: 0 })).toBeUndefined();
     expect(toSpringOptions({ type: "tween", duration: 0.2, ease: [0, 0, 1, 1] })).toBeUndefined();
   });
 });

@@ -30,7 +30,7 @@ function heights(effect: Variant): [string, string] | undefined {
 }
 
 export function variant(effect: Variant, elements: HTMLElement[]): void {
-  if (effect.trigger !== "click") return; // timer-driven variants are not handled here
+  if (effect.trigger !== "click") return; // timer variants: timer.ts
   const range = heights(effect);
   if (!range) return;
   const [closedHeight, openHeight] = range;

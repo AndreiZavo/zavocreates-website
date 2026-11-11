@@ -11,6 +11,7 @@ import siteJson from "../../content/site.json";
 import tokensJson from "../../content/tokens.json";
 import {
   type Effect,
+  type Motion as MotionMap,
   HomeContent,
   Layout,
   Motion,
@@ -31,6 +32,8 @@ export const getHome = (): HomeContent => home;
 export const getPricing = (lang: "en" | "ro"): PricingContent => pricing[lang];
 export const getTokens = (): Tokens => tokens;
 export const getLayout = (): Layout => layout;
+/** Every effect, keyed by id. */
+export const getAllMotion = (): MotionMap => motion;
 
 export function getMotion(id: string): Effect {
   const effect = Object.hasOwn(motion, id) ? motion[id] : undefined;

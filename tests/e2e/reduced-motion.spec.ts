@@ -1,6 +1,34 @@
 import { test, expect, type Page } from "@playwright/test";
 
 const PATHS = ["/", "/pricing", "/pricing-ro"] as const;
+const GLOW = "Desktop / Available/Status/Glowing";
+
+/**
+ * Test fixture: an availability-glow element (nav.status.glow, a looping timer effect on every page),
+ * inserted after parsing and before the deferred runtime script runs. Tasks 6/7 add the real nav.
+ */
+async function addGlowFixture(page: Page): Promise<void> {
+  await page.addInitScript((layer) => {
+    document.addEventListener("readystatechange", () => {
+      if (document.readyState !== "interactive") return;
+      const root = document.createElement("div");
+      root.setAttribute("data-motion", "nav.status.glow");
+      root.id = "glow-fixture";
+      const dot = document.createElement("span");
+      dot.setAttribute("data-motion-layer", layer);
+      dot.style.cssText = "display:block;height:6px;width:6px;opacity:0.5";
+      root.appendChild(dot);
+      document.body.appendChild(root);
+    });
+  }, GLOW);
+}
+
+const glowLayer = (page: Page): Promise<{ opacity: number; width: number; style: string }> =>
+  page.evaluate(() => {
+    const el = document.querySelector<HTMLElement>("#glow-fixture > span")!;
+    const cs = getComputedStyle(el);
+    return { opacity: Number(cs.opacity), width: parseFloat(cs.width), style: el.getAttribute("style") ?? "" };
+  });
 
 /** Computed opacity and transform of every [data-motion] element, plus the runtime's marks on <html>. */
 async function motionState(page: Page): Promise<{
@@ -38,6 +66,18 @@ test.describe("prefers-reduced-motion: reduce (Review Focus 2)", () => {
       expect(state.htmlClass, "Lenis must not start").not.toContain("lenis");
     });
   }
+
+  test("no custom cursor and no timer loop", async ({ page }) => {
+    await addGlowFixture(page);
+    await page.goto("/", { waitUntil: "load" });
+    await page.mouse.move(400, 300);
+    await page.mouse.move(420, 320);
+    await page.waitForTimeout(2000); // longer than the glow's holdSeconds + transition
+    await expect(page.locator("[data-motion-cursor]")).toHaveCount(0);
+    expect(await glowLayer(page)).toEqual({ opacity: 0.5, width: 6, style: "display: block; height: 6px; width: 6px; opacity: 0.5;" });
+    expect(await page.evaluate(() => document.getAnimations().length)).toBe(0);
+    await expect(page.locator("html")).not.toHaveClass(/motion-cursor/);
+  });
 });
 
 test.describe("motion allowed", () => {
@@ -53,6 +93,39 @@ test.describe("motion allowed", () => {
         .toBe(true);
     });
   }
+});
+
+test.describe("site-wide effects with motion allowed", () => {
+  test.use({ reducedMotion: "no-preference" });
+
+  test("the availability glow loops from its rest state", async ({ page }) => {
+    await addGlowFixture(page);
+    await page.goto("/", { waitUntil: "load" });
+    await expect
+      .poll(async () => (await glowLayer(page)).width, { timeout: 4000, intervals: [50] })
+      .toBeGreaterThan(6);
+    await expect
+      .poll(async () => (await glowLayer(page)).width, { timeout: 4000, intervals: [50] })
+      .toBe(6);
+  });
+
+  test("the custom cursor follows the mouse and hides the native cursor on desktop", async ({ page }) => {
+    await page.goto("/", { waitUntil: "load" });
+    await expect(page.locator("[data-motion-cursor]")).toHaveCount(1);
+    await expect(page.locator("[data-motion-cursor]")).toBeHidden();
+    await page.mouse.move(400, 300);
+    await page.mouse.move(410, 310);
+    await expect(page.locator("[data-motion-cursor]")).toBeVisible();
+    await expect(page.locator("html")).toHaveClass(/motion-cursor/);
+    await expect(page.locator("body")).toHaveCSS("cursor", "none");
+  });
+
+  test("no custom cursor below the desktop breakpoint", async ({ page }) => {
+    await page.setViewportSize({ width: 800, height: 900 });
+    await page.goto("/", { waitUntil: "load" });
+    await expect(page.locator("html")).toHaveClass(/motion-ready/);
+    await expect(page.locator("[data-motion-cursor]")).toHaveCount(0);
+  });
 });
 
 test.describe("JavaScript off", () => {

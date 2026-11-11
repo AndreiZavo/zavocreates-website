@@ -194,3 +194,9 @@ a:hover {
     navigation: none;
   }
 }
+
+/* Custom cursor (src/motion/cursor.ts): the native cursor is hidden only while the custom one shows. */
+html.motion-cursor,
+html.motion-cursor * {
+  cursor: none !important;
+}
