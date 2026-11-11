@@ -37,6 +37,9 @@ jobs:
 
       - run: npm run build
 
+      # Type-check: .astro files (astro check) and every TypeScript file in tsconfig.json.
+      - run: npm run check
+
       - run: npm run test:unit
 
       - run: npm run test:worker

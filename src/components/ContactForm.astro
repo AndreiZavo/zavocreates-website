@@ -31,11 +31,11 @@ const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || TURNSTILE_TEST_SITE
   <div class="form__row">
     <label class="field">
       <span class="t-body-small field__label">{fields.name.label}</span>
-      <input class="field__control" type="text" name="name" placeholder={fields.name.placeholder} autocomplete="name" required />
+      <input class="field__control" type="text" name="name" placeholder={fields.name.placeholder} autocomplete="name" maxlength="100" required />
     </label>
     <label class="field">
       <span class="t-body-small field__label">{fields.email.label}</span>
-      <input class="field__control" type="email" name="email" placeholder={fields.email.placeholder} autocomplete="email" required />
+      <input class="field__control" type="email" name="email" placeholder={fields.email.placeholder} autocomplete="email" maxlength="254" required />
     </label>
   </div>
   <label class="field">
@@ -50,7 +50,7 @@ const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || TURNSTILE_TEST_SITE
   </label>
   <label class="field">
     <span class="t-body-small field__label">{fields.message.label}</span>
-    <textarea class="field__control field__control--area" name="message" placeholder={fields.message.placeholder} required></textarea>
+    <textarea class="field__control field__control--area" name="message" placeholder={fields.message.placeholder} maxlength="5000" required></textarea>
   </label>
   <div class="cf-turnstile" data-sitekey={siteKey}></div>
   <button class="submit" type="submit" data-motion="button.submit.hover" data-cursor="blend">

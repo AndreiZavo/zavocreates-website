@@ -4,12 +4,13 @@
   "type": "module",
   "version": "0.0.1",
   "engines": {
-    "node": ">=22"
+    "node": ">=22.23.4"
   },
   "scripts": {
     "gen:tokens": "node --experimental-strip-types scripts/gen-tokens.ts",
     "dev": "npm run gen:tokens && astro dev",
     "build": "npm run gen:tokens && astro build",
+    "check": "astro check && tsc --noEmit",
     "preview": "wrangler dev --local --port 8787",
     "test:unit": "vitest run --config vitest.config.ts --passWithNoTests",
     "test:worker": "vitest run --config vitest.workers.config.ts --passWithNoTests",

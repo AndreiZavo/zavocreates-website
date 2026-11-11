@@ -10,9 +10,9 @@ The work was done by AI agents (Claude Code) from a written spec and plan, and c
 
 **Result.** The rebuild is complete and tested locally and in CI. It is not live yet: the domain still points at Framer until the [go-live checklist](docs/go-live.md) is done.
 
-- Same pages, text and animations as the Framer site, compared screenshot by screenshot against captures of the live site.
+- Same pages, text and animations as the Framer site. Every animation value is taken from the Framer project and checked by unit tests; the pages are compared with screenshots of the live site in their settled state, with moving parts hidden. Animations are not compared frame by frame.
 - Lighthouse category scores equal to or higher than Framer's on every page and preset, and 28% to 46% less data transferred per page load ([docs/results](docs/results/README.md)).
-- Contact form with Turnstile, AI triage and email delivery, working with or without JavaScript.
+- Contact form with Turnstile, AI triage and email delivery. Without JavaScript the form shows the email address and phone number instead.
 
 ### Cost
 
@@ -66,7 +66,7 @@ Captured from the built site (`npm run preview`).
 
 - **Build.** `content/*.json` holds every visible string, design token and animation value from the Framer project. Zod schemas validate it during `astro build`, which writes static HTML to `./dist`.
 - **Runtime.** One Worker (`worker/index.ts`) serves `./dist` as static assets and handles `POST /api/contact`: validate the fields, verify the Turnstile token, ask Workers AI for a structured label, send the email through Resend. If the AI call fails, the email still goes out, marked "Triage unavailable". Messages are never stored.
-- **Motion.** Motion (motion.dev) and Lenis, driven only by `content/motion.json`. Nothing moves under `prefers-reduced-motion: reduce`, and every element is visible without JavaScript.
+- **Motion.** Motion (motion.dev) and Lenis, driven only by `content/motion.json`. Nothing moves under `prefers-reduced-motion: reduce`, and every element is visible without JavaScript. The tablet and phone menu opens with reduced motion too, and without JavaScript it is shown open.
 
 Why each piece was chosen: [docs/decisions.md](docs/decisions.md).
 
@@ -86,9 +86,10 @@ Before anything changed, screenshots of the live Framer site were captured for 3
 
 ### 3. Worker tests
 
-23 tests run in the Workers runtime (`tests/worker/contact.test.ts`) with Workers AI, Turnstile and Resend stubbed. They check these properties:
+29 tests run in the Workers runtime (`tests/worker/contact.test.ts`) with Workers AI, Turnstile and Resend stubbed. They check these properties:
 
-- A failed Turnstile check returns 403 and makes no AI call and no email call.
+- A failed Turnstile check returns 403 and makes no AI call and no email call. So does a token issued for another `action` or hostname.
+- A missing `TURNSTILE_SECRET` or `RESEND_API_KEY` returns 503 and logs only the variable name. Cloudflare's Turnstile test secret is refused (503) on any host but localhost.
 - Invalid fields return 400; a body over 20 KB returns 413, including a streamed body without `Content-Length`; other content types return 415; `GET` returns 405.
 - The visitor's message is sent to the model as JSON data inside a delimited block, in JSON mode. Output that fails the schema is retried once.
 - If the AI throws or returns invalid output twice, the email is still sent with the original message and a "Triage unavailable" note.
@@ -104,7 +105,7 @@ It has not been run yet, because it needs a Cloudflare account; it runs at go-li
 
 ### 5. Lighthouse budgets in CI
 
-`lighthouserc.json` fails the build if any mobile score drops below the higher of a fixed floor and Framer's own median, so the rebuild can never score below the site it replaces. `/` must reach performance 0.90, accessibility 0.95, best practices 1.00 and SEO 1.00; `/pricing` must reach 0.93, 0.95, 1.00 and 1.00. The margin on `/` performance is small: the last three runs scored 94.
+`lighthouserc.json` fails the build if any mobile score drops below the higher of a fixed floor and Framer's own median, so the rebuild can never score below the site it replaces. `/` must reach performance 0.90, accessibility 0.95, best practices 1.00 and SEO 1.00; `/pricing` must reach 0.93, 0.95, 1.00 and 1.00. The margin on `/` performance is small: the latest three local runs scored 91, 98 and 93.
 
 ### Other checks
 
@@ -112,7 +113,7 @@ End-to-end tests (Playwright) cover routes and the 404 page, SEO tags and `hrefl
 
 ## Run locally
 
-Needs Node 22 or newer (`.nvmrc`).
+Needs Node 22.23.4 or newer (`.nvmrc`; Astro 7.4.8 requires it).
 
 ```sh
 npm install
@@ -124,6 +125,7 @@ cp .dev.vars.example .dev.vars   # dummy local secrets, git-ignored
 | --- | --- |
 | `npm run dev` | Astro dev server |
 | `npm run build` | build the static site into `./dist` |
+| `npm run check` | type-check: `astro check` and `tsc --noEmit` |
 | `npm run preview` | `wrangler dev` on http://localhost:8787, serving `./dist` and the Worker (build first) |
 | `npm run test:unit` | Vitest, `tests/unit/` |
 | `npm run test:worker` | Vitest in the Workers runtime, `tests/worker/` |

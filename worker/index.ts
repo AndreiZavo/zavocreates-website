@@ -1,6 +1,6 @@
 import { EmailError, sendEmail } from "./email";
 import { triage } from "./triage";
-import { verifyTurnstile } from "./turnstile";
+import { isTestSecret, verifyTurnstile } from "./turnstile";
 import { validate } from "./validate";
 
 export interface Env {
@@ -14,6 +14,10 @@ export interface Env {
 
 const CONTACT_PATH = "/api/contact";
 const MAX_BODY_BYTES = 20 * 1024;
+/** The `action` the form's Turnstile widget is rendered with (src/scripts/contact-form.ts). */
+const TURNSTILE_ACTION = "contact";
+/** Hosts where Cloudflare's dummy Turnstile secrets are allowed (local `npm run preview`). */
+const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]"]);
 
 type Mode = "json" | "form";
 
@@ -77,6 +81,19 @@ async function handleContact(req: Request, env: Env): Promise<Response> {
     type === "application/json" ? "json" : type === "application/x-www-form-urlencoded" ? "form" : null;
   if (!mode) return Response.json({ ok: false, error: "Unsupported content type" }, { status: 415 });
 
+  // Configuration problems: log the variable or problem name only, never a value.
+  for (const name of ["TURNSTILE_SECRET", "RESEND_API_KEY"] as const) {
+    if (!env[name]) {
+      console.error(`contact: missing secret ${name}`);
+      return reply(mode, 503, "Service unavailable");
+    }
+  }
+  const hostname = new URL(req.url).hostname;
+  if (isTestSecret(env.TURNSTILE_SECRET) && !LOCAL_HOSTS.has(hostname)) {
+    console.error("contact: TURNSTILE_SECRET is a Cloudflare test secret on a non-local host");
+    return reply(mode, 503, "Service unavailable");
+  }
+
   try {
     const declared = Number(req.headers.get("content-length") ?? "0");
     if (declared > MAX_BODY_BYTES) return reply(mode, 413, "Message is too large");
@@ -94,7 +111,10 @@ async function handleContact(req: Request, env: Env): Promise<Response> {
     if (!checked.ok) return reply(mode, 400, checked.error);
     const contact = checked.data;
 
-    const human = await verifyTurnstile(contact.turnstileToken, req.headers.get("cf-connecting-ip"), env.TURNSTILE_SECRET);
+    const human = await verifyTurnstile(contact.turnstileToken, req.headers.get("cf-connecting-ip"), env.TURNSTILE_SECRET, {
+      action: TURNSTILE_ACTION,
+      hostname,
+    });
     if (!human) return reply(mode, 403, "Spam check failed");
 
     // Never throws: the email goes out untriaged if the AI fails.

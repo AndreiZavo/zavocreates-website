@@ -7,6 +7,9 @@
  * Effects: home.avatar.appear (outer wrapper) and home.avatar.scroll (inner wrapper) on the card,
  * home.badge.scroll on the badge, home.hero.left/right.appear on the two heading columns. The sticky
  * numbers come from home.hero.sticky.
+ *
+ * One <h1> with the whole heading ("Video Producer") for assistive tech; the two visible halves sit in
+ * separate animated columns, so they are aria-hidden text styled as Heading 1.
  */
 import { getHome, getMotion } from "../content/load";
 import CircleBadge from "./CircleBadge.astro";
@@ -44,18 +47,19 @@ const backWidth = Math.ceil((476 * hero.avatarBack.width) / hero.avatarBack.heig
   </div>
   <div class="outer__content">
     <section id="hero" class="hero">
+      <h1 class="hero__title">{`${hero.headingLeft} ${hero.headingRight}`}</h1>
       <div id="home" class="hero__container">
         <div class="hero__left" data-motion="home.hero.left.appear">
           <div class="hero__lwrap">
             <div class="hero__name">
               <p class="t-heading-3">{hero.name}</p>
             </div>
-            <h1 class="t-heading-1">{hero.headingLeft}</h1>
+            <p class="t-heading-1 hero__word" aria-hidden="true">{hero.headingLeft}</p>
           </div>
         </div>
         <div class="hero__right" data-motion="home.hero.right.appear">
           <div class="hero__rwrap">
-            <h1 class="t-heading-1">{hero.headingRight}</h1>
+            <p class="t-heading-1 hero__word" aria-hidden="true">{hero.headingRight}</p>
             <div class="hero__tagline">
               <p class="t-body-medium">{hero.tagline}</p>
             </div>
@@ -236,8 +240,21 @@ const backWidth = Math.ceil((476 * hero.avatarBack.width) / hero.avatarBack.heig
   }
 
   .hero__name p,
-  .hero h1 {
+  .hero__word {
     white-space: nowrap;
+  }
+
+  /* Visually hidden: takes no space and paints nothing. */
+  .hero__title {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
   }
 
   .hero__rwrap {

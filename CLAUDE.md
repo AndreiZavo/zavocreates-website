@@ -19,7 +19,7 @@ Astro static site (built to `./dist`) served by one Cloudflare Worker (`worker/i
 
 ## Setup
 
-- Node 22+ (`.nvmrc`). `npm install`, `npx playwright install chromium`.
+- Node 22.23.4+ (`.nvmrc`). `npm install`, `npx playwright install chromium`.
 - Local secrets: `cp .dev.vars.example .dev.vars` (git-ignored, dummy values).
 
 ## Commands

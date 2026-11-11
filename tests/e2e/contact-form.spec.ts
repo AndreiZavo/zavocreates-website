@@ -257,6 +257,15 @@ test.describe("contact form without JavaScript", () => {
 });
 
 test.describe("contact form markup", () => {
+  test("text fields carry the server's length limits (worker/validate.ts)", async ({ page }) => {
+    await stubTurnstile(page);
+    await page.goto("/");
+    const form = page.locator("#contact-form");
+    await expect(form.locator('[name="name"]')).toHaveAttribute("maxlength", "100");
+    await expect(form.locator('[name="email"]')).toHaveAttribute("maxlength", "254");
+    await expect(form.locator('[name="message"]')).toHaveAttribute("maxlength", "5000");
+  });
+
   test("the no-JS messages are hidden with JavaScript on", async ({ page }) => {
     await stubTurnstile(page);
     await page.goto("/");

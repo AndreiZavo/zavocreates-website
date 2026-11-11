@@ -4,8 +4,13 @@
  *
  * Motion hooks (src/motion/index.ts): the pill is nav.scroll (desktop collapses on scroll down,
  * tablet/phone open with the menu toggle), each link is nav.link.hover, the "Contact" button is
- * button.secondary.hover and the status avatar carries the nav.status.glow loop. Without JS the
- * CSS shows each breakpoint's starting variant (desktop: open, tablet/phone: closed).
+ * button.secondary.hover and the status avatar carries the nav.status.glow loop.
+ *
+ * Tablet/phone menu: the <script> below owns open/close (data-state="open" on .nav, aria-expanded on
+ * the toggle) and runs with or without motion; nav.scroll only animates the change it announces
+ * ("nav-toggle" event) when motion is allowed. Without JS (no html.js, set in Base.astro's <head>)
+ * the tablet/phone menu is shown open and the toggle is hidden, so every link stays reachable; the
+ * desktop pill shows its starting variant (open).
  */
 import { getSite } from "../content/load";
 import Img from "./Img.astro";
@@ -31,13 +36,19 @@ const T = "Tablet & Phone / Closed";
           <span class="status__glow" data-motion-layer="Desktop / Available/Status/Glowing" data-baseline-hide></span>
         </div>
       </div>
-      <button class="nav__toggle" type="button" aria-label={nav.links.map((l) => l.label).join(", ")}>
+      <button
+        class="nav__toggle"
+        type="button"
+        aria-label={nav.links.map((l) => l.label).join(", ")}
+        aria-controls="nav-menu"
+        aria-expanded="false"
+      >
         <span class="nav__line nav__line--top" data-motion-layer={`${T}/Avatar & Button Wrap/Toggle Button/Line / Top`}></span>
         <span class="nav__line nav__line--bottom" data-motion-layer={`${T}/Avatar & Button Wrap/Toggle Button/Line / Bottom`}></span>
       </button>
     </div>
     <div class="nav__hide" data-motion-layer={`${D}/Scroll Hide Wrap`}>
-      <div class="nav__menu" data-motion-layer={`${T}/Scroll Hide Wrap`}>
+      <div class="nav__menu" id="nav-menu" data-motion-layer={`${T}/Scroll Hide Wrap`}>
         <div class="nav__links" data-motion-layer={`${T}/Scroll Hide Wrap/Nav Link Wrap`}>
           {
             nav.links.map((link) => (
@@ -60,6 +71,31 @@ const T = "Tablet & Phone / Closed";
     </div>
   </nav>
 </div>
+
+<script>
+  // Menu toggle (tablet & phone). Always runs, also under prefers-reduced-motion: reduce; the
+  // animation is added by src/motion/scrollVariant.ts only when motion is allowed. The trigger is the
+  // whole "Avatar & Button Wrap" ([data-motion-trigger]), as on Framer; on desktop the toggle is
+  // hidden and the click belongs to nav.scroll (reopen the pill).
+  for (const nav of document.querySelectorAll<HTMLElement>(".nav")) {
+    const toggle = nav.querySelector<HTMLButtonElement>(".nav__toggle");
+    const head = nav.querySelector<HTMLElement>("[data-motion-trigger]");
+    if (!toggle || !head) continue;
+    const sync = (): void => {
+      toggle.setAttribute("aria-expanded", String(nav.dataset["state"] === "open"));
+    };
+    new MutationObserver(sync).observe(nav, { attributes: true, attributeFilter: ["data-state"] });
+    sync();
+    head.addEventListener("click", () => {
+      if (getComputedStyle(toggle).display === "none") return;
+      const open = nav.dataset["state"] !== "open";
+      // Closed is the CSS default below the desktop breakpoint, so closing drops the attribute.
+      if (open) nav.dataset["state"] = "open";
+      else delete nav.dataset["state"];
+      nav.dispatchEvent(new CustomEvent("nav-toggle", { detail: { open } }));
+    });
+  }
+</script>
 
 <style is:global>
   .nav-wrap {
@@ -308,7 +344,12 @@ const T = "Tablet & Phone / Closed";
       flex-direction: column;
     }
 
-    .nav__menu {
+    html.js .nav:not([data-state="open"]) .nav__menu {
+      display: none;
+    }
+
+    /* Without JS: shown open, and the toggle (which needs JS) is hidden. */
+    html:not(.js) .nav__toggle {
       display: none;
     }
 
@@ -317,27 +358,32 @@ const T = "Tablet & Phone / Closed";
       gap: 20px;
     }
 
-    .nav[data-state="open"] {
+    .nav[data-state="open"],
+    html:not(.js) .nav {
       width: 300px;
       justify-content: flex-end;
       gap: 40px;
       padding: 10px 10px 20px;
     }
 
-    .nav[data-state="open"] .nav__head {
+    .nav[data-state="open"] .nav__head,
+    html:not(.js) .nav .nav__head {
       justify-content: space-between;
       gap: 10px;
     }
 
-    .nav[data-state="open"] .status__status {
+    .nav[data-state="open"] .status__status,
+    html:not(.js) .nav .status__status {
       display: none;
     }
 
-    .nav[data-state="open"] .nav__menu {
+    .nav[data-state="open"] .nav__menu,
+    html:not(.js) .nav .nav__menu {
       display: flex;
     }
 
-    .nav[data-state="open"] .nav__links {
+    .nav[data-state="open"] .nav__links,
+    html:not(.js) .nav .nav__links {
       width: 100%;
       gap: 40px;
       overflow: visible;

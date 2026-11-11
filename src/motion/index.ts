@@ -13,7 +13,9 @@
  *                                    timer glow, nav.scroll), e.g. "Desktop/Color BG"; the root path
  *                                    ("Desktop / Open") is the data-motion element itself
  * - data-motion-panel                accordion panel whose height animates (variant.ts)
- * - <summary> or data-motion-trigger accordion toggle (variant.ts); nav avatar / menu toggle (scrollVariant.ts)
+ * - <summary> or data-motion-trigger accordion toggle (variant.ts); nav avatar (scrollVariant.ts, desktop)
+ * - "nav-toggle" event               dispatched on the nav by its menu toggle script (Nav.astro, runs
+ *                                    without motion too); scrollVariant.ts animates to the announced state
  * - data-motion-group                groups accordion items (one open at a time); default: parent element
  * - data-motion-track                Circle Badge track that slides inside its window (timer.ts cycle)
  * - data-cursor="blend"              custom cursor switches to its blending style over this element
@@ -21,7 +23,8 @@
  *                                    src/scripts/contact-form.ts only while a submission is pending
  * Written by the runtime (style these in CSS):
  * - html.motion-ready                runtime started; html.lenis* (Lenis); html.motion-cursor (native cursor hidden)
- * - data-state                       accordions "open|closed"; nav "open|closed"; badge cycle "<variant name>"
+ * - data-state                       accordions "open|closed"; nav "open|closed" (tablet/phone "open" is
+ *                                    set by Nav.astro's toggle script); badge cycle "<variant name>"
  * - data-shows="text|lottie"         badge cycle: which face is showing (start/stop the Lottie on it)
  * - data-hover, data-pressed         hover effects, for properties CSS has to switch
  * - [data-motion-cursor]             the custom cursor element (appended to <body>)

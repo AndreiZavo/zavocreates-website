@@ -4,31 +4,17 @@ const PATHS = ["/", "/pricing", "/pricing-ro"] as const;
 const GLOW = "Desktop / Available/Status/Glowing";
 
 /**
- * Test fixture: an availability-glow element (nav.status.glow, a looping timer effect on every page),
- * inserted after parsing and before the deferred runtime script runs. Tasks 6/7 add the real nav.
+ * The real availability glow (nav.status.glow, a looping timer effect in the nav on every page). At
+ * tablet width the nav's closed state shows the availability status, so the glow is rendered.
  */
-async function addGlowFixture(page: Page): Promise<void> {
-  await page.addInitScript((layer) => {
-    document.addEventListener("readystatechange", () => {
-      if (document.readyState !== "interactive") return;
-      const root = document.createElement("div");
-      root.setAttribute("data-motion", "nav.status.glow");
-      root.id = "glow-fixture";
-      const dot = document.createElement("span");
-      dot.setAttribute("data-motion-layer", layer);
-      dot.style.cssText = "display:block;height:6px;width:6px;opacity:0.5";
-      root.appendChild(dot);
-      document.body.appendChild(root);
-    });
-  }, GLOW);
-}
+const TABLET = { width: 800, height: 900 };
 
 const glowLayer = (page: Page): Promise<{ opacity: number; width: number; style: string }> =>
-  page.evaluate(() => {
-    const el = document.querySelector<HTMLElement>("#glow-fixture > span")!;
+  page.evaluate((layer) => {
+    const el = document.querySelector<HTMLElement>(`[data-motion="nav.status.glow"] [data-motion-layer="${layer}"]`)!;
     const cs = getComputedStyle(el);
     return { opacity: Number(cs.opacity), width: parseFloat(cs.width), style: el.getAttribute("style") ?? "" };
-  });
+  }, GLOW);
 
 /** Computed opacity and transform of every [data-motion] element, plus the runtime's marks on <html>. */
 async function motionState(page: Page): Promise<{
@@ -68,13 +54,14 @@ test.describe("prefers-reduced-motion: reduce (Review Focus 2)", () => {
   }
 
   test("no custom cursor and no timer loop", async ({ page }) => {
-    await addGlowFixture(page);
+    await page.setViewportSize(TABLET);
     await page.goto("/", { waitUntil: "load" });
+    await expect(page.locator(".status__glow")).toBeVisible();
     await page.mouse.move(400, 300);
     await page.mouse.move(420, 320);
     await page.waitForTimeout(2000); // longer than the glow's holdSeconds + transition
     await expect(page.locator("[data-motion-cursor]")).toHaveCount(0);
-    expect(await glowLayer(page)).toEqual({ opacity: 0.5, width: 6, style: "display: block; height: 6px; width: 6px; opacity: 0.5;" });
+    expect(await glowLayer(page)).toEqual({ opacity: 0.5, width: 6, style: "" });
     expect(await page.evaluate(() => document.getAnimations().length)).toBe(0);
     await expect(page.locator("html")).not.toHaveClass(/motion-cursor/);
   });
@@ -131,8 +118,9 @@ test.describe("site-wide effects with motion allowed", () => {
   test.use({ reducedMotion: "no-preference" });
 
   test("the availability glow loops from its rest state", async ({ page }) => {
-    await addGlowFixture(page);
+    await page.setViewportSize(TABLET);
     await page.goto("/", { waitUntil: "load" });
+    await expect(page.locator(".status__glow")).toBeVisible();
     await expect
       .poll(async () => (await glowLayer(page)).width, { timeout: 4000, intervals: [50] })
       .toBeGreaterThan(6);

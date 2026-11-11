@@ -4,6 +4,8 @@ import worker, { type Env } from "../../worker/index";
 const URL_CONTACT = "https://zavocreates.com/api/contact";
 const TURNSTILE_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 const RESEND_URL = "https://api.resend.com/emails";
+/** Cloudflare's documented always-pass test secret (the one in .dev.vars.example). */
+const TEST_SECRET = "1x0000000000000000000000000000000AA";
 
 const validTriage = {
   category: "filming",
@@ -33,6 +35,8 @@ type ResendPayload = {
 
 let fetchMock: ReturnType<typeof vi.fn>;
 let turnstileSuccess: boolean;
+/** Fields siteverify returns with a success; the default matches the form's widget on zavocreates.com. */
+let turnstileFields: { hostname?: string; action?: string };
 let resendStatus: number;
 let aiRun: ReturnType<typeof vi.fn>;
 let assetsFetch: ReturnType<typeof vi.fn>;
@@ -53,9 +57,9 @@ function call(req: Request): Promise<Response> {
   return worker.fetch(req, env, ctx);
 }
 
-function postJson(body: unknown): Promise<Response> {
+function postJson(body: unknown, url = URL_CONTACT): Promise<Response> {
   return call(
-    new Request(URL_CONTACT, {
+    new Request(url, {
       method: "POST",
       headers: { "content-type": "application/json", "cf-connecting-ip": "203.0.113.7" },
       body: JSON.stringify(body),
@@ -65,10 +69,11 @@ function postJson(body: unknown): Promise<Response> {
 
 beforeEach(() => {
   turnstileSuccess = true;
+  turnstileFields = { hostname: "zavocreates.com", action: "contact" };
   resendStatus = 200;
   fetchMock = vi.fn(async (input: RequestInfo | URL) => {
     const url = String(input instanceof Request ? input.url : input);
-    if (url === TURNSTILE_URL) return Response.json({ success: turnstileSuccess });
+    if (url === TURNSTILE_URL) return Response.json({ success: turnstileSuccess, ...turnstileFields });
     if (url === RESEND_URL) return Response.json({ id: "email-1" }, { status: resendStatus });
     throw new Error(`unexpected fetch ${url}`);
   });
@@ -147,6 +152,53 @@ describe("POST /api/contact (JSON)", () => {
     expect(res.status).toBe(403);
     expect(aiRun).not.toHaveBeenCalled();
     expect(resendCalls()).toHaveLength(0);
+  });
+
+  it("token issued for another action -> 403 and no AI or email call", async () => {
+    turnstileFields = { hostname: "zavocreates.com", action: "login" };
+    const res = await postJson(validBody);
+    expect(res.status).toBe(403);
+    expect(aiRun).not.toHaveBeenCalled();
+    expect(resendCalls()).toHaveLength(0);
+  });
+
+  it("token issued on another hostname -> 403 and no AI or email call", async () => {
+    turnstileFields = { hostname: "evil.example", action: "contact" };
+    const res = await postJson(validBody);
+    expect(res.status).toBe(403);
+    expect(aiRun).not.toHaveBeenCalled();
+    expect(resendCalls()).toHaveLength(0);
+  });
+
+  it("Cloudflare's test secret on a non-local host -> 503, logged by name, no Turnstile call", async () => {
+    const log = vi.spyOn(console, "error").mockImplementation(() => {});
+    env.TURNSTILE_SECRET = TEST_SECRET;
+    const res = await postJson(validBody);
+    expect(res.status).toBe(503);
+    expect(turnstileCalls()).toBe(0);
+    expect(resendCalls()).toHaveLength(0);
+    expect(log).toHaveBeenCalledWith(expect.stringContaining("test secret"));
+    expect(String(log.mock.calls)).not.toContain(TEST_SECRET);
+  });
+
+  it("Cloudflare's test secret on localhost -> passes with the dummy siteverify answer", async () => {
+    env.TURNSTILE_SECRET = TEST_SECRET;
+    // The documented dummy success response: hostname "example.com", no action.
+    turnstileFields = { hostname: "example.com" };
+    const res = await postJson(validBody, "http://localhost:8787/api/contact");
+    expect(res.status).toBe(200);
+    expect(resendCalls()).toHaveLength(1);
+  });
+
+  it("missing TURNSTILE_SECRET -> 503, logs the variable name only, no outbound call", async () => {
+    const log = vi.spyOn(console, "error").mockImplementation(() => {});
+    env.TURNSTILE_SECRET = "";
+    const res = await postJson(validBody);
+    expect(res.status).toBe(503);
+    expect(((await res.json()) as { ok: boolean }).ok).toBe(false);
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(aiRun).not.toHaveBeenCalled();
+    expect(log.mock.calls).toEqual([["contact: missing secret TURNSTILE_SECRET"]]);
   });
 
   it("GET /api/contact -> 405", async () => {
@@ -297,6 +349,16 @@ describe("POST /api/contact (form-encoded, no-JS fallback)", () => {
     const res = await postForm(formFields);
     expect(res.status).toBe(303);
     expect(res.headers.get("location")).toBe("/#contact-error");
+  });
+
+  it("missing RESEND_API_KEY on form POST -> 303 to /#contact-error, logs the variable name only", async () => {
+    const log = vi.spyOn(console, "error").mockImplementation(() => {});
+    delete (env as Partial<Env>).RESEND_API_KEY;
+    const res = await postForm(formFields);
+    expect(res.status).toBe(303);
+    expect(res.headers.get("location")).toBe("/#contact-error");
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(log.mock.calls).toEqual([["contact: missing secret RESEND_API_KEY"]]);
   });
 
   it("Resend failure on form POST -> 303 to /#contact-error", async () => {

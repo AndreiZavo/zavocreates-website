@@ -4,9 +4,10 @@
  * Desktop (the tokens' desktop media query): starts in the variant named by the desktop diff's root
  * ("Desktop / Open" -> data-state="open"); scrolling in `direction` switches to the other state and,
  * with `replay`, scrolling back switches back. Clicking [data-motion-trigger] (the avatar) reopens.
- * Tablet & phone: no scroll effect (motion.json note); [data-motion-trigger] (the menu toggle)
- * toggles between the tabletPhone diff's two states. Diffs animate on the element and its
- * data-motion-layer descendants; properties motion can't animate are CSS on [data-state].
+ * Tablet & phone: no scroll effect (motion.json note). The menu toggle script in Nav.astro owns the
+ * open/closed state (it also runs under reduced motion) and dispatches "nav-toggle" on the element;
+ * this module only animates the tabletPhone diff to the announced state. Diffs animate on the
+ * element and its data-motion-layer descendants; properties motion can't animate are CSS on [data-state].
  */
 import { animate, scroll } from "motion";
 import type { BreakpointMedia } from "./scrollTransform";
@@ -49,20 +50,20 @@ export function scrollVariant(effect: ScrollVariant, elements: HTMLElement[], me
   for (const el of elements) {
     let layers: LayerFrames[] = [];
     let names: [string, string] = ["open", "closed"];
-    let side: 0 | 1 = 0;
     let tracker = initialDirection();
     const isDesktop = (): boolean => desktop?.matches ?? false;
-    const set = (next: 0 | 1): void => {
-      side = next;
-      el.dataset["state"] = names[next];
+    const play = (next: 0 | 1): void => {
       for (const layer of layers) animate(layer.el, layer.frames[next], options);
+    };
+    const set = (next: 0 | 1): void => {
+      el.dataset["state"] = names[next];
+      play(next);
     };
     const setup = (): void => {
       clearFrames(layers);
       const diff = effect.states[isDesktop() ? "desktop" : "tabletPhone"];
       layers = layerFrames(el, diff);
       names = stateNames(diff);
-      side = 0;
       tracker = initialDirection();
       el.dataset["state"] = names[0];
     };
@@ -76,9 +77,17 @@ export function scrollVariant(effect: ScrollVariant, elements: HTMLElement[], me
       tracker = next;
     });
 
+    // Desktop: clicking the avatar reopens the pill.
     el.querySelector<HTMLElement>("[data-motion-trigger]")?.addEventListener("click", () => {
       if (isDesktop()) set(0);
-      else set(side === 0 ? 1 : 0);
+    });
+
+    // Tablet & phone: animate to the state the menu toggle already set (names: [closed, open]).
+    el.addEventListener("nav-toggle", (event) => {
+      if (isDesktop()) return;
+      const open = (event as CustomEvent<{ open: boolean }>).detail.open;
+      const next = names.indexOf(open ? "open" : "closed");
+      if (next === 0 || next === 1) play(next);
     });
   }
 }
