@@ -41,9 +41,15 @@ Task 13 of the [plan](superpowers/plans/2026-11-10-zavocreates-framer-to-cloudfl
 
 ## 4. Test on workers.dev
 
-- [ ] Run the e2e and visual suites against the `workers.dev` URL.
-  - `playwright.config.ts` has `baseURL` fixed to `http://localhost:8787` and always starts a local preview. A `BASE_URL` override has to be added first (small change, not made yet).
-  - Expected failure against production: the seo test "has no analytics beacon when the token is unset", because the token is now set.
+- [ ] Run the e2e and visual suites against the `workers.dev` URL. With `BASE_URL` set, Playwright uses that site and starts no local build or preview. Export the same analytics token the build used, so the seo test expects the beacon:
+
+  ```sh
+  export PUBLIC_CF_ANALYTICS_TOKEN=<web analytics token>
+  BASE_URL=https://<name>.workers.dev npm run test:e2e
+  BASE_URL=https://<name>.workers.dev npm run test:visual
+  ```
+
+  No spec sends a real message: the form tests mock `/api/contact` and Turnstile in the browser, and the API tests only hit paths that stop before Turnstile, Workers AI and Resend.
 - [ ] Open `/`, `/pricing`, `/pricing-ro`, `/nope` on a phone and a desktop.
 
 ## 5. DNS and domain

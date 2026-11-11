@@ -1,6 +1,13 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const baseURL = "http://localhost:8787";
+const LOCAL_URL = "http://localhost:8787";
+/**
+ * BASE_URL points the e2e and visual suites at an already running site (a deployed workers.dev URL,
+ * or a preview started by hand) and skips the local build + preview. Unset: build and start
+ * `npm run preview` on :8787 as before.
+ */
+const remoteURL = process.env["BASE_URL"];
+const baseURL = remoteURL || LOCAL_URL;
 
 export default defineConfig({
   fullyParallel: true,
@@ -24,10 +31,14 @@ export default defineConfig({
       snapshotPathTemplate: "{testDir}/baseline/{arg}{ext}",
     },
   ],
-  webServer: {
-    command: "npm run build && npm run preview",
-    url: baseURL,
-    reuseExistingServer: !process.env["CI"],
-    timeout: 120_000,
-  },
+  ...(remoteURL
+    ? {}
+    : {
+        webServer: {
+          command: "npm run build && npm run preview",
+          url: LOCAL_URL,
+          reuseExistingServer: !process.env["CI"],
+          timeout: 120_000,
+        },
+      }),
 });

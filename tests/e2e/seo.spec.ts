@@ -73,12 +73,23 @@ test("robots.txt points at the sitemap", async ({ request }) => {
   expect(await res.text()).toContain(`Sitemap: ${ORIGIN}/sitemap.xml`);
 });
 
-// Cloudflare Web Analytics is only rendered when PUBLIC_CF_ANALYTICS_TOKEN is set at build time;
-// the test build leaves it unset.
+// Cloudflare Web Analytics is rendered only when PUBLIC_CF_ANALYTICS_TOKEN is set at build time. The
+// test environment states which build it expects: unset (local builds, CI) -> no beacon; set (e.g. when
+// run with BASE_URL against production, with the same token exported) -> the beacon with that token.
+const analyticsToken = process.env["PUBLIC_CF_ANALYTICS_TOKEN"];
 for (const path of ["/", "/pricing", "/pricing-ro", "/nope"]) {
-  test(`${path} has no analytics beacon when the token is unset`, async ({ page }) => {
-    await page.goto(path);
-    await expect(page.locator("script[data-cf-beacon]")).toHaveCount(0);
-    await expect(page.locator('script[src*="cloudflareinsights.com"]')).toHaveCount(0);
-  });
+  if (analyticsToken) {
+    test(`${path} loads the analytics beacon with PUBLIC_CF_ANALYTICS_TOKEN`, async ({ page }) => {
+      await page.goto(path);
+      const beacon = page.locator('script[src="https://static.cloudflareinsights.com/beacon.min.js"]');
+      await expect(beacon).toHaveCount(1);
+      expect(JSON.parse((await beacon.getAttribute("data-cf-beacon")) ?? "{}")).toEqual({ token: analyticsToken });
+    });
+  } else {
+    test(`${path} has no analytics beacon when the token is unset`, async ({ page }) => {
+      await page.goto(path);
+      await expect(page.locator("script[data-cf-beacon]")).toHaveCount(0);
+      await expect(page.locator('script[src*="cloudflareinsights.com"]')).toHaveCount(0);
+    });
+  }
 }

@@ -79,7 +79,7 @@ test.describe("prefers-reduced-motion: reduce (Review Focus 2)", () => {
     await expect(page.locator("html")).not.toHaveClass(/motion-cursor/);
   });
 
-  test("the noise layer shows the still frame, not the animated GIF (Ruling R11)", async ({ page }) => {
+  test("the noise layer shows the still frame, not the animated GIF (Ruling R12)", async ({ page }) => {
     const gifRequests: string[] = [];
     page.on("request", (req) => {
       if (req.url().endsWith(".gif")) gifRequests.push(req.url());
