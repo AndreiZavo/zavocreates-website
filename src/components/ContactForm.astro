@@ -1,16 +1,30 @@
 ---
 /**
- * Contact form markup (Framer "Contact Form"). Behaviour (validation, Turnstile, fetch to
- * /api/contact, status messages) arrives in Task 9; without JS it posts to /api/contact.
+ * Contact form (Framer "Contact Form" + "Submit Button"). src/scripts/contact-form.ts enhances it:
+ * Turnstile widget, JSON POST to /api/contact, the Framer button variants (Loading spinner, Success,
+ * Error) and the [data-form-status] announcement. Without JS the form posts natively; the Worker
+ * redirects to /#contact-sent or /#contact-error and CSS :target shows the matching message
+ * (Ruling R2). Turnstile needs JS, so a no-JS post always ends on #contact-error, which, like the
+ * <noscript> note, gives the email address and phone number (Ruling R10).
  *
- * Contract: #contact-form, fields name / email / service (options from content) / message, a
- * div.cf-turnstile placeholder, a submit button and the [data-form-status] live region.
+ * Contract: #contact-form, fields name / email / service (options from content) / message,
+ * div.cf-turnstile, a submit button and the [data-form-status] live region.
  */
-import { getHome } from "../content/load";
+import { getHome, getSite } from "../content/load";
 import { svgMarkup } from "../content/images";
 
-const { fields, serviceOptions } = getHome().contact;
+const { fields, serviceOptions, success, error } = getHome().contact;
+const site = getSite();
 const chevron = svgMarkup("/icons/iconoir-nav-arrow-down.svg");
+
+/**
+ * Cloudflare's documented always-pass test sitekey (visible widget), used when
+ * PUBLIC_TURNSTILE_SITE_KEY is unset (local dev, tests). Source:
+ * https://developers.cloudflare.com/turnstile/troubleshooting/testing/
+ * Production builds must set PUBLIC_TURNSTILE_SITE_KEY (see .env.example).
+ */
+const TURNSTILE_TEST_SITE_KEY = "1x00000000000000000000AA";
+const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || TURNSTILE_TEST_SITE_KEY;
 ---
 
 <form id="contact-form" class="form" action="/api/contact" method="post">
@@ -38,20 +52,43 @@ const chevron = svgMarkup("/icons/iconoir-nav-arrow-down.svg");
     <span class="t-body-small field__label">{fields.message.label}</span>
     <textarea class="field__control field__control--area" name="message" placeholder={fields.message.placeholder} required></textarea>
   </label>
-  <div class="cf-turnstile"></div>
+  <div class="cf-turnstile" data-sitekey={siteKey}></div>
   <button class="submit" type="submit" data-motion="button.submit.hover" data-cursor="blend">
     <span class="submit__bg" data-motion-layer="Desktop/Color BG"></span>
-    <span class="submit__text" data-motion-layer="Desktop/RichText">{fields.submit}</span>
+    <span class="submit__text submit__text--idle" data-motion-layer="Desktop/RichText" data-label="idle">{fields.submit}</span>
+    <span class="submit__text submit__text--success" data-label="success">{success}</span>
+    <span class="submit__text submit__text--error" data-label="error">{error}</span>
+    <span class="submit__spinner" data-form-spinner aria-hidden="true"><span class="submit__dot"></span></span>
   </button>
   <p class="t-body-small form__status" data-form-status role="status" aria-live="polite"></p>
+  <div class="form__notice" id="contact-sent" tabindex="-1">
+    <p class="t-body-small form__notice-title">{success}</p>
+  </div>
+  <div class="form__notice" id="contact-error" tabindex="-1">
+    <p class="t-body-small form__notice-title">{error}</p>
+    <p class="t-body-small">{site.footer.emailLabel} <a class="form__link" href={site.footer.emailHref}>{site.email}</a></p>
+    <p class="t-body-small">{site.footer.phoneLabel} <a class="form__link" href={site.footer.phoneHref}>{site.phone}</a></p>
+  </div>
+  <noscript>
+    <div class="form__notice form__notice--noscript" data-form-noscript>
+      <p class="t-body-small">{site.footer.emailLabel} <a class="form__link" href={site.footer.emailHref}>{site.email}</a></p>
+      <p class="t-body-small">{site.footer.phoneLabel} <a class="form__link" href={site.footer.phoneHref}>{site.phone}</a></p>
+    </div>
+  </noscript>
 </form>
+
+<script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer data-turnstile-script></script>
+<script>
+  import "../scripts/contact-form";
+</script>
 
 <style is:global>
   .form {
+    --form-gap: 20px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 20px;
+    gap: var(--form-gap);
     width: 100%;
   }
 
@@ -147,9 +184,53 @@ const chevron = svgMarkup("/icons/iconoir-nav-arrow-down.svg");
     resize: vertical;
   }
 
-  .cf-turnstile:empty,
-  .form__status:empty {
+  /* Turnstile renders with appearance "interaction-only": a 0px-high box unless Cloudflare asks the
+     visitor to interact (contact-form.ts sets data-interactive then). The negative margin cancels the
+     form gap of that empty box, so the form keeps the Framer layout (Framer has no captcha). The box
+     is never display:none, which would stop the widget from showing its challenge. */
+  .cf-turnstile:empty {
     display: none;
+  }
+
+  .cf-turnstile:not(:empty, [data-interactive]) {
+    margin-top: calc(-1 * var(--form-gap));
+  }
+
+  .field__control[aria-invalid="true"] {
+    box-shadow: inset 0 0 0 1px var(--color-red);
+  }
+
+  /* Announced to screen readers; sighted visitors see the result on the button (Framer variants). */
+  .form__status {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* No-JS result messages (shown by :target) and the <noscript> note. */
+  .form__notice {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    outline: none;
+  }
+
+  .form__notice:target,
+  .form__notice--noscript {
+    display: flex;
+  }
+
+  .form__notice-title {
+    color: var(--color-purple-green);
+  }
+
+  .form__link {
+    color: var(--color-grey-200-white);
+    text-decoration: underline;
   }
 
   .submit {
@@ -195,6 +276,81 @@ const chevron = svgMarkup("/icons/iconoir-nav-arrow-down.svg");
     letter-spacing: var(--text-heading-4-tracking);
     text-transform: var(--text-heading-4-transform);
     color: var(--color-purple-green);
+  }
+
+  .submit__text--success,
+  .submit__text--error,
+  .submit__spinner {
+    display: none;
+  }
+
+  /* Framer "Loading", "Success" and "Error" variants, set by contact-form.ts as data-state.
+     !important: the hover/pressed runtime writes inline colours on these layers. */
+  .submit[data-state="loading"],
+  .submit[data-state="success"],
+  .submit[data-state="error"] {
+    cursor: default;
+  }
+
+  .submit[data-state="loading"] {
+    background-color: var(--color-purple-green) !important;
+  }
+
+  .submit[data-state="success"] {
+    background-color: var(--color-green) !important;
+  }
+
+  .submit[data-state="error"] {
+    background-color: var(--color-red) !important;
+  }
+
+  .submit[data-state="loading"]::after,
+  .submit[data-state="success"]::after,
+  .submit[data-state="error"]::after,
+  .submit[data-state="loading"] .submit__bg,
+  .submit[data-state="success"] .submit__bg,
+  .submit[data-state="error"] .submit__bg {
+    display: none;
+  }
+
+  /* Loading shows only the spinner; the label stays in place (and in the accessible name). */
+  .submit[data-state="loading"] .submit__text--idle {
+    color: transparent !important;
+  }
+
+  .submit[data-state="success"] .submit__text--idle,
+  .submit[data-state="error"] .submit__text--idle {
+    display: none;
+  }
+
+  .submit[data-state="success"] .submit__text--success,
+  .submit[data-state="error"] .submit__text--error {
+    display: inline;
+    color: var(--color-white-dark) !important;
+  }
+
+  .submit[data-state="loading"] .submit__spinner {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: block;
+    width: 20px;
+    height: 20px;
+    margin: auto;
+    background: conic-gradient(from 0deg at 50% 50%, var(--color-loading-circle) 7.2deg, var(--color-white) 342deg);
+    border-radius: 50%;
+    /* Framer's ring mask SVG is not downloadable (docs/extraction/README.md): a 2px CSS ring instead. */
+    mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
+  }
+
+  .submit__dot {
+    position: absolute;
+    top: 0;
+    left: 9px;
+    width: 2px;
+    height: 2px;
+    border-radius: 1px;
+    background: var(--color-white);
   }
 
   /* Tablet & phone: the filled "Tablet & Phone" variant. */

@@ -31,6 +31,11 @@ const STABLE_INTERVAL_MS = 500;
 /** A frame is kept once this many consecutive screenshots are identical. */
 const STABLE_MATCHES = 3;
 const STABLE_ATTEMPTS = 30;
+/**
+ * Upper bound for the "networkidle" waits. The Turnstile widget on the contact form starts a blob:
+ * worker request that Playwright never sees finish, so the page never reports networkidle.
+ */
+const NETWORK_IDLE_TIMEOUT_MS = 10_000;
 
 /**
  * Parts that never stop moving, so two captures of the same page would differ.
@@ -160,13 +165,13 @@ export async function capture(browser: Browser, page: Page, url: string, width: 
   const notes: string[] = [];
   const response = await page.goto(url, { waitUntil: "load" });
   if (!response || !response.ok()) throw new Error(`${url} returned ${response?.status() ?? "no response"}`);
-  await page.waitForLoadState("networkidle").catch(() => {});
+  await page.waitForLoadState("networkidle", { timeout: NETWORK_IDLE_TIMEOUT_MS }).catch(() => {});
   await page.addStyleTag({ content: HIDE_CSS });
   await page.evaluate(() => document.fonts.ready.then(() => undefined));
 
   await preScroll(page);
 
-  await page.waitForLoadState("networkidle").catch(() => {});
+  await page.waitForLoadState("networkidle", { timeout: NETWORK_IDLE_TIMEOUT_MS }).catch(() => {});
   await page.evaluate(async () => {
     await document.fonts.ready;
     // Images with no layout box (display: none at this breakpoint) are never shown, and a lazy one

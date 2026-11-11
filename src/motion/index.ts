@@ -17,6 +17,8 @@
  * - data-motion-group                groups accordion items (one open at a time); default: parent element
  * - data-motion-track                Circle Badge track that slides inside its window (timer.ts cycle)
  * - data-cursor="blend"              custom cursor switches to its blending style over this element
+ * - data-form-spinner                submit button spinner: "button.submit.spinner" loop, started by
+ *                                    src/scripts/contact-form.ts only while a submission is pending
  * Written by the runtime (style these in CSS):
  * - html.motion-ready                runtime started; html.lenis* (Lenis); html.motion-cursor (native cursor hidden)
  * - data-state                       accordions "open|closed"; nav "open|closed"; badge cycle "<variant name>"
