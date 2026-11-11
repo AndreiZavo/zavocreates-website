@@ -78,6 +78,21 @@ test.describe("prefers-reduced-motion: reduce (Review Focus 2)", () => {
     expect(await page.evaluate(() => document.getAnimations().length)).toBe(0);
     await expect(page.locator("html")).not.toHaveClass(/motion-cursor/);
   });
+
+  test("the noise layer shows the still frame, not the animated GIF (Ruling R11)", async ({ page }) => {
+    const gifRequests: string[] = [];
+    page.on("request", (req) => {
+      if (req.url().endsWith(".gif")) gifRequests.push(req.url());
+    });
+    await page.goto("/", { waitUntil: "load" });
+    const noise = page.locator(".noise");
+    await expect(noise).toHaveCSS("background-image", /noise-still\.png/);
+    await expect(noise).not.toHaveCSS("background-image", /\.gif/);
+    // Tiling comes from content/site.json, as with motion allowed.
+    await expect(noise).toHaveCSS("background-repeat", "repeat");
+    await expect(noise).toHaveCSS("background-size", "250px auto");
+    expect(gifRequests, "the GIF is neither preloaded nor painted").toEqual([]);
+  });
 });
 
 test.describe("motion allowed", () => {
@@ -135,6 +150,11 @@ test.describe("site-wide effects with motion allowed", () => {
     await expect(page.locator("[data-motion-cursor]")).toBeVisible();
     await expect(page.locator("html")).toHaveClass(/motion-cursor/);
     await expect(page.locator("body")).toHaveCSS("cursor", "none");
+  });
+
+  test("the noise layer is the animated GIF", async ({ page }) => {
+    await page.goto("/", { waitUntil: "load" });
+    await expect(page.locator(".noise")).toHaveCSS("background-image", /noise\.gif/);
   });
 
   test("no custom cursor below the desktop breakpoint", async ({ page }) => {

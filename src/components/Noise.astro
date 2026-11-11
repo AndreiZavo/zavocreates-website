@@ -3,12 +3,23 @@
  * Fixed film-grain layer behind every page (Framer "Noise BG", layout template).
  * Framer renders it as a CSS background tiled at noise.size (background-repeat/-size in its
  * published HTML), not a stretched image, so this is a decorative div with the same background.
+ *
+ * The GIF animates. Under prefers-reduced-motion: reduce the layer shows a still instead (Ruling R11):
+ * <name>-still.png next to the GIF is its first frame, written once with sharp
+ * (`sharp(gif, { pages: 1 }).png({ palette: true, compressionLevel: 9 })`, pixel-identical to frame 1).
  */
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import { getSite } from "../content/load";
 
 const { noise } = getSite();
+const still = noise.src.replace(/\.gif$/, "-still.png");
+if (still === noise.src || !existsSync(join(process.cwd(), "public", still))) {
+  throw new Error(`Noise still frame missing: public${still} (first frame of public${noise.src})`);
+}
 const style = [
-  `background-image:url(${noise.src})`,
+  `--noise-animated:url(${noise.src})`,
+  `--noise-still:url(${still})`,
   `background-repeat:${noise.repeat}`,
   `background-size:${noise.size}`,
   `opacity:${noise.opacity}`,
@@ -27,7 +38,14 @@ const style = [
     width: 100%;
     height: 100vh;
     overflow: hidden;
+    background-image: var(--noise-animated);
     background-position: left top;
     pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .noise {
+      background-image: var(--noise-still);
+    }
   }
 </style>

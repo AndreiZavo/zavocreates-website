@@ -72,3 +72,13 @@ test("robots.txt points at the sitemap", async ({ request }) => {
   expect(res.status()).toBe(200);
   expect(await res.text()).toContain(`Sitemap: ${ORIGIN}/sitemap.xml`);
 });
+
+// Cloudflare Web Analytics is only rendered when PUBLIC_CF_ANALYTICS_TOKEN is set at build time;
+// the test build leaves it unset.
+for (const path of ["/", "/pricing", "/pricing-ro", "/nope"]) {
+  test(`${path} has no analytics beacon when the token is unset`, async ({ page }) => {
+    await page.goto(path);
+    await expect(page.locator("script[data-cf-beacon]")).toHaveCount(0);
+    await expect(page.locator('script[src*="cloudflareinsights.com"]')).toHaveCount(0);
+  });
+}

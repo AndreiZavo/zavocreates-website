@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 720" width="1000" height="720" role="img" aria-labelledby="title desc">
+  <title id="title">zavocreates.com architecture</title>
+  <desc id="desc">Request path: visitor, Cloudflare edge, one Worker serving static assets and POST /api/contact, which calls Turnstile siteverify, Workers AI triage and Resend, which delivers to Andrei's Gmail. Build path: Framer project read through the Framer MCP connector into content JSON, Astro build into ./dist. CI: GitHub Actions on ubuntu and macOS.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#57606a"/>
+    </marker>
+    <style>
+      text { font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; fill: #1f2328; }
+      .h { font-size: 20px; font-weight: 700; }
+      .panel-title { font-size: 14px; font-weight: 700; fill: #57606a; letter-spacing: 0.04em; }
+      .t { font-size: 14px; font-weight: 600; }
+      .s { font-size: 12px; fill: #57606a; }
+      .lbl { font-size: 12px; fill: #57606a; }
+      .note { font-size: 12px; fill: #57606a; }
+      .panel { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1; }
+      .box { fill: #ffffff; stroke: #57606a; stroke-width: 1.25; }
+      .ext { fill: #ffffff; stroke: #8c959f; stroke-width: 1.25; stroke-dasharray: 5 3; }
+      .ai { fill: #eef0ff; stroke: #5b5fe0; stroke-width: 1.5; }
+      .line { stroke: #57606a; stroke-width: 1.5; fill: none; }
+      .dash { stroke: #57606a; stroke-width: 1.5; fill: none; stroke-dasharray: 6 4; }
+    </style>
+  </defs>
+
+  <!-- Explicit background so the diagram reads the same in GitHub light and dark mode -->
+  <rect x="0" y="0" width="1000" height="720" fill="#ffffff"/>
+  <text class="h" x="30" y="38">zavocreates.com: request path, build path and CI</text>
+
+  <!-- ===================== Request path ===================== -->
+  <rect class="panel" x="15" y="58" width="970" height="292" rx="10"/>
+  <text class="panel-title" x="30" y="82">REQUEST PATH (CLOUDFLARE, FREE PLANS)</text>
+
+  <rect class="box" x="30" y="110" width="160" height="60" rx="8"/>
+  <text class="t" x="110" y="136" text-anchor="middle">Visitor</text>
+  <text class="s" x="110" y="155" text-anchor="middle">browser, JS optional</text>
+
+  <rect class="box" x="225" y="110" width="160" height="60" rx="8"/>
+  <text class="t" x="305" y="136" text-anchor="middle">Cloudflare edge</text>
+  <text class="s" x="305" y="155" text-anchor="middle">DNS, HTTPS</text>
+
+  <rect class="box" x="420" y="110" width="160" height="60" rx="8"/>
+  <text class="t" x="500" y="136" text-anchor="middle">One Worker</text>
+  <text class="s" x="500" y="155" text-anchor="middle">worker/index.ts</text>
+
+  <rect class="box" x="420" y="240" width="160" height="60" rx="8"/>
+  <text class="t" x="500" y="266" text-anchor="middle">Static assets</text>
+  <text class="s" x="500" y="285" text-anchor="middle">./dist (ASSETS binding)</text>
+
+  <rect class="ext" x="625" y="110" width="160" height="60" rx="8"/>
+  <text class="t" x="705" y="136" text-anchor="middle">Turnstile</text>
+  <text class="s" x="705" y="155" text-anchor="middle">siteverify</text>
+
+  <rect class="ai" x="810" y="110" width="160" height="60" rx="8"/>
+  <text class="t" x="890" y="136" text-anchor="middle">Workers AI triage</text>
+  <text class="s" x="890" y="155" text-anchor="middle">JSON mode, 1 retry</text>
+
+  <rect class="ext" x="810" y="240" width="160" height="60" rx="8"/>
+  <text class="t" x="890" y="266" text-anchor="middle">Resend</text>
+  <text class="s" x="890" y="285" text-anchor="middle">email API, free tier</text>
+
+  <rect class="box" x="625" y="240" width="160" height="60" rx="8"/>
+  <text class="t" x="705" y="266" text-anchor="middle">Andrei's Gmail</text>
+  <text class="s" x="705" y="285" text-anchor="middle">CONTACT_TO</text>
+
+  <line class="line" x1="190" y1="140" x2="223" y2="140" marker-end="url(#arrow)"/>
+  <line class="line" x1="385" y1="140" x2="418" y2="140" marker-end="url(#arrow)"/>
+  <line class="line" x1="580" y1="140" x2="623" y2="140" marker-end="url(#arrow)"/>
+  <text class="lbl" x="602" y="102" text-anchor="middle">POST /api/contact</text>
+  <line class="line" x1="785" y1="140" x2="808" y2="140" marker-end="url(#arrow)"/>
+  <line class="line" x1="890" y1="170" x2="890" y2="238" marker-end="url(#arrow)"/>
+  <line class="line" x1="810" y1="270" x2="787" y2="270" marker-end="url(#arrow)"/>
+  <line class="line" x1="500" y1="170" x2="500" y2="238" marker-end="url(#arrow)"/>
+  <text class="lbl" x="510" y="208">every other request</text>
+
+  <text class="note" x="30" y="226">Turnstile fails: 403, no AI call, no email.</text>
+  <text class="note" x="30" y="246">AI fails or returns invalid JSON twice:</text>
+  <text class="note" x="30" y="264">the email still goes out, marked</text>
+  <text class="note" x="30" y="282">"Triage unavailable".</text>
+  <text class="note" x="30" y="302">Messages are never stored.</text>
+  <text class="note" x="30" y="332">Dashed boxes: services outside the Worker.</text>
+
+  <!-- ===================== Build path ===================== -->
+  <rect class="panel" x="15" y="368" width="970" height="160" rx="10"/>
+  <text class="panel-title" x="30" y="392">BUILD PATH</text>
+
+  <rect class="ext" x="30" y="430" width="170" height="60" rx="8"/>
+  <text class="t" x="115" y="456" text-anchor="middle">Framer project</text>
+  <text class="s" x="115" y="475" text-anchor="middle">source of truth</text>
+
+  <rect class="box" x="290" y="430" width="180" height="60" rx="8"/>
+  <text class="t" x="380" y="456" text-anchor="middle">content/*.json</text>
+  <text class="s" x="380" y="475" text-anchor="middle">validated by zod</text>
+
+  <rect class="box" x="560" y="430" width="160" height="60" rx="8"/>
+  <text class="t" x="640" y="456" text-anchor="middle">Astro build</text>
+  <text class="s" x="640" y="475" text-anchor="middle">npm run build</text>
+
+  <rect class="box" x="810" y="430" width="160" height="60" rx="8"/>
+  <text class="t" x="890" y="456" text-anchor="middle">./dist</text>
+  <text class="s" x="890" y="475" text-anchor="middle">static HTML, CSS, JS</text>
+
+  <line class="line" x1="200" y1="460" x2="288" y2="460" marker-end="url(#arrow)"/>
+  <text class="lbl" x="245" y="420" text-anchor="middle">Framer MCP, read-only</text>
+  <line class="line" x1="470" y1="460" x2="558" y2="460" marker-end="url(#arrow)"/>
+  <line class="line" x1="720" y1="460" x2="808" y2="460" marker-end="url(#arrow)"/>
+  <!-- ./dist is what the Worker serves as static assets -->
+  <path class="dash" d="M 890 430 L 890 405 L 600 405 L 600 330 L 560 330 L 560 302" marker-end="url(#arrow)"/>
+  <text class="lbl" x="700" y="398" text-anchor="middle">wrangler deploy</text>
+
+  <!-- ===================== CI ===================== -->
+  <rect class="panel" x="15" y="546" width="970" height="158" rx="10"/>
+  <text class="panel-title" x="30" y="570">CI: GITHUB ACTIONS, EVERY PUSH AND PULL REQUEST</text>
+
+  <rect class="box" x="30" y="590" width="460" height="96" rx="8"/>
+  <text class="t" x="50" y="618">ubuntu-latest</text>
+  <text class="s" x="50" y="640">build, unit tests, Worker tests (Workers runtime),</text>
+  <text class="s" x="50" y="658">end-to-end tests, link check,</text>
+  <text class="s" x="50" y="676">Lighthouse budgets (never below Framer's scores)</text>
+
+  <rect class="box" x="510" y="590" width="460" height="96" rx="8"/>
+  <text class="t" x="530" y="618">macos-latest</text>
+  <text class="s" x="530" y="640">visual regression: the rebuild, captured the same</text>
+  <text class="s" x="530" y="658">scroll-stitched way, against screenshots of the live</text>
+  <text class="s" x="530" y="676">Framer site (3 pages x 3 breakpoints, max 2% pixel diff)</text>
+</svg>

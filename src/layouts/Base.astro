@@ -71,6 +71,10 @@ const effects: Record<string, Effect> = Object.fromEntries(
 );
 const motionConfig = JSON.stringify(effects).replaceAll("<", "\\u003c");
 const media = (name: "desktop" | "tablet" | "phone"): string | undefined => getTokens().breakpoints.find((b) => b.name === name)?.media;
+
+// Cloudflare Web Analytics (cookieless). The site token is public; it is set as a build variable at
+// go-live. Unset (local dev, tests, CI): no beacon at all.
+const cfAnalyticsToken = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN;
 ---
 
 <!doctype html>
@@ -86,7 +90,9 @@ const media = (name: "desktop" | "tablet" | "phone"): string | undefined => getT
     {/* The noise GIF (756 KB, decorative CSS background in Noise.astro) is requested here at low
         priority. Left to the background, Chrome fetches it at High priority because it is in the
         viewport, and it competes with the hero portrait, the LCP image. */}
-    <link rel="preload" as="image" href={site.noise.src} fetchpriority="low" />
+    {/* Under prefers-reduced-motion: reduce the noise layer shows a still frame instead (Noise.astro),
+        so the GIF is only preloaded for visitors who get the animation. */}
+    <link rel="preload" as="image" href={site.noise.src} fetchpriority="low" media="(prefers-reduced-motion: no-preference)" />
     <link rel="preload" as="font" type="font/woff2" href={antonioHero} crossorigin />
     <link rel="preload" as="font" type="font/woff2" href={interHero} crossorigin />
     <meta property="og:type" content="website" />
@@ -119,5 +125,19 @@ const media = (name: "desktop" | "tablet" | "phone"): string | undefined => getT
         initMotion(JSON.parse(config.textContent) as Record<string, Effect>, media);
       }
     </script>
+    {/* Snippet from https://developers.cloudflare.com/web-analytics/faq/ (manual install, "before the
+        ending body tag": https://developers.cloudflare.com/web-analytics/get-started/). Cloudflare's
+        current snippet is type="module", which the HTML spec always defers; a literal `defer` attribute
+        is not allowed on module scripts. The beacon sets no cookies. */}
+    {
+      cfAnalyticsToken && (
+        <script
+          is:inline
+          type="module"
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon={JSON.stringify({ token: cfAnalyticsToken })}
+        />
+      )
+    }
   </body>
 </html>
