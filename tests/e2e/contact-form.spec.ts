@@ -246,12 +246,9 @@ test.describe("contact form without JavaScript", () => {
     await links(page, "[data-form-noscript]");
   });
 
-  // FIXME (reported in Task 9): a browser form post is a navigation request (Sec-Fetch-Mode: navigate),
-  // and with compatibility_date 2025-10-01 Workers Assets answers navigation requests itself, so the
-  // POST never reaches the Worker and the visitor gets a 405. Verified locally: the compatibility flag
-  // "assets_navigation_has_no_effect" in wrangler.jsonc makes it reach the Worker (303). Worker config
-  // is out of this task's scope; enable this test with that fix.
-  test.fixme("a native post reaches the Worker and lands on #contact-error (no Turnstile without JS)", async ({ page }) => {
+  // A browser form post is a navigation request: it reaches the Worker only because wrangler.jsonc
+  // sets the "assets_navigation_has_no_effect" compatibility flag.
+  test("a native post reaches the Worker and lands on #contact-error (no Turnstile without JS)", async ({ page }) => {
     await page.goto("/");
     await fill(page);
     await Promise.all([page.waitForURL(/\/#contact-error$/), page.locator('#contact-form button[type="submit"]').click()]);
