@@ -1,0 +1,163 @@
+---
+/**
+ * Purple "Hi" circle badge (Framer "Circle Badge" / "Circle Badge Animate"). Its 50% window slides
+ * between the text and the waving-hand Lottie (home.badge.cycle, timer.ts). The size comes from
+ * the parent's --badge-size. `scroll` attaches the hero badge's scroll effect (home.badge.scroll).
+ *
+ * The Lottie (lottie-web light player, loaded lazily on pages with a badge) renders its first frame
+ * and plays only while the window shows it (data-shows="lottie"); under reduced motion the cycle
+ * never starts, so it stays on that first frame.
+ */
+import { getHome, getMotion } from "../content/load";
+
+interface Props {
+  scroll?: boolean;
+}
+
+const { scroll = false } = Astro.props;
+const { badge } = getHome().hero;
+const cycle = getMotion("home.badge.cycle");
+if (cycle.kind !== "variant" || !cycle.lottie) throw new Error('motion "home.badge.cycle" must be a variant with a lottie');
+const { lottie } = cycle;
+---
+
+<div class="badge" data-motion={scroll ? "home.badge.scroll" : undefined}>
+  <div class="badge__window" data-motion="home.badge.cycle" data-baseline-hide>
+    <div class="badge__track" data-motion-track>
+      <p class="t-body-large badge__text">{badge.text}</p>
+      <div
+        class="badge__lottie"
+        aria-hidden="true"
+        data-lottie={badge.lottie}
+        data-lottie-loop={String(lottie.loop)}
+        data-lottie-speed={String(lottie.speed)}
+        data-lottie-colors={JSON.stringify([lottie.color1, lottie.color2])}
+      >
+      </div>
+    </div>
+  </div>
+</div>
+
+<style is:global>
+  .badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--badge-size, 120px);
+    height: var(--badge-size, 120px);
+    overflow: hidden;
+    border-radius: 99px;
+    background: var(--color-purple-green);
+  }
+
+  .badge__window {
+    --badge-window: calc(var(--badge-size, 120px) / 2);
+    width: var(--badge-window);
+    height: var(--badge-window);
+    overflow: hidden;
+  }
+
+  .badge__track {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .badge__text,
+  .badge__lottie {
+    flex: none;
+    width: var(--badge-window);
+    height: var(--badge-window);
+  }
+
+  .badge__text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+</style>
+
+<script>
+  import type { AnimationItem } from "lottie-web";
+
+  type Rgba = [number, number, number, number];
+
+  /** The CSS colour of `var(--x)` (as used in motion.json) on `el`, as Lottie's 0..1 RGBA. */
+  function cssColor(el: HTMLElement, value: string): Rgba | undefined {
+    const probe = document.createElement("span");
+    probe.style.color = value;
+    el.appendChild(probe);
+    const match = /rgba?\(([^)]+)\)/.exec(getComputedStyle(probe).color);
+    probe.remove();
+    if (!match?.[1]) return undefined;
+    const [r = 0, g = 0, b = 0, a = 1] = match[1].split(",").map(Number);
+    return [r / 255, g / 255, b / 255, a];
+  }
+
+  /**
+   * Framer's Lottie Icon recolours the animation: its fills, in document order, take color1, color2.
+   * (The mapping order is the component's; the icon has exactly two fills.)
+   */
+  function recolor(data: unknown, colors: Rgba[]): void {
+    let index = 0;
+    const walk = (node: unknown): void => {
+      if (Array.isArray(node)) return node.forEach(walk);
+      if (!node || typeof node !== "object") return;
+      const obj = node as Record<string, unknown>;
+      const c = obj["c"] as { k?: unknown } | undefined;
+      if (obj["ty"] === "fl" && c && Array.isArray(c.k)) {
+        const color = colors[index++];
+        if (color) c.k = color;
+      }
+      Object.values(obj).forEach(walk);
+    };
+    walk(data);
+  }
+
+  async function mount(el: HTMLElement): Promise<void> {
+    const src = el.dataset["lottie"];
+    if (!src) return;
+    const [{ default: lottie }, data] = await Promise.all([
+      import("lottie-web/build/player/lottie_light"),
+      fetch(src).then((r) => r.json() as Promise<unknown>),
+    ]);
+    const colors = (JSON.parse(el.dataset["lottieColors"] ?? "[]") as string[])
+      .map((c) => cssColor(el, c))
+      .filter((c): c is Rgba => c !== undefined);
+    recolor(data, colors);
+    const anim: AnimationItem = lottie.loadAnimation({
+      container: el,
+      renderer: "svg",
+      loop: el.dataset["lottieLoop"] === "true",
+      autoplay: false,
+      animationData: data,
+    });
+    anim.setSpeed(Number(el.dataset["lottieSpeed"] ?? "1"));
+    anim.goToAndStop(0, true);
+
+    const face = el.closest<HTMLElement>("[data-shows], [data-motion='home.badge.cycle']");
+    if (!face) return;
+    const sync = (): void => {
+      if (face.dataset["shows"] === "lottie") anim.play();
+      else anim.goToAndStop(0, true);
+    };
+    new MutationObserver(sync).observe(face, { attributes: true, attributeFilter: ["data-shows"] });
+    sync();
+  }
+
+  // The Lottie sits outside the badge's window (clipped), so the badge itself is observed.
+  const lotties = new Map<Element, HTMLElement>();
+  for (const el of document.querySelectorAll<HTMLElement>("[data-lottie]")) lotties.set(el.closest(".badge") ?? el, el);
+  if (lotties.size > 0) {
+    const io = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        const el = lotties.get(entry.target);
+        if (!entry.isIntersecting || !el) continue;
+        io.unobserve(entry.target);
+        void mount(el);
+      }
+    });
+    lotties.forEach((_el, badge) => io.observe(badge));
+  }
+</script>

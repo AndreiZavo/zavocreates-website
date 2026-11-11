@@ -1,0 +1,43 @@
+---
+/** Phone / Email Info Card: a bold label and a link (link.hover). Stacked; one row on phone. */
+interface Props {
+  label: string;
+  text: string;
+  href: string;
+}
+
+const { label, text, href } = Astro.props;
+---
+
+<div class="info">
+  <div class="info__wrap">
+    <p class="t-body-medium-bold">{label}</p>
+    <a class="t-body-medium info__link" href={href} data-motion="link.hover">{text}</a>
+  </div>
+</div>
+
+<style is:global>
+  .info {
+    display: flex;
+    overflow: hidden;
+  }
+
+  .info__wrap {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .info__link {
+    color: var(--link-default-color);
+    text-decoration: var(--link-default-decoration);
+  }
+
+  @media (max-width: 809.98px) {
+    .info__wrap {
+      flex-direction: row;
+      align-items: center;
+      gap: 5px;
+    }
+  }
+</style>

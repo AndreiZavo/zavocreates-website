@@ -1,15 +1,247 @@
 ---
-// Placeholder body: Task 6 builds the home page.
+import About from "../components/About.astro";
+import CircleBadge from "../components/CircleBadge.astro";
+import ContactForm from "../components/ContactForm.astro";
+import FeaturedProjects from "../components/FeaturedProjects.astro";
+import Footer from "../components/Footer.astro";
+import Hero from "../components/Hero.astro";
+import Img from "../components/Img.astro";
+import LogoCarousel from "../components/LogoCarousel.astro";
+import Nav from "../components/Nav.astro";
+import Noise from "../components/Noise.astro";
+import ServiceAccordion from "../components/ServiceAccordion.astro";
+import { getHome, getSite } from "../content/load";
 import Base from "../layouts/Base.astro";
-import { getSite } from "../content/load";
 
 const site = getSite();
+const home = getHome();
+
+/** The content/motion.json effects with data-motion elements on this page (site-wide ones are added by Base). */
+const motion = [
+  "home.avatar.appear",
+  "home.avatar.scroll",
+  "home.hero.left.appear",
+  "home.hero.right.appear",
+  "home.badge.scroll",
+  "home.badge.cycle",
+  "home.counter",
+  "home.services.accordion",
+  "link.hover",
+  "button.submit.hover",
+];
 ---
 
-<Base lang="en" title={site.title} description={site.description} path="/" motion={["home.hero.left.appear"]}>
-  <main>
-    <!-- PLACEHOLDER (Task 5): one empty data-motion element so tests/e2e/reduced-motion.spec.ts has something to check.
-         Task 6 replaces it with the real page. -->
-    <div data-motion="home.hero.left.appear"></div>
+<Base lang="en" title={site.title} description={site.description} path="/" motion={motion}>
+  <Noise />
+  <Nav />
+  <main class="home">
+    <Hero>
+      <ServiceAccordion />
+      <About />
+    </Hero>
+
+    <section id="collabs" class="collabs">
+      <div class="collabs__container">
+        <div class="collabs__text">
+          <h2 class="t-heading-2">{home.collaboratorsIntro.heading}</h2>
+          <LogoCarousel />
+          <p class="t-body-medium">{home.collaboratorsIntro.text}</p>
+        </div>
+      </div>
+    </section>
+
+    <FeaturedProjects />
+
+    <section id="contact" class="contact">
+      <div class="contact__container">
+        <div class="contact__avatar-col">
+          <div class="contact__avatar">
+            <Img image={home.contact.avatar} width={340} class="contact__img" />
+            <div class="contact__badge">
+              <CircleBadge />
+            </div>
+          </div>
+        </div>
+        <div class="contact__col">
+          <div class="contact__text">
+            <h2 class="t-heading-2">{home.contact.heading}</h2>
+            <p class="t-body-medium contact__intro">{home.contact.text}</p>
+          </div>
+          <ContactForm />
+        </div>
+      </div>
+    </section>
   </main>
+  <Footer />
 </Base>
+
+<style is:global>
+  .home {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
+  .collabs {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .collabs__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    padding: 72px 40px;
+  }
+
+  .collabs__text {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .contact {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .contact__container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    padding: 160px 40px;
+  }
+
+  .contact__avatar-col,
+  .contact__col {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 50%;
+  }
+
+  .contact__avatar-col {
+    align-items: center;
+  }
+
+  .contact__avatar {
+    --badge-size: 120px;
+    position: relative;
+    display: flex;
+    perspective: 1200px;
+    transform-style: preserve-3d;
+  }
+
+  .contact__img {
+    width: 340px;
+    height: 476px;
+    max-width: none;
+    object-fit: cover;
+    border-radius: 20px;
+  }
+
+  .contact__badge {
+    position: absolute;
+    left: -56.5px;
+    top: 411.2px;
+    z-index: 10;
+    transform: translateZ(30px);
+  }
+
+  .contact__col {
+    align-items: flex-start;
+    gap: 40px;
+  }
+
+  .contact__text {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .contact__intro {
+    max-width: 500px;
+  }
+
+  @media (min-width: 810px) and (max-width: 1199.98px) {
+    .collabs__container {
+      padding: 120px 40px 72px;
+    }
+
+    .contact__container {
+      flex-direction: column;
+      gap: 80px;
+      padding: 120px 40px 160px;
+    }
+
+    .contact__col {
+      width: 100%;
+    }
+
+    .contact__avatar {
+      --badge-size: 80px;
+    }
+
+    .contact__img {
+      width: 260px;
+      height: 364px;
+    }
+
+    .contact__badge {
+      left: -37.4px;
+      top: 320.4px;
+    }
+  }
+
+  @media (max-width: 809.98px) {
+    .collabs__container {
+      padding: 80px 20px;
+    }
+
+    .collabs__text {
+      overflow: clip;
+    }
+
+    .contact__container {
+      flex-direction: column;
+      gap: 40px;
+      padding: 130px 20px;
+    }
+
+    .contact__avatar-col,
+    .contact__col {
+      width: 100%;
+    }
+
+    .contact__avatar {
+      --badge-size: 50px;
+    }
+
+    .contact__img {
+      width: 180px;
+      height: 252px;
+    }
+
+    .contact__badge {
+      top: auto;
+      bottom: 30px;
+      left: -23px;
+    }
+  }
+</style>

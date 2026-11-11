@@ -1,0 +1,414 @@
+---
+/**
+ * Home hero (Framer "OutterWraper"): a 300vh track whose sticky container pins the flipping avatar
+ * card while the hero, service and about sections (the slot) scroll over it. Phone: the card sits in
+ * a single 100vh frame behind the hero and the sections follow in normal flow.
+ *
+ * Effects: home.avatar.appear (outer wrapper) and home.avatar.scroll (inner wrapper) on the card,
+ * home.badge.scroll on the badge, home.hero.left/right.appear on the two heading columns. The sticky
+ * numbers come from home.hero.sticky.
+ */
+import { getHome, getMotion } from "../content/load";
+import CircleBadge from "./CircleBadge.astro";
+import Img from "./Img.astro";
+
+const { hero } = getHome();
+const sticky = getMotion("home.hero.sticky");
+if (sticky.kind !== "sticky") throw new Error('motion "home.hero.sticky" must be a sticky effect');
+const vars = `--sticky-top:${sticky.top};--sticky-height:${sticky.containerHeight};--sticky-track:${sticky.trackHeight}`;
+// The card back is a landscape photo cropped to the 340x476 portrait card: shown 476 * 1.5 px wide.
+const backWidth = Math.ceil((476 * hero.avatarBack.width) / hero.avatarBack.height);
+---
+
+<div class="outer" style={vars}>
+  <div class="outer__track">
+    <div class="outer__sticky">
+      <div class="avatar">
+        <div class="avatar__appear" data-motion="home.avatar.appear">
+          <div class="avatar__wrap" data-motion="home.avatar.scroll">
+            <div class="avatar__flip">
+              <div class="avatar__face avatar__face--back">
+                <Img image={hero.avatarBack} width={backWidth} class="avatar__img" />
+              </div>
+              <div class="avatar__face avatar__face--front">
+                <Img image={hero.avatarFront} width={340} class="avatar__img avatar__img--top" eager />
+              </div>
+            </div>
+            <div class="avatar__badge">
+              <CircleBadge scroll />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="outer__content">
+    <section id="hero" class="hero">
+      <div id="home" class="hero__container">
+        <div class="hero__left" data-motion="home.hero.left.appear">
+          <div class="hero__lwrap">
+            <div class="hero__name">
+              <p class="t-heading-3">{hero.name}</p>
+            </div>
+            <h1 class="t-heading-1">{hero.headingLeft}</h1>
+          </div>
+        </div>
+        <div class="hero__right" data-motion="home.hero.right.appear">
+          <div class="hero__rwrap">
+            <h1 class="t-heading-1">{hero.headingRight}</h1>
+            <div class="hero__tagline">
+              <p class="t-body-medium">{hero.tagline}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <slot />
+  </div>
+</div>
+
+<style is:global>
+  .outer {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
+  .outer__track {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+    height: var(--sticky-track);
+  }
+
+  .outer__sticky {
+    position: sticky;
+    top: var(--sticky-top);
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1 1 0;
+    height: var(--sticky-height);
+    overflow: hidden;
+  }
+
+  .outer__content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  /* Avatar card. Framer puts perspective(1200px) into the wrapper's own transform; a parent
+     perspective of the same size, hugging the card, renders the same and leaves the wrappers'
+     transforms to the motion runtime. */
+  .avatar {
+    --badge-size: 120px;
+    --card-w: 340px;
+    --card-h: 476px;
+    perspective: 1200px;
+  }
+
+  .avatar__appear,
+  .avatar__wrap {
+    transform-style: preserve-3d;
+  }
+
+  .avatar__wrap {
+    position: relative;
+    display: flex;
+  }
+
+  .avatar__flip {
+    position: relative;
+    width: var(--card-w);
+    height: var(--card-h);
+    transform: perspective(2000px);
+    transform-style: preserve-3d;
+  }
+
+  .avatar__face {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: 20px;
+  }
+
+  .avatar__face--back {
+    transform: perspective(1200px) rotateY(180deg);
+  }
+
+  .avatar__face--front {
+    transform: perspective(1200px);
+    backface-visibility: hidden;
+  }
+
+  .avatar__img {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+  }
+
+  .avatar__img--top {
+    object-position: center top;
+  }
+
+  /* Badge centred near the card's bottom-left corner, lifted 30px towards the viewer. */
+  .avatar__badge {
+    position: absolute;
+    left: -56.5px;
+    top: 411.2px;
+    z-index: 10;
+    transform: translateZ(30px);
+  }
+
+  .hero {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .hero__container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 370px;
+    width: 100%;
+    max-width: 1200px;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .hero__left,
+  .hero__right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1 1 0;
+    max-width: 50%;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .hero__left {
+    align-items: flex-end;
+  }
+
+  .hero__right {
+    align-items: flex-start;
+  }
+
+  .hero__lwrap {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-right: 10px;
+  }
+
+  .hero__name {
+    position: absolute;
+    top: -45px;
+    left: 5px;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    width: 293px;
+    overflow: hidden;
+  }
+
+  .hero__name p,
+  .hero h1 {
+    white-space: nowrap;
+  }
+
+  .hero__rwrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .hero__tagline {
+    position: absolute;
+    right: 0;
+    bottom: -65px;
+    z-index: 1;
+    display: flex;
+    width: 89.89637305699482%;
+    overflow: hidden;
+  }
+
+  .hero__tagline p {
+    flex: 1 1 0;
+    text-align: right;
+  }
+
+  @media (min-width: 810px) and (max-width: 1199.98px) {
+    .avatar {
+      --badge-size: 80px;
+      --card-w: 260px;
+      --card-h: 364px;
+    }
+
+    .avatar__badge {
+      left: -37.4px;
+      top: 320.4px;
+    }
+
+    .hero__container {
+      flex-direction: column;
+      gap: 430px;
+    }
+
+    .hero__left,
+    .hero__right {
+      flex: none;
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+    }
+
+    .hero__left {
+      align-items: flex-start;
+      padding: 7px 0 0 100px;
+      overflow: visible;
+    }
+
+    .hero__lwrap {
+      align-items: flex-start;
+    }
+
+    .hero__name {
+      position: relative;
+      top: auto;
+      left: auto;
+      width: 100%;
+      padding-left: 5px;
+    }
+
+    .hero__right {
+      align-items: flex-end;
+      padding-right: 100px;
+    }
+
+    .hero__rwrap {
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    /* Framer "fill" width: it follows the heading's width and does not widen the column. */
+    .hero__tagline {
+      position: relative;
+      right: auto;
+      bottom: auto;
+      width: 100%;
+      contain: inline-size;
+    }
+  }
+
+  @media (max-width: 809.98px) {
+    .outer {
+      overflow: clip;
+    }
+
+    .outer__track {
+      position: absolute;
+      top: 0;
+      left: 0;
+      flex-direction: column;
+      justify-content: center;
+      height: var(--sticky-height);
+      overflow: clip;
+    }
+
+    .outer__sticky {
+      flex: none;
+      width: 100%;
+      overflow: clip;
+    }
+
+    .outer__content {
+      position: relative;
+      overflow: clip;
+    }
+
+    .avatar {
+      --badge-size: 50px;
+      --card-w: 180px;
+      --card-h: 252px;
+    }
+
+    .avatar__badge {
+      top: auto;
+      bottom: 30px;
+      left: -23px;
+    }
+
+    .hero__container {
+      flex-direction: column;
+      gap: 280px;
+    }
+
+    .hero__left,
+    .hero__right {
+      flex: none;
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      align-items: center;
+    }
+
+    .hero__left {
+      padding-top: 25px;
+      overflow: visible;
+    }
+
+    .hero__name {
+      position: relative;
+      top: auto;
+      left: auto;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .hero__lwrap {
+      padding-right: 0;
+    }
+
+    .hero__rwrap {
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .hero__tagline {
+      position: relative;
+      right: auto;
+      bottom: auto;
+      width: 100%;
+      padding: 0 20px;
+    }
+
+    .hero__tagline p {
+      text-align: center;
+    }
+  }
+</style>

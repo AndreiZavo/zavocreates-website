@@ -1,0 +1,44 @@
+---
+/**
+ * A content image (content/*.json Image). Rasters go through Astro's image service (WebP at the
+ * given CSS widths, 1x and 2x); SVGs are served from public/ unchanged.
+ */
+import { Image } from "astro:assets";
+import type { Image as ContentImage } from "../content/schema";
+import { rasterOf } from "../content/images";
+
+interface Props {
+  image: ContentImage;
+  /** Largest CSS width the image is shown at, across breakpoints. */
+  width: number;
+  sizes?: string;
+  class?: string;
+  eager?: boolean;
+  alt?: string;
+}
+
+const { image, width, sizes, class: className, eager = false, alt = image.alt } = Astro.props;
+const meta = rasterOf(image.src);
+const widths = meta ? [...new Set([width, width * 2].map((w) => Math.min(Math.round(w), meta.width)))] : [];
+const height = Math.round((width * image.height) / image.width);
+const loading = eager ? "eager" : "lazy";
+---
+
+{
+  meta ? (
+    <Image
+      src={meta}
+      alt={alt}
+      widths={widths}
+      sizes={sizes ?? `${width}px`}
+      width={width}
+      height={height}
+      format="webp"
+      loading={loading}
+      decoding="async"
+      class={className}
+    />
+  ) : (
+    <img src={image.src} alt={alt} width={image.width} height={image.height} loading={loading} decoding="async" class={className} />
+  )
+}

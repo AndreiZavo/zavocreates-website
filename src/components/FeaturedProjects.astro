@@ -1,0 +1,422 @@
+---
+/**
+ * "Featured Projects" (Framer "Projects" + "Galley"): six tilted video cards linking to Instagram.
+ * The order per breakpoint is home.projectOrder (CSS `order`); the phone shows three of them.
+ * Per-card geometry (tilt, badge and play-button offsets) is the Framer layout (content/layout.json).
+ */
+import { getHome } from "../content/load";
+import Img from "./Img.astro";
+
+const { projectsIntro, projects, projectOrder } = getHome();
+const play = { src: "/images/play-icon.svg", width: 72, height: 72, alt: "" };
+const cards = projects.map((p) => {
+  const phone = projectOrder.phone.indexOf(p.id);
+  return {
+    ...p,
+    style: `--o-desktop:${projectOrder.desktop.indexOf(p.id)};--o-tablet:${projectOrder.tablet.indexOf(p.id)};--o-phone:${phone}`,
+    onPhone: phone >= 0,
+  };
+});
+---
+
+<section id="projects" class="projects">
+  <div class="projects__container">
+    <div class="projects__text">
+      <h2 class="t-heading-2">{projectsIntro.heading}</h2>
+      <p class="t-body-medium projects__intro">{projectsIntro.text}</p>
+    </div>
+  </div>
+</section>
+<div class="galley">
+  {
+    cards.map((card) => (
+      <a
+        class:list={["proj", `proj--${card.id}`, { "proj--no-phone": !card.onPhone }]}
+        style={card.style}
+        href={card.href}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <div class="proj__frame">
+          {card.id === "demmers" && card.badge && (
+            <span class="proj__logo">
+              <Img image={card.badge} width={81} class="proj__logo-img" />
+            </span>
+          )}
+          <div class="proj__media">
+            <Img image={card.image} width={241} class="proj__img" />
+            {card.id === "envato" && card.badge && (
+              <span class="proj__badge">
+                <Img image={card.badge} width={80} class="proj__badge-img" />
+              </span>
+            )}
+          </div>
+          {card.overlay && <span class="proj__overlay" style={`background:${card.overlay}`} />}
+          {card.id === "blitz" && card.badge && <Img image={card.badge} width={109} class="proj__wordmark" />}
+          {card.id === "kittl" && <Img image={play} width={72} class="proj__play" />}
+        </div>
+        {card.id !== "kittl" && (
+          <span class="proj__play-frame">
+            <Img image={play} width={72} class="proj__play" />
+          </span>
+        )}
+      </a>
+    ))
+  }
+</div>
+
+<style is:global>
+  .projects {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    scroll-margin-top: -300px;
+  }
+
+  .projects__container {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 1200px;
+    padding: 108px 40px 0;
+  }
+
+  .projects__text {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    padding: 32px 0;
+    overflow: hidden;
+  }
+
+  .projects__intro {
+    max-width: 500px;
+  }
+
+  .galley {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(50px, 1fr));
+    grid-auto-rows: minmax(200px, 1fr);
+    align-items: center;
+    gap: 100px;
+    width: 1180px;
+    margin: 0 auto;
+    padding: 20px 0;
+  }
+
+  .proj {
+    --tilt: 0deg;
+    --play-tilt: 0deg;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    order: var(--o-desktop);
+    color: inherit;
+  }
+
+  .proj__frame {
+    display: contents;
+  }
+
+  .proj__media {
+    position: relative;
+    flex: none;
+    width: 240px;
+    aspect-ratio: 0.5625;
+    rotate: var(--tilt);
+  }
+
+  .proj__img {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+    border-radius: 20px;
+  }
+
+  .proj__play-frame {
+    position: absolute;
+    left: var(--play-x);
+    top: var(--play-y);
+    width: 72px;
+    height: 72px;
+  }
+
+  .proj__play {
+    width: 72px;
+    height: 72px;
+    max-width: none;
+    overflow: visible;
+    rotate: var(--play-tilt);
+  }
+
+  /* Envato: tilted left, round client logo on its top-right corner. */
+  .proj--envato {
+    --tilt: -5deg;
+    --play-tilt: -5deg;
+    /* Framer's 80px play frame sits slightly left of centre (measured on the published site). */
+    --play-x: calc(50% - 39.25px);
+    --play-y: calc(50% - 36px);
+    width: 100%;
+  }
+
+  .proj__badge {
+    position: absolute;
+    top: -16.26px;
+    right: -39.98px;
+    z-index: 1;
+    width: 80px;
+    height: 80px;
+    overflow: hidden;
+    border-radius: 60px;
+    rotate: 5deg;
+  }
+
+  .proj__badge-img,
+  .proj__logo-img {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+  }
+
+  /* Life: straight card, clipped to its radius. */
+  .proj--life {
+    --play-x: 82px;
+    --play-y: 177px;
+    justify-self: center;
+    overflow: hidden;
+    border-radius: 20px;
+  }
+
+  /* Blitz: tilted right inside a 270x480 clipping frame, wordmark badge in the frame's corner. */
+  .proj--blitz {
+    --tilt: 5deg;
+    --play-tilt: 5deg;
+    --play-x: 124px;
+    --play-y: 178px;
+    align-self: stretch;
+    width: 100%;
+  }
+
+  .proj--blitz .proj__frame,
+  .proj--kittl .proj__frame {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: none;
+    overflow: clip;
+  }
+
+  .proj--blitz .proj__frame {
+    width: 270px;
+    height: 480px;
+  }
+
+  .proj__wordmark {
+    position: absolute;
+    top: 0;
+    left: 7px;
+    width: 109px;
+    height: 99px;
+  }
+
+  /* Eye: straight card, aligned to its column's end. */
+  .proj--eye {
+    --play-tilt: -5deg;
+    --play-x: 84px;
+    --play-y: 177px;
+    justify-self: end;
+  }
+
+  /* Demmers: tilted right, tea-house logo above its top-left. */
+  .proj--demmers {
+    --tilt: 5deg;
+    --play-tilt: 5deg;
+    --play-x: 124px;
+    --play-y: 178px;
+    align-self: stretch;
+    width: 100%;
+  }
+
+  .proj__logo {
+    position: absolute;
+    top: -2px;
+    left: 33px;
+    z-index: 1;
+    width: 81px;
+    height: 81px;
+    overflow: hidden;
+  }
+
+  .proj__logo-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 40px;
+  }
+
+  /* Kittl: straight card with a dark gradient, play button inside the clipped frame. */
+  .proj--kittl {
+    justify-self: center;
+    overflow: hidden;
+    border-radius: 20px;
+  }
+
+  .proj--kittl .proj__frame {
+    display: block;
+    width: 241px;
+    height: 427px;
+  }
+
+  .proj--kittl .proj__media {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 240.5px;
+    height: 427.5px;
+    aspect-ratio: auto;
+  }
+
+  .proj__overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 240.5px;
+    height: 427px;
+    overflow: clip;
+  }
+
+  .proj--kittl .proj__play {
+    position: absolute;
+    left: 86px;
+    top: 177px;
+  }
+
+  @media (min-width: 810px) and (max-width: 1199.98px) {
+    .galley {
+      grid-template-columns: repeat(2, minmax(50px, 1fr));
+      gap: 100px 0;
+      width: 100%;
+    }
+
+    .proj {
+      order: var(--o-tablet);
+    }
+
+    /* On the published tablet layout this play button is stacked under the thumbnail (not visible). */
+    .proj--envato {
+      --play-x: calc(50% - 44px);
+      isolation: isolate;
+    }
+
+    .proj--envato .proj__play-frame {
+      z-index: -1;
+    }
+
+    .proj--life {
+      --play-x: 86px;
+    }
+
+    .proj--eye {
+      justify-self: center;
+    }
+
+    .proj--blitz,
+    .proj--demmers {
+      --play-x: 167px;
+    }
+
+    .proj--demmers .proj__logo {
+      top: -20.5px;
+      left: 300px;
+    }
+
+    .proj--kittl .proj__play {
+      left: 82px;
+    }
+  }
+
+  @media (max-width: 809.98px) {
+    .projects__container {
+      padding: 80px 20px;
+    }
+
+    .galley {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 72px;
+      width: 100%;
+      padding: 32px 20px;
+      overflow: clip;
+    }
+
+    .proj {
+      order: var(--o-phone);
+    }
+
+    .proj--no-phone {
+      display: none;
+    }
+
+    .proj--life {
+      --play-x: 83px;
+    }
+
+    .proj--blitz {
+      --play-x: 106px;
+      --play-y: 191px;
+      align-self: center;
+      width: auto;
+    }
+
+    .proj--blitz .proj__frame {
+      width: 281.25px;
+      height: 500px;
+    }
+
+    /* Phone shows Demmers in Client #1's frame: 280x500, tilted left, logo inside the frame. */
+    .proj--demmers {
+      --tilt: -5deg;
+      --play-tilt: -5deg;
+      --play-x: 108.5px;
+      --play-y: 182px;
+      align-self: center;
+      width: auto;
+    }
+
+    .proj--demmers .proj__frame {
+      position: relative;
+      display: block;
+      width: 280px;
+      height: 500px;
+      overflow: clip;
+    }
+
+    .proj--demmers .proj__media {
+      position: absolute;
+      left: 20px;
+      top: calc(49.89% - 213.33px);
+    }
+
+    .proj--demmers .proj__logo {
+      top: 3px;
+      left: 194px;
+      border-radius: 40px;
+      rotate: 1deg;
+    }
+
+    .proj--demmers .proj__logo-img {
+      width: 81px;
+      height: 81px;
+    }
+  }
+</style>

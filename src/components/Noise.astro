@@ -1,0 +1,30 @@
+---
+/** Fixed film-grain layer behind every page (Framer "Noise BG", layout template). */
+import { getSite } from "../content/load";
+
+const { noise } = getSite();
+---
+
+<img
+  class="noise"
+  src={noise.src}
+  alt={noise.alt}
+  width={noise.width}
+  height={noise.height}
+  style={`opacity:${noise.opacity};mix-blend-mode:${noise.blendMode}`}
+  decoding="async"
+/>
+
+<style is:global>
+  .noise {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    width: 100%;
+    max-width: none;
+    height: 100vh;
+    object-fit: cover;
+    pointer-events: none;
+  }
+</style>

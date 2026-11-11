@@ -1,0 +1,257 @@
+---
+/**
+ * "What I can do for you" section with the service accordion (Framer "Service Accordion Wrap").
+ * <details> items work without JS; with JS, home.services.accordion (variant.ts) keeps one item open
+ * and animates the panel height. Titles and bullets are the desktop copy (controller ruling R8).
+ */
+import { getHome } from "../content/load";
+import { svgMarkup } from "../content/images";
+
+const { servicesIntro, services } = getHome();
+const chevron = svgMarkup("/icons/iconoir-nav-arrow-down.svg");
+const check = svgMarkup("/icons/iconoir-check-circle.svg");
+---
+
+<section id="service" class="service" data-motion-target="Rd4N98ip7">
+  <div class="service__container">
+    <div class="service__column">
+      <div class="service__text">
+        <h2 class="t-heading-2">{servicesIntro.heading}</h2>
+        <p class="t-body-medium service__intro">{servicesIntro.text}</p>
+      </div>
+      <div class="acc" data-motion-group>
+        {
+          services.map((service) => (
+            <details class="acc__item" data-motion="home.services.accordion">
+              <summary class="acc__top">
+                <h3 class="acc__title">{service.title}</h3>
+                <span class="acc__chevron" set:html={chevron} />
+              </summary>
+              <div class="acc__panel" data-motion-panel>
+                <ul class="acc__bullets">
+                  {service.bullets.map((bullet) => (
+                    <li class="acc__bullet">
+                      <span class="acc__check" set:html={check} />
+                      <span class="t-body-medium acc__bullet-text">{bullet}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style is:global>
+  .service {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .service__container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    padding: 0 40px;
+    overflow: hidden;
+  }
+
+  .service__column {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 40px;
+    width: 600px;
+  }
+
+  .service__text {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow: hidden;
+  }
+
+  .service__intro {
+    max-width: 500px;
+  }
+
+  .acc {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .acc__item {
+    --acc-color: var(--color-grey-100);
+    --acc-title: var(--color-grey-200-white);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Framer draws the bottom border over the box (no layout space). */
+  .acc__item::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0;
+    height: 1px;
+    background: var(--acc-color);
+    pointer-events: none;
+  }
+
+  .acc__item[open],
+  .acc__item[data-state="open"] {
+    --acc-color: var(--color-purple-green);
+    --acc-title: var(--color-purple-green);
+    padding-bottom: 20px;
+  }
+
+  .acc__item[data-state="closed"] {
+    --acc-color: var(--color-grey-100);
+    --acc-title: var(--color-grey-200-white);
+  }
+
+  .acc__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 82px;
+    list-style: none;
+    cursor: pointer;
+  }
+
+  .acc__top::-webkit-details-marker {
+    display: none;
+  }
+
+  /* Closed, Framer keeps the bullets in a 1px-high panel; a closed <details> renders no panel. */
+  .acc__item:not([open]) > .acc__top {
+    margin-bottom: 1px;
+  }
+
+  .acc__title {
+    margin: 0;
+    font-family: var(--text-heading-3-family);
+    font-weight: var(--text-heading-3-weight);
+    font-size: var(--text-heading-3-size);
+    line-height: var(--text-heading-3-line);
+    letter-spacing: var(--text-heading-3-tracking);
+    text-transform: var(--text-heading-3-transform);
+    color: var(--acc-title);
+  }
+
+  .acc__top:hover .acc__title {
+    color: var(--color-purple-green);
+  }
+
+  .acc__chevron {
+    display: flex;
+    width: 30px;
+    height: 30px;
+    color: var(--color-grey-200-white);
+    rotate: 180deg;
+  }
+
+  .acc__item[open] .acc__chevron,
+  .acc__item[data-state="open"] .acc__chevron {
+    rotate: 0deg;
+  }
+
+  .acc__item[data-state="closed"] .acc__chevron {
+    rotate: 180deg;
+  }
+
+  .acc__chevron svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .acc__panel {
+    overflow: hidden;
+  }
+
+  .acc__bullets {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .acc__bullet {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .acc__check {
+    display: flex;
+    flex: none;
+    width: 20px;
+    height: 27px;
+    color: var(--color-grey-200-white);
+  }
+
+  .acc__check svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .acc__bullet-text {
+    flex: 1 1 0;
+  }
+
+  @media (max-width: 1199.98px) {
+    .service__column {
+      width: 50%;
+    }
+
+    .acc__top {
+      height: auto;
+      padding: 20px 0;
+    }
+
+    .acc__title {
+      font-family: var(--text-heading-4-family);
+      font-weight: var(--text-heading-4-weight);
+      font-size: var(--text-heading-4-size);
+      line-height: var(--text-heading-4-line);
+      letter-spacing: var(--text-heading-4-tracking);
+      text-transform: var(--text-heading-4-transform);
+    }
+
+    .acc__chevron {
+      width: 24px;
+      height: 24px;
+    }
+
+    .acc__check {
+      width: 16px;
+      height: 24px;
+    }
+  }
+
+  @media (max-width: 809.98px) {
+    .service {
+      height: auto;
+    }
+
+    .service__container {
+      padding: 80px 20px;
+    }
+
+    .service__column {
+      width: 100%;
+    }
+  }
+</style>

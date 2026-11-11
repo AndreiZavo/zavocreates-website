@@ -200,3 +200,31 @@ html.motion-cursor,
 html.motion-cursor * {
   cursor: none !important;
 }
+
+/* Text presets (content/tokens.json "text"). Size and line height switch per breakpoint in tokens.css.
+   Zero specificity (:where), so a component class can override any part, e.g. the colour. */
+:where(.t-heading-1, .t-heading-2, .t-heading-3, .t-heading-4, .t-body-large, .t-body-medium, .t-body-medium-bold, .t-body-small, .t-nav-link) {
+  margin: 0;
+  font-family: var(--t-family);
+  font-weight: var(--t-weight);
+  font-size: var(--t-size);
+  line-height: var(--t-line);
+  letter-spacing: var(--t-tracking);
+  text-transform: var(--t-transform);
+  color: var(--t-color);
+}
+
+:where(.t-heading-1) { --t-family: var(--text-heading-1-family); --t-weight: var(--text-heading-1-weight); --t-size: var(--text-heading-1-size); --t-line: var(--text-heading-1-line); --t-tracking: var(--text-heading-1-tracking); --t-transform: var(--text-heading-1-transform); --t-color: var(--text-heading-1-color); }
+:where(.t-heading-2) { --t-family: var(--text-heading-2-family); --t-weight: var(--text-heading-2-weight); --t-size: var(--text-heading-2-size); --t-line: var(--text-heading-2-line); --t-tracking: var(--text-heading-2-tracking); --t-transform: var(--text-heading-2-transform); --t-color: var(--text-heading-2-color); }
+:where(.t-heading-3) { --t-family: var(--text-heading-3-family); --t-weight: var(--text-heading-3-weight); --t-size: var(--text-heading-3-size); --t-line: var(--text-heading-3-line); --t-tracking: var(--text-heading-3-tracking); --t-transform: var(--text-heading-3-transform); --t-color: var(--text-heading-3-color); }
+:where(.t-heading-4) { --t-family: var(--text-heading-4-family); --t-weight: var(--text-heading-4-weight); --t-size: var(--text-heading-4-size); --t-line: var(--text-heading-4-line); --t-tracking: var(--text-heading-4-tracking); --t-transform: var(--text-heading-4-transform); --t-color: var(--text-heading-4-color); }
+:where(.t-body-large) { --t-family: var(--text-body-large-family); --t-weight: var(--text-body-large-weight); --t-size: var(--text-body-large-size); --t-line: var(--text-body-large-line); --t-tracking: var(--text-body-large-tracking); --t-transform: var(--text-body-large-transform); --t-color: var(--text-body-large-color); }
+:where(.t-body-medium) { --t-family: var(--text-body-medium-family); --t-weight: var(--text-body-medium-weight); --t-size: var(--text-body-medium-size); --t-line: var(--text-body-medium-line); --t-tracking: var(--text-body-medium-tracking); --t-transform: var(--text-body-medium-transform); --t-color: var(--text-body-medium-color); }
+:where(.t-body-medium-bold) { --t-family: var(--text-body-medium-bold-family); --t-weight: var(--text-body-medium-bold-weight); --t-size: var(--text-body-medium-bold-size); --t-line: var(--text-body-medium-bold-line); --t-tracking: var(--text-body-medium-bold-tracking); --t-transform: var(--text-body-medium-bold-transform); --t-color: var(--text-body-medium-bold-color); }
+:where(.t-body-small) { --t-family: var(--text-body-small-family); --t-weight: var(--text-body-small-weight); --t-size: var(--text-body-small-size); --t-line: var(--text-body-small-line); --t-tracking: var(--text-body-small-tracking); --t-transform: var(--text-body-small-transform); --t-color: var(--text-body-small-color); }
+:where(.t-nav-link) { --t-family: var(--text-nav-link-family); --t-weight: var(--text-nav-link-weight); --t-size: var(--text-nav-link-size); --t-line: var(--text-nav-link-line); --t-tracking: var(--text-nav-link-tracking); --t-transform: var(--text-nav-link-transform); --t-color: var(--text-nav-link-color); }
+
+/* Paragraph spacing inside one Framer text block (e.g. the About definition + line). */
+:where(.t-paragraphs > .t-body-medium + .t-body-medium) {
+  margin-top: var(--text-body-medium-paragraph);
+}

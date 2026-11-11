@@ -1,0 +1,102 @@
+---
+/**
+ * Logo Carrousel (Framer Ticker): the logos twice in one track that slides left forever, a CSS
+ * keyframe loop at the extracted speed (home.logos.marquee, px per second). Paused under
+ * prefers-reduced-motion. Logos are 80px high (wordmark SVGs 60px), as in Framer.
+ */
+import { getHome, getMotion } from "../content/load";
+import Img from "./Img.astro";
+
+const { collaborators } = getHome();
+const marquee = getMotion("home.logos.marquee");
+if (marquee.kind !== "marquee") throw new Error('motion "home.logos.marquee" must be a marquee');
+
+const LOGO_HEIGHT = 80;
+const WORDMARK_HEIGHT = 60;
+const logos = collaborators.map((image) => {
+  const height = image.src.endsWith(".svg") ? WORDMARK_HEIGHT : LOGO_HEIGHT;
+  return { image, height, width: Math.round(((height * image.width) / image.height) * 100) / 100 };
+});
+// One copy of the logos, each followed by the gap: the track moves by this much per loop.
+const copyWidth = logos.reduce((sum, l) => sum + l.width + marquee.gap, 0);
+const fade = marquee.fade;
+const fadeStop = `${fade.fadeWidth}%`;
+const vars = [
+  `--marquee-gap:${marquee.gap}px`,
+  `--marquee-padding:${marquee.padding}`,
+  `--marquee-height:${marquee.height}`,
+  `--marquee-distance:-${copyWidth}px`,
+  `--marquee-duration:${copyWidth / marquee.speed}s`,
+  `--marquee-fade:linear-gradient(to right, rgba(0, 0, 0, ${fade.fadeAlpha}) ${fade.fadeInset}%, #000 ${fadeStop}, #000 calc(100% - ${fadeStop}), rgba(0, 0, 0, ${fade.fadeAlpha}) calc(100% - ${fade.fadeInset}%))`,
+].join(";");
+---
+
+<div class="carousel" style={vars}>
+  <div class="carousel__ticker">
+    <ul class="carousel__track" data-marquee-track>
+      {
+        [0, 1].map((copy) =>
+          logos.map((logo) => (
+            <li class="carousel__logo" style={`width:${logo.width}px;height:${logo.height}px`} aria-hidden={copy === 1 ? "true" : undefined}>
+              <Img image={logo.image} width={logo.width} alt={copy === 1 ? "" : logo.image.alt} class="carousel__img" eager />
+            </li>
+          )),
+        )
+      }
+    </ul>
+  </div>
+</div>
+
+<style is:global>
+  .carousel {
+    display: flex;
+    align-items: center;
+    flex: none;
+    width: 1119px;
+    height: 200px;
+  }
+
+  .carousel__ticker {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: var(--marquee-height);
+    padding: var(--marquee-padding) 0;
+    overflow: hidden;
+    -webkit-mask-image: var(--marquee-fade);
+    mask-image: var(--marquee-fade);
+  }
+
+  .carousel__track {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    margin: 0;
+    padding: 0 0 0 var(--marquee-padding);
+    list-style: none;
+  }
+
+  .carousel__logo {
+    display: flex;
+    flex: none;
+    margin-right: var(--marquee-gap);
+  }
+
+  .carousel__img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  @keyframes marquee {
+    to {
+      transform: translateX(var(--marquee-distance));
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .carousel__track {
+      animation: marquee var(--marquee-duration) linear infinite;
+    }
+  }
+</style>

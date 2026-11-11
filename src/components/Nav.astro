@@ -1,0 +1,346 @@
+---
+/**
+ * Floating nav pill (Framer "Nav", layout template). Shared by every page.
+ *
+ * Motion hooks (src/motion/index.ts): the pill is nav.scroll (desktop collapses on scroll down,
+ * tablet/phone open with the menu toggle), each link is nav.link.hover, the "Contact" button is
+ * button.secondary.hover and the status avatar carries the nav.status.glow loop. Without JS the
+ * CSS shows each breakpoint's starting variant (desktop: open, tablet/phone: closed).
+ */
+import { getSite } from "../content/load";
+import Img from "./Img.astro";
+
+const { nav } = getSite();
+const D = "Desktop / Open";
+const T = "Tablet & Phone / Closed";
+---
+
+<div class="nav-wrap">
+  <nav class="nav" aria-label="Main" data-motion="nav.scroll" data-cursor="blend">
+    <div class="nav__head" data-motion-trigger data-motion-layer={`${T}/Avatar & Button Wrap`}>
+      <div class="status" data-motion="nav.status.glow">
+        <Img image={nav.avatar} width={40} class="status__avatar" eager />
+        <div class="status__status">
+          <a class="nav-link" href={nav.status.href} data-motion="nav.link.hover">
+            <span class="nav-link__wrap" data-motion-layer="Desktop/Link Wrap">
+              <span class="t-nav-link nav-link__face">{nav.status.label}</span>
+              <span class="t-nav-link nav-link__face nav-link__face--alt" aria-hidden="true">{nav.status.label}</span>
+            </span>
+          </a>
+          <span class="status__dot"></span>
+          <span class="status__glow" data-motion-layer="Desktop / Available/Status/Glowing" data-baseline-hide></span>
+        </div>
+      </div>
+      <button class="nav__toggle" type="button" aria-label={nav.links.map((l) => l.label).join(", ")}>
+        <span class="nav__line nav__line--top" data-motion-layer={`${T}/Avatar & Button Wrap/Toggle Button/Line / Top`}></span>
+        <span class="nav__line nav__line--bottom" data-motion-layer={`${T}/Avatar & Button Wrap/Toggle Button/Line / Bottom`}></span>
+      </button>
+    </div>
+    <div class="nav__hide" data-motion-layer={`${D}/Scroll Hide Wrap`}>
+      <div class="nav__menu" data-motion-layer={`${T}/Scroll Hide Wrap`}>
+        <div class="nav__links" data-motion-layer={`${T}/Scroll Hide Wrap/Nav Link Wrap`}>
+          {
+            nav.links.map((link) => (
+              <a class="nav-link" href={link.href} data-motion="nav.link.hover">
+                <span class="nav-link__wrap" data-motion-layer="Desktop/Link Wrap">
+                  <span class="t-nav-link nav-link__face">{link.label}</span>
+                  <span class="t-nav-link nav-link__face nav-link__face--alt" aria-hidden="true">
+                    {link.label}
+                  </span>
+                </span>
+              </a>
+            ))
+          }
+        </div>
+        <a class="btn-secondary" href={nav.cta.href} data-motion="button.secondary.hover">
+          <span class="btn-secondary__bg" data-motion-layer="Desktop/Color BG"></span>
+          <span class="t-nav-link btn-secondary__text">{nav.cta.label}</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<style is:global>
+  .nav-wrap {
+    position: fixed;
+    top: 20px;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  .nav {
+    position: relative;
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    border-radius: 28px;
+    background: var(--color-nav-bg-color);
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+  }
+
+  /* Framer borders are drawn over the box and take no space. */
+  .nav::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 1px solid var(--color-nav-border-color);
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  .nav__head {
+    display: flex;
+    align-items: center;
+  }
+
+  .status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .status__avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 99px;
+    object-fit: cover;
+    flex: none;
+  }
+
+  .status__status {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .status__dot,
+  .status__glow {
+    width: 6px;
+    aspect-ratio: 1;
+    border-radius: 99px;
+    background: var(--color-green);
+  }
+
+  .status__glow {
+    position: absolute;
+    left: 97.97%;
+    top: 50%;
+    z-index: 1;
+    height: auto;
+    opacity: 0.5;
+    translate: -50% -50%;
+  }
+
+  /* Nav Link: a two-face roll (Link Wrap rotates on hover, nav.link.hover). */
+  .nav-link {
+    display: flex;
+    height: 24px;
+    overflow: hidden;
+    perspective: 1200px;
+    text-decoration: none;
+  }
+
+  .nav-link[data-hover] {
+    overflow: visible;
+  }
+
+  .nav-link__wrap {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 24px;
+    transform-style: preserve-3d;
+    transform-origin: 50% 0%;
+  }
+
+  .nav-link__face {
+    display: block;
+    white-space: nowrap;
+    color: var(--color-grey-200-white);
+  }
+
+  .nav-link__face--alt {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    color: var(--color-purple-green);
+    transform-origin: 50% 0%;
+    transform: rotateX(90deg);
+  }
+
+  .nav__toggle {
+    position: relative;
+    display: none;
+    flex: none;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 0;
+    border-radius: 99px;
+    background: var(--color-purple-green);
+    cursor: pointer;
+  }
+
+  .nav__line {
+    position: absolute;
+    left: 50%;
+    width: 12px;
+    height: 2px;
+    background: var(--color-white-dark);
+    translate: -50% 0;
+  }
+
+  .nav__line--top {
+    top: 16px;
+  }
+
+  .nav__line--bottom {
+    bottom: 16px;
+  }
+
+  .nav__hide {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    transform-origin: 0% 50%;
+  }
+
+  .nav__menu {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+  }
+
+  .nav__links {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    overflow: hidden;
+  }
+
+  .btn-secondary {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    padding: 3px 30px 4px;
+    overflow: hidden;
+    border-radius: 99px;
+    background: var(--color-grey-200-white);
+    text-decoration: none;
+  }
+
+  .btn-secondary__bg {
+    position: absolute;
+    bottom: -20px;
+    left: -20px;
+    z-index: 1;
+    width: 20px;
+    height: 20px;
+    border-radius: 99px;
+    background: var(--color-purple-green);
+  }
+
+  .btn-secondary__text {
+    position: relative;
+    z-index: 1;
+    color: var(--color-white-dark);
+    white-space: nowrap;
+  }
+
+  /* Desktop: "Desktop / Open" (avatar only + links) until the page scrolls down, then
+     "Desktop / Closed" (avatar + availability, links folded away). */
+  @media (min-width: 1200px) {
+    .nav {
+      justify-content: flex-end;
+      gap: 40px;
+      padding: 8px 10px;
+    }
+
+    .nav:not([data-state="closed"]) .status__status {
+      display: none;
+    }
+
+    .nav[data-state="closed"] {
+      gap: 0;
+      padding: 8px 20px 8px 10px;
+    }
+
+    .nav[data-state="closed"] .nav__hide {
+      width: 1px;
+      opacity: 0;
+    }
+  }
+
+  /* Tablet & phone: "Tablet & Phone / Closed" (avatar + availability + menu toggle); the toggle
+     opens "Tablet & Phone / Open" (links stacked under the head). */
+  @media (max-width: 1199.98px) {
+    .nav {
+      flex-direction: column;
+      justify-content: center;
+      gap: 0;
+      padding: 8px 10px;
+    }
+
+    .nav__head {
+      align-self: stretch;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .nav__toggle {
+      display: block;
+    }
+
+    .nav__hide,
+    .nav__menu {
+      width: 100%;
+      flex-direction: column;
+    }
+
+    .nav__menu {
+      display: none;
+    }
+
+    .nav__links {
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .nav[data-state="open"] {
+      width: 300px;
+      justify-content: flex-end;
+      gap: 40px;
+      padding: 10px 10px 20px;
+    }
+
+    .nav[data-state="open"] .nav__head {
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .nav[data-state="open"] .status__status {
+      display: none;
+    }
+
+    .nav[data-state="open"] .nav__menu {
+      display: flex;
+    }
+
+    .nav[data-state="open"] .nav__links {
+      width: 100%;
+      gap: 40px;
+      overflow: visible;
+    }
+  }
+</style>
