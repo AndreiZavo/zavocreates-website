@@ -16,7 +16,8 @@
     "test:e2e": "playwright test --project=e2e",
     "test:visual": "playwright test --project=visual --pass-with-no-tests",
     "check:links": "linkinator ./dist --recurse --silent --skip \"^https://zavocreates\\.com/\"",
-    "lhci": "lhci autorun"
+    "lhci": "lhci autorun",
+    "eval:triage": "node --experimental-strip-types evals/triage/run.ts"
   },
   "dependencies": {
     "@fontsource/antonio": "^5.3.0",
