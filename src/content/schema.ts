@@ -36,7 +36,16 @@ export const Site = z.strictObject({
   instagram: url.optional(),
   tiktok: url,
   threads: url,
-  noise: z.strictObject({ ...Image.shape, opacity: z.number().min(0).max(1), blendMode: text }),
+  // Framer tiles the noise GIF: repeat + size are its CSS background-repeat / background-size. The
+  // canvas dump has no tile fields; the values are from the published HTML (docs/extraction/README.md).
+  noise: z.strictObject({
+    ...Image.shape,
+    opacity: z.number().min(0).max(1),
+    blendMode: text,
+    repeat: z.enum(["repeat", "repeat-x", "repeat-y", "no-repeat"]),
+    // CSS background-size: one or two of <length>|<percentage>|auto, or cover/contain.
+    size: z.string().regex(/^(cover|contain)$|^([\d.]+(px|%)|auto)( ([\d.]+(px|%)|auto))?$/),
+  }),
   nav: z.strictObject({
     avatar: Image,
     status: Link,

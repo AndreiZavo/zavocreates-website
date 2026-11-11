@@ -25,7 +25,9 @@
     "height": 700,
     "alt": "",
     "opacity": 0.12,
-    "blendMode": "color-dodge"
+    "blendMode": "color-dodge",
+    "repeat": "repeat",
+    "size": "250px auto"
   },
   "nav": {
     "avatar": {

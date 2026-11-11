@@ -1,24 +1,22 @@
 ---
 /**
  * Fixed film-grain layer behind every page (Framer "Noise BG", layout template).
- * fetchpriority="low": the GIF is 756 KB and decorative. At the default (High, in-viewport image)
- * it competed with the hero portrait (the LCP image) for bandwidth.
+ * Framer renders it as a CSS background tiled at noise.size (background-repeat/-size in its
+ * published HTML), not a stretched image, so this is a decorative div with the same background.
  */
 import { getSite } from "../content/load";
 
 const { noise } = getSite();
+const style = [
+  `background-image:url(${noise.src})`,
+  `background-repeat:${noise.repeat}`,
+  `background-size:${noise.size}`,
+  `opacity:${noise.opacity}`,
+  `mix-blend-mode:${noise.blendMode}`,
+].join(";");
 ---
 
-<img
-  class="noise"
-  src={noise.src}
-  alt={noise.alt}
-  width={noise.width}
-  height={noise.height}
-  style={`opacity:${noise.opacity};mix-blend-mode:${noise.blendMode}`}
-  decoding="async"
-  fetchpriority="low"
-/>
+<div class="noise" aria-hidden="true" style={style}></div>
 
 <style is:global>
   .noise {
@@ -27,9 +25,9 @@ const { noise } = getSite();
     left: 0;
     z-index: 0;
     width: 100%;
-    max-width: none;
     height: 100vh;
-    object-fit: cover;
+    overflow: hidden;
+    background-position: left top;
     pointer-events: none;
   }
 </style>

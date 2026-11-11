@@ -50,6 +50,12 @@ describe("content files", () => {
     }
   });
 
+  it("has only valid tel: links (digits after +, no spaces)", () => {
+    const tels = files.flatMap((f) => allStrings(read(f))).filter((s) => s.startsWith("tel:"));
+    expect(tels.length).toBeGreaterThan(0);
+    for (const t of tels) expect(t).toMatch(/^tel:\+\d+$/);
+  });
+
   it("references only images, icons and Lottie files that exist in public/", () => {
     const refs = files
       .flatMap((f) => allStrings(read(f)))

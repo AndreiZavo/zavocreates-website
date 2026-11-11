@@ -83,6 +83,10 @@ const media = (name: "desktop" | "tablet" | "phone"): string | undefined => getT
     {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
     {alternates.map((a) => <link rel="alternate" hreflang={a.lang} href={abs(a.path)} />)}
     <link rel="icon" type="image/png" sizes={`${FAVICON_SIZE}x${FAVICON_SIZE}`} href={favicon} />
+    {/* The noise GIF (756 KB, decorative CSS background in Noise.astro) is requested here at low
+        priority. Left to the background, Chrome fetches it at High priority because it is in the
+        viewport, and it competes with the hero portrait, the LCP image. */}
+    <link rel="preload" as="image" href={site.noise.src} fetchpriority="low" />
     <link rel="preload" as="font" type="font/woff2" href={antonioHero} crossorigin />
     <link rel="preload" as="font" type="font/woff2" href={interHero} crossorigin />
     <meta property="og:type" content="website" />

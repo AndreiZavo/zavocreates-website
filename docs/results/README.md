@@ -79,28 +79,27 @@ Mobile is what `npm run lhci` collects (the CI run); desktop was collected separ
 | Page | Preset | Site | Performance | Accessibility | Best practices | SEO | FCP | LCP | TBT | CLS | Speed Index |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | `/` | mobile | Framer | 82 | 92 | 100 | 100 | 1.19 s | 1.19 s | 614 ms | 0.003 | 2.78 s |
-| `/` | mobile | rebuild | 92 | 100 | 100 | 100 | 0.92 s | 3.37 s | 0 ms | 0.001 | 0.92 s |
+| `/` | mobile | rebuild | 94 | 100 | 100 | 100 | 0.92 s | 3.11 s | 0 ms | 0.001 | 0.92 s |
 | `/pricing` | mobile | Framer | 93 | 89 | 100 | 100 | 1.18 s | 1.18 s | 295 ms | 0 | 2.98 s |
-| `/pricing` | mobile | rebuild | 100 | 100 | 100 | 100 | 1.39 s | 1.39 s | 0 ms | 0 | 1.39 s |
+| `/pricing` | mobile | rebuild | 100 | 100 | 100 | 100 | 0.92 s | 0.92 s | 0 ms | 0 | 0.92 s |
 | `/` | desktop | Framer | 100 | 92 | 100 | 100 | 0.50 s | 0.50 s | 12 ms | 0.002 | 0.99 s |
-| `/` | desktop | rebuild | 100 | 100 | 100 | 100 | 0.26 s | 0.50 s | 0 ms | 0 | 0.28 s |
+| `/` | desktop | rebuild | 100 | 100 | 100 | 100 | 0.26 s | 0.56 s | 0 ms | 0 | 0.34 s |
 | `/pricing` | desktop | Framer | 100 | 89 | 100 | 100 | 0.48 s | 0.48 s | 12 ms | 0 | 0.54 s |
-| `/pricing` | desktop | rebuild | 100 | 100 | 100 | 100 | 0.26 s | 0.26 s | 0 ms | 0 | 0.28 s |
+| `/pricing` | desktop | rebuild | 100 | 100 | 100 | 100 | 0.25 s | 0.25 s | 0 ms | 0 | 0.25 s |
 
-Individual mobile performance runs for `/` were 91, 97 and 92: the margin over the 0.90 budget
-is small. What remains on the LCP path is the 756 KB animated noise GIF (the same file Framer
-serves). On localhost it finishes downloading before the hero portrait paints, so Lighthouse's
-simulation counts it against LCP at slow-4G speed; on Framer's CDN it finishes after LCP and is
-not counted.
+Individual mobile performance runs for `/` were 94, 94 and 94. The 756 KB animated noise GIF
+(the same file Framer serves) still shares bandwidth with the hero portrait in Lighthouse's
+simulation: on localhost it finishes downloading before the portrait paints. It is fetched at
+Low priority (see below), so the simulation no longer waits for it to finish.
 
 ### Total transfer size: Framer vs rebuild
 
 | Page | Preset | Framer | Rebuild |
 | --- | --- | --- | --- |
-| `/` | mobile | 1,989,224 bytes (1.90 MiB), 59 requests | 1,421,970 bytes (1.36 MiB), 35 requests |
-| `/` | desktop | 2,124,523 bytes (2.03 MiB), 61 requests | 1,382,702 bytes (1.32 MiB), 38 requests |
-| `/pricing` | mobile | 1,741,809 bytes (1.66 MiB), 43 requests | 943,762 bytes (0.90 MiB), 14 requests |
-| `/pricing` | desktop | 1,741,837 bytes (1.66 MiB), 43 requests | 942,590 bytes (0.90 MiB), 14 requests |
+| `/` | mobile | 1,989,224 bytes (1.90 MiB), 59 requests | 1,423,999 bytes (1.36 MiB), 35 requests |
+| `/` | desktop | 2,124,523 bytes (2.03 MiB), 61 requests | 1,376,050 bytes (1.31 MiB), 38 requests |
+| `/pricing` | mobile | 1,741,809 bytes (1.66 MiB), 43 requests | 943,786 bytes (0.90 MiB), 14 requests |
+| `/pricing` | desktop | 1,741,837 bytes (1.66 MiB), 43 requests | 942,601 bytes (0.90 MiB), 14 requests |
 
 The noise GIF is 756 KB of each rebuild total.
 
@@ -111,7 +110,10 @@ The first CI run failed: `/` mobile performance 0.77 (LCP 5.7 s, 3.4 MB transfer
 - Favicon: the 2731 px, 2 MB original PNG was linked directly. It is now resized at build to a
   64 px PNG (11 KB), `src/layouts/Base.astro`.
 - Noise layer: the GIF was fetched at High priority (an in-viewport image) next to the hero
-  portrait, the LCP image. It now has `fetchpriority="low"`, `src/components/Noise.astro`.
+  portrait, the LCP image. It is now a tiled CSS background like Framer's (`site.noise.repeat`,
+  `site.noise.size`, `src/components/Noise.astro`). Chrome also fetches an in-viewport background
+  at High priority (`/` mobile scored 76-77 that way), so `Base.astro` preloads the GIF with
+  `fetchpriority="low"`; the background reuses that single Low-priority request.
 
 ### Budgets (`lighthouserc.json`, mobile, median of 3 runs)
 

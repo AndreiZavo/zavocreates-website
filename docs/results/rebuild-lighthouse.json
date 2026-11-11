@@ -9,19 +9,19 @@
       "http://localhost:8787/": {
         "runs": 3,
         "scores": {
-          "performance": 92,
+          "performance": 94,
           "accessibility": 100,
           "best-practices": 100,
           "seo": 100
         },
         "metrics": {
-          "firstContentfulPaintMs": 917,
-          "largestContentfulPaintMs": 3370,
-          "speedIndexMs": 917,
+          "firstContentfulPaintMs": 916,
+          "largestContentfulPaintMs": 3108,
+          "speedIndexMs": 920,
           "totalBlockingTimeMs": 0,
           "cumulativeLayoutShift": 0.001,
-          "timeToInteractiveMs": 3385,
-          "totalTransferBytes": 1421970
+          "timeToInteractiveMs": 3130,
+          "totalTransferBytes": 1423999
         },
         "requests": 35
       },
@@ -34,13 +34,13 @@
           "seo": 100
         },
         "metrics": {
-          "firstContentfulPaintMs": 1389,
-          "largestContentfulPaintMs": 1389,
-          "speedIndexMs": 1389,
+          "firstContentfulPaintMs": 916,
+          "largestContentfulPaintMs": 916,
+          "speedIndexMs": 916,
           "totalBlockingTimeMs": 0,
           "cumulativeLayoutShift": 0,
-          "timeToInteractiveMs": 1389,
-          "totalTransferBytes": 943762
+          "timeToInteractiveMs": 916,
+          "totalTransferBytes": 943786
         },
         "requests": 14
       }
@@ -55,13 +55,13 @@
           "seo": 100
         },
         "metrics": {
-          "firstContentfulPaintMs": 264,
-          "largestContentfulPaintMs": 496,
-          "speedIndexMs": 281,
+          "firstContentfulPaintMs": 257,
+          "largestContentfulPaintMs": 562,
+          "speedIndexMs": 339,
           "totalBlockingTimeMs": 0,
           "cumulativeLayoutShift": 0,
-          "timeToInteractiveMs": 496,
-          "totalTransferBytes": 1382702
+          "timeToInteractiveMs": 562,
+          "totalTransferBytes": 1376050
         },
         "requests": 38
       },
@@ -74,13 +74,13 @@
           "seo": 100
         },
         "metrics": {
-          "firstContentfulPaintMs": 255,
-          "largestContentfulPaintMs": 255,
-          "speedIndexMs": 280,
+          "firstContentfulPaintMs": 254,
+          "largestContentfulPaintMs": 254,
+          "speedIndexMs": 254,
           "totalBlockingTimeMs": 0,
           "cumulativeLayoutShift": 0,
-          "timeToInteractiveMs": 255,
-          "totalTransferBytes": 942590
+          "timeToInteractiveMs": 254,
+          "totalTransferBytes": 942601
         },
         "requests": 14
       }
