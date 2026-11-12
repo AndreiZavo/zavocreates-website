@@ -54,12 +54,12 @@ Task 13 of the [plan](superpowers/plans/2026-11-10-zavocreates-framer-to-cloudfl
 
 ## 5. DNS and domain
 
-- [ ] Move DNS from GoDaddy to Cloudflare (guide steps 3a–3e). The domain stays registered at GoDaddy.
-- [ ] Attach `zavocreates.com` to the Worker.
-- [ ] Redirect rule: `www.zavocreates.com` → `https://zavocreates.com` (301, keep the path).
-- [ ] Always Use HTTPS on.
+- [x] Move DNS from GoDaddy to Cloudflare (guide steps 3a–3e). The domain stays registered at GoDaddy.
+- [x] Attach `zavocreates.com` to the Worker.
+- [x] Redirect rule: `www.zavocreates.com` → `https://zavocreates.com` (301, keep the path).
+- [x] Always Use HTTPS on.
 - [ ] Turnstile: remove the `workers.dev` hostname from the widget once `zavocreates.com` serves the site, so tokens are only issued for the real domain.
-- [ ] Remove the `^https://zavocreates\.com/` skip from `.linkinator.config.json` (and its note in `scripts/check-links.ts`). Run `npm run check:links`.
+- [x] Remove the `^https://zavocreates\.com/` skip from `.linkinator.config.json` (and its note in `scripts/check-links.ts`). Run `npm run check:links`.
 
 ## 6. Questions for Andrei
 

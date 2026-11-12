@@ -61,8 +61,14 @@ export const HIDE_SELECTORS = [
   "[data-baseline-hide]",
 ];
 
-/** Rebuild-only content the owner added after the Framer baselines (e.g. the VAT line): taken out of layout. */
-const REMOVE_SELECTOR = "[data-baseline-remove]";
+/**
+ * Rebuild-only content, taken out of layout: what the owner added after the Framer baselines
+ * (e.g. the VAT line), and the Turnstile widget. Turnstile decides per visit whether to show its
+ * "Verify you are human" box (72 px) or nothing, and a test browser often gets the box. With
+ * nothing shown the form's CSS already collapses the widget to zero size, so removing it gives
+ * that same layout on every run.
+ */
+const REMOVE_SELECTOR = "[data-baseline-remove], .cf-turnstile";
 
 // Descendants are listed too: a child with its own `visibility: visible` would otherwise show.
 const HIDE_CSS = `
