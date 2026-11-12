@@ -76,4 +76,4 @@ Task 13 of the [plan](superpowers/plans/2026-11-10-zavocreates-framer-to-cloudfl
 - [ ] Check each arrives at zavocreates@gmail.com as one conversation: private notes first, then the visitor's message. Reply (on the newest email) goes to the sender and quotes only their message.
 - [ ] Search Console: verify the domain, submit `https://zavocreates.com/sitemap.xml`, request indexing. Check the link preview in LinkedIn's post inspector.
 - [ ] Remove the domain from the Framer project, then cancel the Framer plan.
-- [ ] Fill in the Framer plan cost in the README's cost table.
+- [x] Fill in the Framer plan cost in the README's cost table.
