@@ -1,12 +1,12 @@
 {
-  "_minScores": "Each minScore = max(brief floor, Framer mobile median from docs/results/framer-lighthouse.json). Floors: performance 0.90, accessibility 0.95, best-practices 0.95, SEO 1.0. Framer /: 0.82, 0.92, 1.00, 1.00. Framer /pricing: 0.93, 0.89, 1.00, 1.00. So / = 0.90, 0.95, 1.00, 1.00 and /pricing = 0.93, 0.95, 1.00, 1.00. Scores are the median of 3 runs. Never lower these to pass; fix the site.",
+  "_minScores": "Each minScore = max(brief floor, Framer mobile median from docs/results/framer-lighthouse.json). Floors: performance 0.90, accessibility 0.95, best-practices 0.95, SEO 1.0. Framer /: 0.82, 0.92, 1.00, 1.00. Framer /pricing: 0.93, 0.89, 1.00, 1.00. So / = 0.90, 0.95, 1.00, 1.00 and /pricing = 0.93, 0.95, 1.00, 1.00. Scores are the median of 5 runs (shared CI runners vary a lot between loads; see docs/decisions.md R17). Never lower these to pass; fix the site.",
   "ci": {
     "collect": {
       "startServerCommand": "npm run preview",
       "startServerReadyPattern": "Ready on",
       "startServerReadyTimeout": 60000,
       "url": ["http://localhost:8787/", "http://localhost:8787/pricing"],
-      "numberOfRuns": 3
+      "numberOfRuns": 5
     },
     "assert": {
       "assertMatrix": [
