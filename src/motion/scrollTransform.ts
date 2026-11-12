@@ -8,6 +8,10 @@
  *
  * Markup: targets carry data-motion-target="<framerNodeId>"; data-motion-row="<n>" (1-based) picks
  * `rows[n-1].sections` instead of the effect's own sections.
+ *
+ * `lineFollow` breakpoints (timeline fills on phone, owner request R14): the element is the fill of its
+ * parent line and is revealed exactly as far as the viewport line has passed along that line, so the
+ * fill runs continuously down the timeline, one line after the other.
  */
 import { motionValue, scroll, springValue, styleEffect, type MotionValue } from "motion";
 import { toSpringOptions, type EffectOf } from "./transition";
@@ -74,6 +78,19 @@ function sectionsFor(effect: Scroll, el: HTMLElement, media: BreakpointMedia): S
   return effect.sections;
 }
 
+/** y of a fill (`fillHeight` tall, hidden at y = -fillHeight) inside a line `line` once the viewport line is at `at`. */
+export function lineFillY(at: number, line: Box, fillHeight: number): number {
+  const shown = Math.min(Math.max(at - line.top, 0), line.height);
+  return shown - fillHeight;
+}
+
+function follows(effect: Scroll, media: BreakpointMedia): boolean {
+  return (effect.lineFollow ?? []).some((name) => {
+    const query = media[name];
+    return query !== undefined && window.matchMedia(query).matches;
+  });
+}
+
 function measure(framerNodeId: string): Box | undefined {
   const target = document.querySelector<HTMLElement>(`[data-motion-target="${CSS.escape(framerNodeId)}"]`);
   if (!target) return undefined;
@@ -99,9 +116,16 @@ export function scrollTransform(effect: Scroll, elements: HTMLElement[], media: 
     };
 
     scroll((_progress, info) => {
+      const lineOffset = VIEWPORT_LINE[effect.viewport] * info.y.containerLength;
+      const line = el.parentElement;
+      if (line && follows(effect, media)) {
+        const top = line.getBoundingClientRect().top + window.scrollY;
+        write({ y: lineFillY(info.y.current + lineOffset, { top, height: line.clientHeight }, el.offsetHeight) });
+        return;
+      }
       const sections = sectionsFor(effect, el, media);
       if (!sections) return; // this breakpoint has no scroll effect
-      const stops = scrollStops(sections, measure, VIEWPORT_LINE[effect.viewport] * info.y.containerLength);
+      const stops = scrollStops(sections, measure, lineOffset);
       const pose = poseAt(info.y.current, stops);
       if (pose) write(pose);
     });

@@ -345,6 +345,11 @@ export const Effect = z.discriminatedUnion("kind", [
       .strictObject({ tablet: z.array(ScrollSection).nullable(), phone: z.array(ScrollSection).nullable() })
       .optional(),
     rows: z.array(z.strictObject({ row: text, framerNodeId: text, sections: z.array(ScrollSection) })).optional(),
+    /**
+     * Breakpoints where each element instead fills its parent line as the viewport line passes along
+     * that line (fill: element height; empty at the first section's pose). Owner request, not Framer.
+     */
+    lineFollow: z.array(z.enum(["tablet", "phone"])).optional(),
   }),
   z.strictObject({
     ...base,

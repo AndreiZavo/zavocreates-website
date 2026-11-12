@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { Motion, type Transition } from "../../src/content/schema";
 import { toMotionOptions, toSpringOptions } from "../../src/motion/transition";
-import { poseAt, scrollStops } from "../../src/motion/scrollTransform";
+import { lineFillY, poseAt, scrollStops } from "../../src/motion/scrollTransform";
 
 const motion = Motion.parse(JSON.parse(readFileSync(join(__dirname, "..", "..", "content", "motion.json"), "utf8")));
 
@@ -93,9 +93,9 @@ describe("toSpringOptions", () => {
     });
   });
 
-  it("passes a duration spring's duration in ms, the unit springValue resolves it in", () => {
+  it("passes a duration spring's time as motion's visualDuration (Framer's Time + Bounce spring)", () => {
     // cursor: { type: "spring", bounce: 0.2, duration: 0.4 }
-    expect(toSpringOptions({ type: "spring", duration: 0.4, bounce: 0.2, delay: 0 })).toEqual({ duration: 400, bounce: 0.2 });
+    expect(toSpringOptions({ type: "spring", duration: 0.4, bounce: 0.2, delay: 0 })).toEqual({ visualDuration: 0.4, bounce: 0.2 });
   });
 
   it("returns undefined for tweens and instant transitions", () => {
@@ -136,5 +136,16 @@ describe("scroll section maths (Framer 'Scroll Section' transform)", () => {
   it("returns no stops when no target exists", () => {
     expect(scrollStops([start], measure, 800)).toEqual([]);
     expect(poseAt(10, [])).toBeUndefined();
+  });
+});
+
+describe("lineFillY (phone timeline: continuous fill, R14)", () => {
+  const line = { top: 1000, height: 120 };
+  it("is hidden until the viewport line reaches the line, then reveals exactly what it has passed", () => {
+    expect(lineFillY(900, line, 180)).toBe(-180);
+    expect(lineFillY(1000, line, 180)).toBe(-180);
+    expect(lineFillY(1060, line, 180)).toBe(-120);
+    expect(lineFillY(1120, line, 180)).toBe(-60);
+    expect(lineFillY(2000, line, 180)).toBe(-60);
   });
 });

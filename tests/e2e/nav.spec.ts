@@ -47,6 +47,27 @@ test.describe("phone menu, motion allowed", () => {
   });
 });
 
+test.describe("phone menu link", () => {
+  test.use({ viewport: PHONE, reducedMotion: "no-preference" });
+
+  test("closes the menu and scrolls smoothly to the section", async ({ page }) => {
+    await page.goto("/", { waitUntil: "load" });
+    await toggle(page).click();
+    const about = page.locator('.nav__links a[href="/#about"]');
+    await expect(about).toBeVisible();
+    await about.click();
+    // Smooth: shortly after the tap the page is on its way, not already there.
+    await page.waitForTimeout(100);
+    const target = await page.evaluate(() => document.getElementById("about")!.getBoundingClientRect().top + scrollY);
+    expect(await page.evaluate(() => scrollY)).toBeLessThan(target - 1);
+    await expect.poll(() => page.evaluate(() => Math.abs(document.getElementById("about")!.getBoundingClientRect().top)), { timeout: 4000 }).toBeLessThan(2);
+    await expect(toggle(page)).toHaveAttribute("aria-expanded", "false");
+    await expect(page.locator(".nav")).not.toHaveAttribute("data-closing", /.*/);
+    await expect(about).toBeHidden();
+    expect(new URL(page.url()).hash).toBe("#about");
+  });
+});
+
 test.describe("phone menu without JavaScript", () => {
   test.use({ viewport: PHONE, javaScriptEnabled: false });
 

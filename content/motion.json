@@ -816,7 +816,10 @@
     "transition": {
       "type": "instant"
     },
-    "note": "Scroll-linked (no spring set in Framer). Row 05 has no visible line. On /pricing-ro Framer's section targets still point at the EN page rows; use the RO page's own rows."
+    "note": "Scroll-linked (no spring set in Framer). Row 05 has no visible line. On /pricing-ro Framer's section targets still point at the EN page rows; use the RO page's own rows. lineFollow (owner request, R14): on phone each line fills as the viewport middle passes along it, one continuous fill down the timeline; Framer fills a row's two phone lines together.",
+    "lineFollow": [
+      "phone"
+    ]
   },
   "pricing.timeline.row.appear": {
     "kind": "appear",

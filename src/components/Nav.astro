@@ -77,6 +77,8 @@ const T = "Tablet & Phone / Closed";
   // animation is added by src/motion/scrollVariant.ts only when motion is allowed. The trigger is the
   // whole "Avatar & Button Wrap" ([data-motion-trigger]), as on Framer; on desktop the toggle is
   // hidden and the click belongs to nav.scroll (reopen the pill).
+  import { scrollToElement } from "../motion/smoothScroll";
+
   for (const nav of document.querySelectorAll<HTMLElement>(".nav")) {
     const toggle = nav.querySelector<HTMLButtonElement>(".nav__toggle");
     const head = nav.querySelector<HTMLElement>("[data-motion-trigger]");
@@ -96,10 +98,17 @@ const T = "Tablet & Phone / Closed";
       if (getComputedStyle(toggle).display === "none") return;
       setOpen(nav.dataset["state"] !== "open");
     });
-    // Choosing a link in the open menu closes it (owner request; the menu otherwise covers the section).
+    // A link to a section of this page scrolls there smoothly, and choosing a link in the open
+    // tablet/phone menu closes it (owner request; the menu otherwise covers the section).
     nav.querySelector("#nav-menu")?.addEventListener("click", (event) => {
       const link = event.target instanceof Element ? event.target.closest("a") : null;
-      if (link && nav.dataset["state"] === "open" && getComputedStyle(toggle).display !== "none") setOpen(false);
+      if (!link) return;
+      if (nav.dataset["state"] === "open" && getComputedStyle(toggle).display !== "none") setOpen(false);
+      const section = link.pathname === location.pathname && link.hash ? document.getElementById(link.hash.slice(1)) : null;
+      if (!section) return;
+      event.preventDefault();
+      history.pushState(null, "", link.hash);
+      scrollToElement(section);
     });
   }
 </script>
@@ -367,7 +376,7 @@ const T = "Tablet & Phone / Closed";
       flex-direction: column;
     }
 
-    html.js .nav:not([data-state="open"]) .nav__menu {
+    html.js .nav:not([data-state="open"], [data-closing]) .nav__menu {
       display: none;
     }
 
@@ -382,6 +391,7 @@ const T = "Tablet & Phone / Closed";
     }
 
     .nav[data-state="open"],
+    .nav[data-closing],
     html:not(.js) .nav {
       width: 300px;
       justify-content: flex-end;
@@ -390,22 +400,26 @@ const T = "Tablet & Phone / Closed";
     }
 
     .nav[data-state="open"] .nav__head,
+    .nav[data-closing] .nav__head,
     html:not(.js) .nav .nav__head {
       justify-content: space-between;
       gap: 10px;
     }
 
-    .nav[data-state="open"] .status__status,
+    /* While closing, the availability label is already back, so the pill folds to its closed width. */
+    .nav[data-state="open"]:not([data-closing]) .status__status,
     html:not(.js) .nav .status__status {
       display: none;
     }
 
     .nav[data-state="open"] .nav__menu,
+    .nav[data-closing] .nav__menu,
     html:not(.js) .nav .nav__menu {
       display: flex;
     }
 
     .nav[data-state="open"] .nav__links,
+    .nav[data-closing] .nav__links,
     html:not(.js) .nav .nav__links {
       width: 100%;
       gap: 40px;

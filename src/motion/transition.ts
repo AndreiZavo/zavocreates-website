@@ -6,8 +6,6 @@
 import type { AnimationOptions, SpringOptions, ValueAnimationTransition } from "motion";
 import type { Effect, Transition } from "../content/schema";
 
-const MS_PER_SECOND = 1000;
-
 /** One effect kind out of the Effect union. */
 export type EffectOf<K extends Effect["kind"]> = Extract<Effect, { kind: K }>;
 
@@ -42,8 +40,11 @@ export const toValueOptions = (t: Transition): ValueAnimationTransition<number> 
 
 /**
  * Options for motion's springValue(), which smooths a followed value (scroll transforms, cursor).
- * A physics spring passes through; a duration spring passes duration in ms, which is the unit
- * springValue's spring resolver takes (Framer converts the same way). Tweens and instant: undefined.
+ * A physics spring passes through. A duration spring is Framer's "Time" + "Bounce" spring, whose time
+ * is the visual duration: motion turns it into stiffness/damping, so a value that is retargeted on
+ * every pointer move keeps its velocity and trails smoothly. (Passed as a plain duration, motion re-solves
+ * a duration spring on each retarget and the cursor dot lagged ~30% more than on Framer.)
+ * Tweens and instant: undefined.
  */
 export function toSpringOptions(t: Transition): SpringOptions | undefined {
   if (t.type !== "spring") return undefined;
@@ -51,5 +52,5 @@ export function toSpringOptions(t: Transition): SpringOptions | undefined {
     return defined({ stiffness: t.stiffness, damping: t.damping, mass: t.mass });
   }
   if (t.duration === undefined) return undefined;
-  return defined({ duration: t.duration * MS_PER_SECOND, bounce: t.bounce });
+  return defined({ visualDuration: t.duration, bounce: t.bounce });
 }
