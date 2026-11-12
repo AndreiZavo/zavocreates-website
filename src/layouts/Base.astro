@@ -125,7 +125,7 @@ const cfAnalyticsToken = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN;
         if (config.dataset["desktop"]) media.desktop = config.dataset["desktop"];
         if (config.dataset["tablet"]) media.tablet = config.dataset["tablet"];
         if (config.dataset["phone"]) media.phone = config.dataset["phone"];
-        initMotion(JSON.parse(config.textContent) as Record<string, Effect>, media);
+        void initMotion(JSON.parse(config.textContent) as Record<string, Effect>, media);
       }
     </script>
     {/* Snippet from https://developers.cloudflare.com/web-analytics/faq/ (manual install, "before the

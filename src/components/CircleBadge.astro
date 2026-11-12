@@ -157,7 +157,9 @@ const { lottie } = cycle;
         const el = lotties.get(entry.target);
         if (!entry.isIntersecting || !el) continue;
         io.unobserve(entry.target);
-        void mount(el);
+        // Not during page load: the player and its JSON are decoration, so they wait for an idle moment.
+        if ("requestIdleCallback" in window) requestIdleCallback(() => void mount(el), { timeout: 2000 });
+        else setTimeout(() => void mount(el), 0);
       }
     });
     lotties.forEach((_el, badge) => io.observe(badge));

@@ -45,11 +45,26 @@ import { variant } from "./variant";
 
 export type { BreakpointMedia };
 
-export function initMotion(effects: Record<string, Effect>, media: BreakpointMedia = {}): void {
+/**
+ * Give the browser a turn between effects, so setting them all up is many short tasks instead of one
+ * long one that blocks input and rendering on slow phones (Lighthouse "Total Blocking Time").
+ */
+function yieldToMain(): Promise<void> {
+  const scheduler = (globalThis as { scheduler?: { yield?: () => Promise<void> } }).scheduler;
+  if (scheduler?.yield) return scheduler.yield();
+  return new Promise((resolve) => setTimeout(resolve, 0));
+}
+
+export async function initMotion(effects: Record<string, Effect>, media: BreakpointMedia = {}): Promise<void> {
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   document.documentElement.classList.add("motion-ready");
 
-  for (const [id, effect] of Object.entries(effects)) {
+  // Effects that hide elements until they appear run first, all in this task, so nothing is painted
+  // visible and then hidden; every other effect gets its own task.
+  const entries = Object.entries(effects);
+  const ordered = [...entries.filter(([, e]) => e.kind === "appear"), ...entries.filter(([, e]) => e.kind !== "appear")];
+  for (const [index, [id, effect]] of ordered.entries()) {
+    if (effect.kind !== "appear" && index > 0) await yieldToMain();
     const elements = [...document.querySelectorAll<HTMLElement>(`[data-motion="${CSS.escape(id)}"]`)];
     switch (effect.kind) {
       case "smoothScroll":
