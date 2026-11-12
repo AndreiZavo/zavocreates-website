@@ -1,7 +1,7 @@
 /**
  * Contact form behaviour (progressive enhancement of src/components/ContactForm.astro).
  *
- * - Renders the Turnstile widget into div.cf-turnstile (explicit render, appearance
+ * - Loads Turnstile when the form comes near (loadTurnstileNear) and renders the widget into div.cf-turnstile (explicit render, appearance
  *   "interaction-only", so it takes no space unless the visitor has to interact). Test sitekey and
  *   API: https://developers.cloudflare.com/turnstile/troubleshooting/testing/ and
  *   https://developers.cloudflare.com/turnstile/get-started/client-side-rendering/
@@ -53,6 +53,34 @@ function spinnerEffect(): Extract<Effect, { kind: "loop" }> | undefined {
   return effect?.kind === "loop" ? effect : undefined;
 }
 
+const TURNSTILE_SRC = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+/** The script starts loading once the form is within one viewport height of the screen. */
+const LOAD_AHEAD = "100% 0px";
+
+/**
+ * Turnstile's script (and its iframe) loads only when the visitor nears the form or focuses one of
+ * its fields, not with the page: at the top of the page it competed with the hero for the first
+ * paint (Lighthouse LCP on slow CI runners). `onReady` runs once the API is available.
+ */
+function loadTurnstileNear(form: HTMLFormElement, onReady: () => void): void {
+  if (window.turnstile) return onReady();
+  let started = false;
+  const start = (): void => {
+    if (started) return;
+    started = true;
+    observer.disconnect();
+    form.removeEventListener("focusin", start);
+    const script = document.createElement("script");
+    script.src = TURNSTILE_SRC;
+    script.async = true;
+    script.addEventListener("load", onReady);
+    document.head.appendChild(script);
+  };
+  const observer = new IntersectionObserver((entries) => entries.some((e) => e.isIntersecting) && start(), { rootMargin: LOAD_AHEAD });
+  observer.observe(form);
+  form.addEventListener("focusin", start);
+}
+
 function enhance(form: HTMLFormElement): void {
   const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
   const status = form.querySelector<HTMLElement>("[data-form-status]");
@@ -81,8 +109,7 @@ function enhance(form: HTMLFormElement): void {
         "after-interactive-callback": () => container.toggleAttribute("data-interactive", false),
       }) ?? undefined;
   };
-  if (window.turnstile) renderWidget();
-  else document.querySelector("script[data-turnstile-script]")?.addEventListener("load", renderWidget);
+  loadTurnstileNear(form, renderWidget);
 
   const token = (): string =>
     window.turnstile?.getResponse(widgetId) ||

@@ -14,14 +14,16 @@ interface Props {
   sizes?: string;
   class?: string;
   eager?: boolean;
+  /** The page's LCP image: fetched at high priority (implies eager). */
+  priority?: boolean;
   alt?: string;
 }
 
-const { image, width, sizes, class: className, eager = false, alt = image.alt } = Astro.props;
+const { image, width, sizes, class: className, eager = false, priority = false, alt = image.alt } = Astro.props;
 const meta = rasterOf(image.src);
 const widths = meta ? [...new Set([width, width * 2].map((w) => Math.min(Math.round(w), meta.width)))] : [];
 const height = Math.round((width * image.height) / image.width);
-const loading = eager ? "eager" : "lazy";
+const loading = eager || priority ? "eager" : "lazy";
 ---
 
 {
@@ -35,6 +37,7 @@ const loading = eager ? "eager" : "lazy";
       height={height}
       format="webp"
       loading={loading}
+      fetchpriority={priority ? "high" : undefined}
       decoding="async"
       class={className}
     />

@@ -39,7 +39,13 @@ async function stubTurnstile(page: Page): Promise<void> {
 }
 
 const turnstile = (page: Page) =>
-  page.evaluate(() => (window as unknown as { __turnstile: { renders: { sitekey: string; appearance: string }[]; resets: number } }).__turnstile);
+  page.evaluate(
+    () =>
+      (window as unknown as { __turnstile?: { renders: { sitekey: string; appearance: string }[]; resets: number } }).__turnstile ?? {
+        renders: [],
+        resets: 0,
+      },
+  );
 
 async function fill(page: Page): Promise<void> {
   const form = page.locator("#contact-form");
@@ -52,8 +58,9 @@ async function fill(page: Page): Promise<void> {
 async function open(page: Page): Promise<void> {
   await stubTurnstile(page);
   await page.goto("/", { waitUntil: "load" });
-  await expect.poll(async () => (await turnstile(page)).renders.length).toBe(1);
+  // Turnstile loads only once the form is near the screen (src/scripts/contact-form.ts).
   await page.locator("#contact-form").scrollIntoViewIfNeeded();
+  await expect.poll(async () => (await turnstile(page)).renders.length).toBe(1);
 }
 
 const status = (page: Page) => page.locator("#contact-form [data-form-status]");
@@ -204,14 +211,24 @@ test.describe("contact form with JavaScript", () => {
     });
   });
 
-  test("the Turnstile script and the form script load only on the page with the form", async ({ page }) => {
+  test("the Turnstile script loads only on the page with the form, once the form is near", async ({ page }) => {
     await stubTurnstile(page);
-    await page.goto("/pricing");
-    await expect(page.locator('script[src*="challenges.cloudflare.com"]')).toHaveCount(0);
-    await page.goto("/");
-    await expect(page.locator('script[src*="challenges.cloudflare.com"]')).toHaveCount(1);
-    await expect(page.locator('script[src*="challenges.cloudflare.com"]')).toHaveAttribute("async", "");
-    await expect(page.locator('script[src*="challenges.cloudflare.com"]')).toHaveAttribute("defer", "");
+    const script = page.locator('script[src*="challenges.cloudflare.com"]');
+    await page.goto("/pricing", { waitUntil: "load" });
+    await expect(script).toHaveCount(0);
+    await page.goto("/", { waitUntil: "load" });
+    // Not with the page: it would compete with the hero for the first paint.
+    await expect(script).toHaveCount(0);
+    await page.locator("#contact-form").scrollIntoViewIfNeeded();
+    await expect(script).toHaveCount(1);
+    expect(await script.evaluate((s: HTMLScriptElement) => s.async)).toBe(true);
+  });
+
+  test("focusing a field loads Turnstile even before the form is near", async ({ page }) => {
+    await stubTurnstile(page);
+    await page.goto("/", { waitUntil: "load" });
+    await page.locator('#contact-form [name="name"]').focus({ preventScroll: true } as never);
+    await expect.poll(async () => (await turnstile(page)).renders.length).toBe(1);
   });
 });
 
