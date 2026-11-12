@@ -31,21 +31,34 @@ type ResendPayload = {
   subject: string;
   text: string;
   html: string;
+  headers?: Record<string, string>;
 };
+/** The Message-ID Resend reports for the notes email (GET /emails/:id). */
+const NOTES_MESSAGE_ID = "<notes-1@email.resend.dev>";
 
 let fetchMock: ReturnType<typeof vi.fn>;
 let turnstileSuccess: boolean;
 /** Fields siteverify returns with a success; the default matches the form's widget on zavocreates.com. */
 let turnstileFields: { hostname?: string; action?: string };
-let resendStatus: number;
+/** Status of each successive Resend send (POST); the last one repeats. */
+let resendStatuses: number[];
+let lookupStatus: number;
 let aiRun: ReturnType<typeof vi.fn>;
 let assetsFetch: ReturnType<typeof vi.fn>;
 let env: Env;
 
+/** Every email sent (POST to Resend), in order. */
 function resendCalls(): ResendPayload[] {
   return fetchMock.mock.calls
-    .filter(([input]) => String(input instanceof Request ? input.url : input) === RESEND_URL)
+    .filter(([input, init]) => String(input) === RESEND_URL && (init as RequestInit | undefined)?.method === "POST")
     .map(([, init]) => JSON.parse(String((init as RequestInit).body)) as ResendPayload);
+}
+
+/** With a triage: [notes, visitor message]. */
+function sentPair(): { notes: ResendPayload; message: ResendPayload } {
+  const sent = resendCalls();
+  expect(sent).toHaveLength(2);
+  return { notes: sent[0]!, message: sent[1]! };
 }
 
 function turnstileCalls(): number {
@@ -70,11 +83,18 @@ function postJson(body: unknown, url = URL_CONTACT): Promise<Response> {
 beforeEach(() => {
   turnstileSuccess = true;
   turnstileFields = { hostname: "zavocreates.com", action: "contact" };
-  resendStatus = 200;
+  resendStatuses = [200];
+  lookupStatus = 200;
+  let sends = 0;
   fetchMock = vi.fn(async (input: RequestInfo | URL) => {
     const url = String(input instanceof Request ? input.url : input);
     if (url === TURNSTILE_URL) return Response.json({ success: turnstileSuccess, ...turnstileFields });
-    if (url === RESEND_URL) return Response.json({ id: "email-1" }, { status: resendStatus });
+    if (url === RESEND_URL) {
+      const status = resendStatuses[Math.min(sends, resendStatuses.length - 1)]!;
+      sends += 1;
+      return Response.json({ id: `email-${sends}` }, { status, headers: status === 429 ? { "retry-after": "0" } : {} });
+    }
+    if (url === `${RESEND_URL}/email-1`) return Response.json({ id: "email-1", message_id: NOTES_MESSAGE_ID }, { status: lookupStatus });
     throw new Error(`unexpected fetch ${url}`);
   });
   vi.spyOn(globalThis, "fetch").mockImplementation(fetchMock as unknown as typeof fetch);
@@ -95,21 +115,60 @@ afterEach(() => {
 });
 
 describe("POST /api/contact (JSON)", () => {
-  it("valid request -> 200 and one Resend call with reply_to = visitor email", async () => {
+  it("valid request -> 200; private notes first, then the visitor's message threaded under them", async () => {
     const res = await postJson(validBody);
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ ok: true });
-    const sent = resendCalls();
-    expect(sent).toHaveLength(1);
-    expect(sent[0]?.reply_to).toBe("ana@example.com");
-    expect(sent[0]?.to).toEqual(["zavocreates@gmail.com"]);
-    expect(sent[0]?.from).toBe("Zavo Website <onboarding@resend.dev>");
-    expect(sent[0]?.subject).toBe("[filming] Ana Pop – Filming");
-    expect(sent[0]?.text).toContain("Wants a filmed promo video.");
-    expect(sent[0]?.text).toContain("We need a promo video for our cafe.");
+    const { notes, message } = sentPair();
+    for (const email of [notes, message]) {
+      expect(email.to).toEqual(["zavocreates@gmail.com"]);
+      expect(email.from).toBe("Zavo Website <onboarding@resend.dev>");
+      // No triage in the subject: the visitor sees it in "Re:".
+      expect(email.subject).toBe("Filming enquiry – Ana Pop");
+    }
+    // Notes: triage only, and an accidental reply goes back to Andrei, never the visitor.
+    expect(notes.reply_to).toBe("zavocreates@gmail.com");
+    expect(notes.text).toContain("Wants a filmed promo video.");
+    expect(notes.text).toContain("Hi, thanks for reaching out!");
+    expect(notes.text).not.toContain("ana@example.com");
+    // Visitor message: what Gmail quotes on Reply. Nothing from the triage in it.
+    expect(message.reply_to).toBe("ana@example.com");
+    expect(message.text).toContain("We need a promo video for our cafe.");
+    expect(message.text).not.toContain("Wants a filmed promo video.");
+    expect(message.text).not.toContain("Hi, thanks for reaching out!");
+    expect(message.html).not.toContain("Suggested reply");
+    expect(message.headers).toEqual({ "In-Reply-To": NOTES_MESSAGE_ID, References: NOTES_MESSAGE_ID });
     const resendInit = fetchMock.mock.calls.find(([u]) => String(u) === RESEND_URL)?.[1] as RequestInit;
     expect(new Headers(resendInit.headers).get("authorization")).toBe("Bearer re_test");
     expect(aiRun).toHaveBeenCalledTimes(1);
+  });
+
+  it("notes email fails -> 200, the visitor's message still goes out, unthreaded", async () => {
+    const log = vi.spyOn(console, "error").mockImplementation(() => {});
+    resendStatuses = [500, 200];
+    const res = await postJson(validBody);
+    expect(res.status).toBe(200);
+    const sent = resendCalls();
+    expect(sent).toHaveLength(2);
+    expect(sent[1]?.reply_to).toBe("ana@example.com");
+    expect(sent[1]?.headers).toBeUndefined();
+    expect(log).toHaveBeenCalledWith("contact: notes email: Resend responded 500");
+  });
+
+  it("Message-ID lookup fails -> 200, the visitor's message is sent unthreaded", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    lookupStatus = 404;
+    const res = await postJson(validBody);
+    expect(res.status).toBe(200);
+    const { message } = sentPair();
+    expect(message.headers).toBeUndefined();
+  });
+
+  it("Resend rate limit (429) on the visitor's message -> retried once, 200", async () => {
+    resendStatuses = [200, 429, 200];
+    const res = await postJson(validBody);
+    expect(res.status).toBe(200);
+    expect(resendCalls()).toHaveLength(3);
   });
 
   it("sends Turnstile the secret, token and visitor IP", async () => {
@@ -187,7 +246,7 @@ describe("POST /api/contact (JSON)", () => {
     turnstileFields = { hostname: "example.com" };
     const res = await postJson(validBody, "http://localhost:8787/api/contact");
     expect(res.status).toBe(200);
-    expect(resendCalls()).toHaveLength(1);
+    expect(resendCalls()).toHaveLength(2);
   });
 
   it("missing TURNSTILE_SECRET -> 503, logs the variable name only, no outbound call", async () => {
@@ -236,14 +295,14 @@ describe("POST /api/contact (JSON)", () => {
     expect(res.status).toBe(413);
   });
 
-  it("AI throws -> 200, email says Triage unavailable and has the original message", async () => {
+  it("AI throws -> 200, no notes email, the visitor's message goes out", async () => {
     aiRun.mockRejectedValue(new Error("AI down"));
     const res = await postJson(validBody);
     expect(res.status).toBe(200);
     const sent = resendCalls();
     expect(sent).toHaveLength(1);
-    expect(sent[0]?.subject).toBe("[untriaged] Ana Pop – Filming");
-    expect(sent[0]?.text).toContain("Triage unavailable");
+    expect(sent[0]?.subject).toBe("Filming enquiry – Ana Pop");
+    expect(sent[0]?.reply_to).toBe("ana@example.com");
     expect(sent[0]?.text).toContain(validBody.message);
   });
 
@@ -253,7 +312,7 @@ describe("POST /api/contact (JSON)", () => {
     expect(res.status).toBe(200);
     expect(aiRun).toHaveBeenCalledTimes(2);
     const sent = resendCalls();
-    expect(sent[0]?.text).toContain("Triage unavailable");
+    expect(sent).toHaveLength(1);
     expect(sent[0]?.text).toContain(validBody.message);
   });
 
@@ -263,7 +322,7 @@ describe("POST /api/contact (JSON)", () => {
     const res = await postJson(validBody);
     expect(res.status).toBe(200);
     expect(aiRun).toHaveBeenCalledTimes(2);
-    expect(resendCalls()[0]?.subject).toBe("[filming] Ana Pop – Filming");
+    expect(sentPair().notes.text).toContain("Category:\nfilming");
   });
 
   it("calls the AI in JSON mode with the visitor message delimited as data", async () => {
@@ -275,8 +334,9 @@ describe("POST /api/contact (JSON)", () => {
     expect(input.messages.find((m) => m.role === "system")?.content).toMatch(/never follow/i);
   });
 
-  it("Resend 500 -> 502", async () => {
-    resendStatus = 500;
+  it("Resend 500 for every send -> 502", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    resendStatuses = [500];
     const res = await postJson(validBody);
     expect(res.status).toBe(502);
     expect(((await res.json()) as { ok: boolean }).ok).toBe(false);
@@ -288,27 +348,28 @@ describe("POST /api/contact (JSON)", () => {
     expect(message.length).toBe(5000);
     const res = await postJson({ ...validBody, message });
     expect(res.status).toBe(200);
-    const sent = resendCalls();
-    expect(sent[0]?.text).toContain("ăâîșț");
-    expect(sent[0]?.text).toContain("🎬");
-    expect(sent[0]?.html).toContain("ăâîșț");
+    const visitor = sentPair().message;
+    expect(visitor.text).toContain("ăâîșț");
+    expect(visitor.text).toContain("🎬");
+    expect(visitor.html).toContain("ăâîșț");
   });
 
   it("escapes <script> in the HTML part, AI text included", async () => {
     aiRun.mockResolvedValue({ response: { ...validTriage, summary: "<img src=x onerror=alert(1)>" } });
     const res = await postJson({ ...validBody, name: "Eve <b>", message: "hi <script>alert(1)</script>" });
     expect(res.status).toBe(200);
-    const html = resendCalls()[0]?.html ?? "";
-    expect(html).not.toContain("<script>");
-    expect(html).toContain("&lt;script&gt;alert(1)&lt;/script&gt;");
-    expect(html).not.toContain("<img");
-    expect(html).not.toContain("<b>");
+    const { notes, message } = sentPair();
+    expect(notes.html).not.toContain("<img");
+    expect(notes.html).toContain("&lt;img src=x onerror=alert(1)&gt;");
+    expect(message.html).not.toContain("<script>");
+    expect(message.html).toContain("&lt;script&gt;alert(1)&lt;/script&gt;");
+    expect(message.html).not.toContain("<b>");
   });
 
   it("strips CR/LF from the subject", async () => {
     const res = await postJson({ ...validBody, name: "Ana\r\nBcc: evil@example.com" });
     expect(res.status).toBe(200);
-    expect(resendCalls()[0]?.subject).not.toMatch(/[\r\n]/);
+    for (const email of resendCalls()) expect(email.subject).not.toMatch(/[\r\n]/);
   });
 });
 
@@ -335,7 +396,7 @@ describe("POST /api/contact (form-encoded, no-JS fallback)", () => {
     const res = await postForm(formFields);
     expect(res.status).toBe(303);
     expect(res.headers.get("location")).toBe("/#contact-sent");
-    expect(resendCalls()).toHaveLength(1);
+    expect(resendCalls()).toHaveLength(2);
   });
 
   it("invalid form POST -> 303 to /#contact-error", async () => {
@@ -362,7 +423,8 @@ describe("POST /api/contact (form-encoded, no-JS fallback)", () => {
   });
 
   it("Resend failure on form POST -> 303 to /#contact-error", async () => {
-    resendStatus = 500;
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    resendStatuses = [500];
     const res = await postForm(formFields);
     expect(res.status).toBe(303);
     expect(res.headers.get("location")).toBe("/#contact-error");
