@@ -10,3 +10,4 @@ playwright-report
 .astro
 .DS_Store
 !.env.example
+.claude/
