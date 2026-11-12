@@ -1,0 +1,146 @@
+---
+import antonioHero from "@fontsource/antonio/files/antonio-latin-700-normal.woff2?url";
+import interHero from "@fontsource/inter/files/inter-latin-300-normal.woff2?url";
+import { getAllMotion, getMotion, getSite, getTokens } from "../content/load";
+import { getImage } from "astro:assets";
+import { rasterOf } from "../content/images";
+import type { Effect, Transition } from "../content/schema";
+import "../styles/tokens.css";
+import "../styles/global.css";
+
+interface Props {
+  lang: "en" | "ro";
+  title: string;
+  description: string;
+  path: string;
+  alternates?: { lang: string; path: string }[];
+  /** Ids of the content/motion.json effects whose data-motion elements are on this page. */
+  motion?: string[];
+  /** Keep the page out of search results (404): robots noindex and no canonical link. */
+  noindex?: boolean;
+}
+
+const { lang, title, description, path, alternates = [], motion = [], noindex = false } = Astro.props;
+const site = getSite();
+const abs = (p: string): string => new URL(p, site.url).href;
+const canonical = abs(path);
+const ogImage = abs(site.ogImage.src);
+
+// The favicon original is a 2731 px, 2 MB PNG; browsers show it at 16-32 px (64 px on 2x screens).
+// Serving the original made it the largest download on every page.
+const FAVICON_SIZE = 64;
+const faviconMeta = rasterOf(site.favicon.src);
+const favicon = faviconMeta
+  ? (await getImage({ src: faviconMeta, width: FAVICON_SIZE, height: FAVICON_SIZE, format: "png" })).src
+  : site.favicon.src;
+
+// Page fade: every number comes from the "page" effect in content/motion.json.
+const pageEffect = getMotion("page");
+if (pageEffect.kind !== "page") throw new Error('motion "page" must be a page effect');
+const timing = (t: Transition): { duration: string; ease: string; delay: string } => {
+  if (t.type !== "tween") throw new Error(`Page transition must be a tween, got "${t.type}"`);
+  return { duration: `${t.duration}s`, ease: `cubic-bezier(${t.ease.join(", ")})`, delay: `${t.delay ?? 0}s` };
+};
+const opacity = (value: number | undefined, where: string): number => {
+  if (value === undefined) throw new Error(`motion "page" ${where} has no opacity`);
+  return value;
+};
+const enter = timing(pageEffect.enter.transition);
+const exit = timing(pageEffect.exit.transition);
+const pageVars = Object.entries({
+  "--page-enter-duration": enter.duration,
+  "--page-enter-ease": enter.ease,
+  "--page-enter-delay": enter.delay,
+  "--page-enter-from-opacity": opacity(pageEffect.enter.from.opacity, "enter.from"),
+  "--page-enter-to-opacity": opacity(pageEffect.enter.to.opacity, "enter.to"),
+  "--page-exit-duration": exit.duration,
+  "--page-exit-ease": exit.ease,
+  "--page-exit-delay": exit.delay,
+  "--page-exit-to-opacity": opacity(pageEffect.exit.to.opacity, "exit.to"),
+})
+  .map(([name, value]) => `${name}:${value}`)
+  .join(";");
+
+// Motion runtime config: every page:"all" effect (smooth scroll, nav, cursor; the "page" fade is CSS)
+// plus the ids the page declares.
+const siteWide = Object.entries(getAllMotion())
+  .filter(([, e]) => e.page === "all" && e.kind !== "page")
+  .map(([id]) => id);
+const effects: Record<string, Effect> = Object.fromEntries(
+  [...new Set([...siteWide, ...motion])].map((id) => [id, getMotion(id)]),
+);
+const motionConfig = JSON.stringify(effects).replaceAll("<", "\\u003c");
+const media = (name: "desktop" | "tablet" | "phone"): string | undefined => getTokens().breakpoints.find((b) => b.name === name)?.media;
+
+// Cloudflare Web Analytics (cookieless). The site token is public; it is set as a build variable at
+// go-live. Unset (local dev, tests, CI): no beacon at all.
+const cfAnalyticsToken = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN;
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {/* html.js before first paint: CSS keeps no-JS fallbacks (the open tablet/phone menu in Nav.astro)
+        for visitors without JavaScript only. */}
+    <script is:inline>document.documentElement.classList.add("js");</script>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
+    {alternates.map((a) => <link rel="alternate" hreflang={a.lang} href={abs(a.path)} />)}
+    <link rel="icon" type="image/png" sizes={`${FAVICON_SIZE}x${FAVICON_SIZE}`} href={favicon} />
+    {/* The noise GIF (756 KB, decorative CSS background in Noise.astro) is requested here at low
+        priority. Left to the background, Chrome fetches it at High priority because it is in the
+        viewport, and it competes with the hero portrait, the LCP image. */}
+    {/* Under prefers-reduced-motion: reduce the noise layer shows a still frame instead (Noise.astro),
+        so the GIF is only preloaded for visitors who get the animation. */}
+    <link rel="preload" as="image" href={site.noise.src} fetchpriority="low" media="(prefers-reduced-motion: no-preference)" />
+    <link rel="preload" as="font" type="font/woff2" href={antonioHero} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={interHero} crossorigin />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content={String(site.ogImage.width)} />
+    <meta property="og:image:height" content={String(site.ogImage.height)} />
+    <meta property="og:image:alt" content={site.ogImage.alt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <style is:inline set:html={`:root{${pageVars}}`} />
+  </head>
+  <body>
+    <slot />
+    <script is:inline type="application/json" id="motion-config" data-desktop={media("desktop")} data-tablet={media("tablet")} data-phone={media("phone")} set:html={motionConfig} />
+    <script>
+      import { initMotion, type BreakpointMedia } from "../motion";
+      import type { Effect } from "../content/schema";
+
+      const config = document.getElementById("motion-config");
+      if (config?.textContent) {
+        const media: BreakpointMedia = {};
+        if (config.dataset["desktop"]) media.desktop = config.dataset["desktop"];
+        if (config.dataset["tablet"]) media.tablet = config.dataset["tablet"];
+        if (config.dataset["phone"]) media.phone = config.dataset["phone"];
+        initMotion(JSON.parse(config.textContent) as Record<string, Effect>, media);
+      }
+    </script>
+    {/* Snippet from https://developers.cloudflare.com/web-analytics/faq/ (manual install, "before the
+        ending body tag": https://developers.cloudflare.com/web-analytics/get-started/). Cloudflare's
+        current snippet is type="module", which the HTML spec always defers; a literal `defer` attribute
+        is not allowed on module scripts. The beacon sets no cookies. */}
+    {
+      cfAnalyticsToken && (
+        <script
+          is:inline
+          type="module"
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon={JSON.stringify({ token: cfAnalyticsToken })}
+        />
+      )
+    }
+  </body>
+</html>

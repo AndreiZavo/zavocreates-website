@@ -1,0 +1,70 @@
+---
+/**
+ * Pricing FAQ (Framer "Questions Accordion Wrap" / "… RO"): the same Service Accordion items as the
+ * home services list (markup and styles shared through styles/accordion.css). <details> works without
+ * JS; with JS, pricing.faq.accordion (variant.ts) keeps one item open and animates the panel.
+ * Lines are the desktop copy at every breakpoint (controller ruling R8). The one exception is a
+ * title whose Tablet & Phone copy differs (EN FAQ 2): on phone, where Framer shows that variant, the
+ * desktop title wraps to two lines and the page no longer matches the Framer height, so the phone
+ * shows the Tablet & Phone title (content `tabletPhone.q`), as Framer does.
+ */
+import type { Faq } from "../content/schema";
+import { svgMarkup } from "../content/images";
+import "../styles/accordion.css";
+
+interface Props {
+  items: readonly Faq[];
+  /** Keep the "Desktop" item variant on tablet (Framer does on /pricing, not on /pricing-ro). */
+  desktopOnTablet?: boolean;
+}
+
+const { items, desktopOnTablet = false } = Astro.props;
+const chevron = svgMarkup("/icons/iconoir-nav-arrow-down.svg");
+const check = svgMarkup("/icons/iconoir-check-circle.svg");
+---
+
+<div class:list={["acc", desktopOnTablet && "acc--desktop"]} data-motion-group>
+  {
+    items.map((item) => (
+      <details class="acc__item" data-motion="pricing.faq.accordion">
+        <summary class="acc__top">
+          {item.tabletPhone?.q ? (
+            <h3 class="acc__title">
+              <span class="acc__title-desktop">{item.q}</span>
+              <span class="acc__title-phone">{item.tabletPhone.q}</span>
+            </h3>
+          ) : (
+            <h3 class="acc__title">{item.q}</h3>
+          )}
+          <span class="acc__chevron" set:html={chevron} />
+        </summary>
+        <div class="acc__panel" data-motion-panel>
+          <ul class="acc__bullets">
+            {item.lines.map((line) => (
+              <li class="acc__bullet">
+                <span class="acc__check" set:html={check} />
+                <span class="t-body-medium acc__bullet-text">{line}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </details>
+    ))
+  }
+</div>
+
+<style is:global>
+  .acc__title-phone {
+    display: none;
+  }
+
+  @media (max-width: 809.98px) {
+    .acc__title-desktop {
+      display: none;
+    }
+
+    .acc__title-phone {
+      display: inline;
+    }
+  }
+</style>

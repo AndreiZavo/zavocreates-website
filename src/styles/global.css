@@ -1,0 +1,224 @@
+/*
+ * Global styles: self-hosted fonts, page defaults and the cross-document page fade.
+ * Colours, type, spacing and radii come from tokens.css (generated from content/tokens.json).
+ * The --page-* values are written by Base.astro from getMotion("page").
+ */
+
+/* Lenis' own rules (smooth scroll). They only match once the runtime has put .lenis on <html>. */
+@import "lenis/dist/lenis.css";
+
+/* Fonts: Antonio 400/700 and Inter 300/400/500/600, latin + latin-ext (Romanian), woff2 from @fontsource.
+   Inter 400 is the body-large text style; Inter 500 is set directly on nodes in content/layout.json.
+   The unicode ranges are the ones @fontsource ships for these two subsets. */
+@font-face {
+  font-family: "Antonio";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("@fontsource/antonio/files/antonio-latin-ext-400-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Antonio";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("@fontsource/antonio/files/antonio-latin-400-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+
+@font-face {
+  font-family: "Antonio";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("@fontsource/antonio/files/antonio-latin-ext-700-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Antonio";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("@fontsource/antonio/files/antonio-latin-700-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("@fontsource/inter/files/inter-latin-ext-300-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("@fontsource/inter/files/inter-latin-300-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("@fontsource/inter/files/inter-latin-ext-400-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("@fontsource/inter/files/inter-latin-400-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("@fontsource/inter/files/inter-latin-ext-500-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("@fontsource/inter/files/inter-latin-500-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("@fontsource/inter/files/inter-latin-ext-600-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("@fontsource/inter/files/inter-latin-600-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-theme-white-dark);
+  color: var(--text-body-medium-color);
+  font-family: var(--text-body-medium-family);
+  font-weight: var(--text-body-medium-weight);
+  font-size: var(--text-body-medium-size);
+  line-height: var(--text-body-medium-line);
+  letter-spacing: var(--text-body-medium-tracking);
+}
+
+img,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: var(--link-default-color);
+  text-decoration: var(--link-default-decoration);
+}
+
+a:hover {
+  color: var(--link-default-hover-color);
+  text-decoration: var(--link-default-hover-decoration);
+}
+
+/* Page fade between documents. Off under prefers-reduced-motion: reduce. */
+@keyframes page-enter {
+  from {
+    opacity: var(--page-enter-from-opacity);
+  }
+  to {
+    opacity: var(--page-enter-to-opacity);
+  }
+}
+
+@keyframes page-exit {
+  to {
+    opacity: var(--page-exit-to-opacity);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+
+  ::view-transition-old(root) {
+    animation: page-exit var(--page-exit-duration) var(--page-exit-ease) var(--page-exit-delay) both;
+    mix-blend-mode: normal;
+  }
+
+  ::view-transition-new(root) {
+    animation: page-enter var(--page-enter-duration) var(--page-enter-ease) var(--page-enter-delay) both;
+    mix-blend-mode: normal;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+}
+
+/* Text presets (content/tokens.json "text"). Size and line height switch per breakpoint in tokens.css.
+   Zero specificity (:where), so a component class can override any part, e.g. the colour. */
+:where(.t-heading-1, .t-heading-2, .t-heading-3, .t-heading-4, .t-body-large, .t-body-medium, .t-body-medium-bold, .t-body-small, .t-nav-link) {
+  margin: 0;
+  font-family: var(--t-family);
+  font-weight: var(--t-weight);
+  font-size: var(--t-size);
+  line-height: var(--t-line);
+  letter-spacing: var(--t-tracking);
+  text-transform: var(--t-transform);
+  color: var(--t-color);
+}
+
+:where(.t-heading-1) { --t-family: var(--text-heading-1-family); --t-weight: var(--text-heading-1-weight); --t-size: var(--text-heading-1-size); --t-line: var(--text-heading-1-line); --t-tracking: var(--text-heading-1-tracking); --t-transform: var(--text-heading-1-transform); --t-color: var(--text-heading-1-color); }
+:where(.t-heading-2) { --t-family: var(--text-heading-2-family); --t-weight: var(--text-heading-2-weight); --t-size: var(--text-heading-2-size); --t-line: var(--text-heading-2-line); --t-tracking: var(--text-heading-2-tracking); --t-transform: var(--text-heading-2-transform); --t-color: var(--text-heading-2-color); }
+:where(.t-heading-3) { --t-family: var(--text-heading-3-family); --t-weight: var(--text-heading-3-weight); --t-size: var(--text-heading-3-size); --t-line: var(--text-heading-3-line); --t-tracking: var(--text-heading-3-tracking); --t-transform: var(--text-heading-3-transform); --t-color: var(--text-heading-3-color); }
+:where(.t-heading-4) { --t-family: var(--text-heading-4-family); --t-weight: var(--text-heading-4-weight); --t-size: var(--text-heading-4-size); --t-line: var(--text-heading-4-line); --t-tracking: var(--text-heading-4-tracking); --t-transform: var(--text-heading-4-transform); --t-color: var(--text-heading-4-color); }
+:where(.t-body-large) { --t-family: var(--text-body-large-family); --t-weight: var(--text-body-large-weight); --t-size: var(--text-body-large-size); --t-line: var(--text-body-large-line); --t-tracking: var(--text-body-large-tracking); --t-transform: var(--text-body-large-transform); --t-color: var(--text-body-large-color); }
+:where(.t-body-medium) { --t-family: var(--text-body-medium-family); --t-weight: var(--text-body-medium-weight); --t-size: var(--text-body-medium-size); --t-line: var(--text-body-medium-line); --t-tracking: var(--text-body-medium-tracking); --t-transform: var(--text-body-medium-transform); --t-color: var(--text-body-medium-color); }
+:where(.t-body-medium-bold) { --t-family: var(--text-body-medium-bold-family); --t-weight: var(--text-body-medium-bold-weight); --t-size: var(--text-body-medium-bold-size); --t-line: var(--text-body-medium-bold-line); --t-tracking: var(--text-body-medium-bold-tracking); --t-transform: var(--text-body-medium-bold-transform); --t-color: var(--text-body-medium-bold-color); }
+:where(.t-body-small) { --t-family: var(--text-body-small-family); --t-weight: var(--text-body-small-weight); --t-size: var(--text-body-small-size); --t-line: var(--text-body-small-line); --t-tracking: var(--text-body-small-tracking); --t-transform: var(--text-body-small-transform); --t-color: var(--text-body-small-color); }
+:where(.t-nav-link) { --t-family: var(--text-nav-link-family); --t-weight: var(--text-nav-link-weight); --t-size: var(--text-nav-link-size); --t-line: var(--text-nav-link-line); --t-tracking: var(--text-nav-link-tracking); --t-transform: var(--text-nav-link-transform); --t-color: var(--text-nav-link-color); }
+
+/* Paragraph spacing inside one Framer text block (e.g. the About definition + line). */
+:where(.t-paragraphs > .t-body-medium + .t-body-medium) {
+  margin-top: var(--text-body-medium-paragraph);
+}

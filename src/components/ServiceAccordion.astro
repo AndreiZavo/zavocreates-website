@@ -1,0 +1,108 @@
+---
+/**
+ * "What I can do for you" section with the service accordion (Framer "Service Accordion Wrap").
+ * <details> items work without JS; with JS, home.services.accordion (variant.ts) keeps one item open
+ * and animates the panel height. Titles and bullets are the desktop copy (controller ruling R8).
+ */
+import { getHome } from "../content/load";
+import { svgMarkup } from "../content/images";
+import "../styles/accordion.css";
+
+const { servicesIntro, services } = getHome();
+const chevron = svgMarkup("/icons/iconoir-nav-arrow-down.svg");
+const check = svgMarkup("/icons/iconoir-check-circle.svg");
+---
+
+<section id="service" class="service" data-motion-target="Rd4N98ip7">
+  <div class="service__container">
+    <div class="service__column">
+      <div class="service__text">
+        <h2 class="t-heading-2">{servicesIntro.heading}</h2>
+        <p class="t-body-medium service__intro">{servicesIntro.text}</p>
+      </div>
+      <div class="acc" data-motion-group>
+        {
+          services.map((service) => (
+            <details class="acc__item" data-motion="home.services.accordion">
+              <summary class="acc__top">
+                <h3 class="acc__title">{service.title}</h3>
+                <span class="acc__chevron" set:html={chevron} />
+              </summary>
+              <div class="acc__panel" data-motion-panel>
+                <ul class="acc__bullets">
+                  {service.bullets.map((bullet) => (
+                    <li class="acc__bullet">
+                      <span class="acc__check" set:html={check} />
+                      <span class="t-body-medium acc__bullet-text">{bullet}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style is:global>
+  .service {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .service__container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    padding: 0 40px;
+    overflow: hidden;
+  }
+
+  .service__column {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 40px;
+    width: 600px;
+  }
+
+  .service__text {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow: hidden;
+  }
+
+  .service__intro {
+    max-width: 500px;
+  }
+
+  @media (max-width: 1199.98px) {
+    .service__column {
+      width: 50%;
+    }
+  }
+
+  @media (max-width: 809.98px) {
+    .service {
+      height: auto;
+    }
+
+    .service__container {
+      padding: 80px 20px;
+    }
+
+    .service__column {
+      width: 100%;
+    }
+  }
+</style>

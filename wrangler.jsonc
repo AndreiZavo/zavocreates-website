@@ -1,0 +1,22 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "zavocreates",
+  "main": "worker/index.ts",
+  "compatibility_date": "2025-10-01",
+  // Default since 2025-04-01, navigation requests (Sec-Fetch-Mode: navigate) are answered by asset
+  // serving before the Worker, so a no-JS form POST to /api/contact got a 405 from the assets layer.
+  // This flag restores "Worker runs for any request that is not an exact asset match".
+  // https://developers.cloudflare.com/workers/configuration/compatibility-flags/#navigation-requests-prefer-asset-serving
+  "compatibility_flags": ["assets_navigation_has_no_effect"],
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  },
+  "ai": { "binding": "AI" },
+  "vars": {
+    "CONTACT_TO": "zavocreates@gmail.com",
+    "CONTACT_FROM": "Zavo Website <onboarding@resend.dev>"
+  }
+}

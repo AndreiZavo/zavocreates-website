@@ -1,0 +1,1636 @@
+{
+  "page": {
+    "kind": "page",
+    "element": "Every page (primary breakpoint pageEffects.all)",
+    "page": "all",
+    "section": "page",
+    "framerNodeId": "WQLkyLRf1",
+    "enter": {
+      "from": {
+        "opacity": 0,
+        "x": 0,
+        "y": 0,
+        "scale": 1,
+        "rotateX": 0,
+        "rotateY": 0,
+        "rotate": 0
+      },
+      "to": {
+        "opacity": 1,
+        "x": 0,
+        "y": 0,
+        "scale": 1,
+        "rotate": 0,
+        "rotateX": 0,
+        "rotateY": 0,
+        "skewX": 0,
+        "skewY": 0
+      },
+      "transition": {
+        "type": "tween",
+        "duration": 0.2,
+        "ease": [
+          0.27,
+          0,
+          0.51,
+          1
+        ],
+        "delay": 0.0
+      }
+    },
+    "exit": {
+      "to": {
+        "opacity": 0,
+        "x": 0,
+        "y": 0,
+        "scale": 1,
+        "rotateX": 0,
+        "rotateY": 0,
+        "rotate": 0
+      },
+      "transition": {
+        "type": "tween",
+        "duration": 0.2,
+        "ease": [
+          0.27,
+          0,
+          0.51,
+          1
+        ],
+        "delay": 0.2
+      }
+    },
+    "transition": {
+      "type": "tween",
+      "duration": 0.2,
+      "ease": [
+        0.27,
+        0,
+        0.51,
+        1
+      ],
+      "delay": 0.0
+    },
+    "trigger": "navigation"
+  },
+  "smoothScroll": {
+    "kind": "smoothScroll",
+    "element": "Smooth Scroll component (one instance per page)",
+    "page": "all",
+    "section": "page",
+    "framerNodeId": "IvmHhEgzx",
+    "intensity": 10,
+    "perPage": {
+      "home": 10,
+      "pricing": 10,
+      "pricingRo": 10
+    },
+    "transition": {
+      "type": "instant"
+    },
+    "trigger": "scroll"
+  },
+  "home.hero.sticky": {
+    "kind": "sticky",
+    "element": "Sticky Container holding the flipping avatar card",
+    "page": "home",
+    "section": "hero",
+    "framerNodeId": "FGqFXGOHD",
+    "top": "0px",
+    "containerHeight": "100vh",
+    "trackHeight": "300vh",
+    "note": "Sticky Wrap (300vh) and the absolutely positioned 'Content' column (hero, service, about sections, 100vh each) overlap; the avatar stays pinned while the three sections scroll past.",
+    "transition": {
+      "type": "instant"
+    },
+    "trigger": "scroll"
+  },
+  "home.avatar.appear": {
+    "kind": "appear",
+    "element": "Avatar card (flip card with portrait front / photo back) in the sticky hero",
+    "page": "home",
+    "section": "hero",
+    "framerNodeId": "rwG3sNdPR",
+    "trigger": "load",
+    "threshold": 0.5,
+    "replay": false,
+    "from": {
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "scale": 0,
+      "rotateX": -180,
+      "rotateY": 0,
+      "skewX": 0,
+      "skewY": 0,
+      "rotate": 0
+    },
+    "to": {
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "scale": 1,
+      "rotate": 0,
+      "rotateX": 0,
+      "rotateY": 0,
+      "skewX": 0,
+      "skewY": 0
+    },
+    "transition": {
+      "type": "spring",
+      "bounce": 0,
+      "duration": 1.0,
+      "delay": 0.0
+    }
+  },
+  "home.avatar.scroll": {
+    "kind": "scroll",
+    "element": "Avatar card wrapper (rotates/moves as Service and About scroll in)",
+    "page": "home",
+    "section": "hero",
+    "framerNodeId": "rwG3sNdPR",
+    "trigger": "scrollTarget",
+    "viewport": "end",
+    "sections": [
+      {
+        "at": "start",
+        "pose": {
+          "opacity": 1,
+          "x": 0,
+          "y": 0,
+          "scale": 1,
+          "skewX": 0,
+          "skewY": 0,
+          "rotateX": 0,
+          "rotateY": 0,
+          "rotate": 0
+        }
+      },
+      {
+        "at": "target",
+        "target": {
+          "framerNodeId": "Rd4N98ip7",
+          "description": "Home 'Service' section (#service)"
+        },
+        "pose": {
+          "opacity": 1,
+          "x": 340,
+          "y": 0,
+          "scale": 0.9,
+          "skewX": 0,
+          "skewY": 0,
+          "rotateX": 0,
+          "rotateY": 150,
+          "rotate": 10
+        }
+      },
+      {
+        "at": "target",
+        "target": {
+          "framerNodeId": "z940ZBfKS",
+          "description": "Home 'About' section (#about)"
+        },
+        "pose": {
+          "opacity": 1,
+          "x": 340,
+          "y": 0,
+          "scale": 1,
+          "skewX": 0,
+          "skewY": 0,
+          "rotateX": 0,
+          "rotateY": 340,
+          "rotate": 5
+        }
+      }
+    ],
+    "breakpointSections": {
+      "tablet": [
+        {
+          "at": "start",
+          "pose": {
+            "opacity": 1,
+            "x": 0,
+            "y": 0,
+            "scale": 1,
+            "skewX": 0,
+            "skewY": 0,
+            "rotateX": 0,
+            "rotateY": 0,
+            "rotate": 0
+          }
+        },
+        {
+          "at": "target",
+          "target": {
+            "framerNodeId": "Rd4N98ip7",
+            "description": "Home 'Service' section (#service)"
+          },
+          "pose": {
+            "opacity": 1,
+            "x": 200,
+            "y": 0,
+            "scale": 0.85,
+            "skewX": 0,
+            "skewY": 0,
+            "rotateX": 0,
+            "rotateY": 150,
+            "rotate": 10
+          }
+        },
+        {
+          "at": "target",
+          "target": {
+            "framerNodeId": "z940ZBfKS",
+            "description": "Home 'About' section (#about)"
+          },
+          "pose": {
+            "opacity": 1,
+            "x": 200,
+            "y": 0,
+            "scale": 0.9,
+            "skewX": 0,
+            "skewY": 0,
+            "rotateX": 0,
+            "rotateY": 340,
+            "rotate": 5
+          }
+        }
+      ],
+      "phone": null
+    },
+    "transition": {
+      "type": "spring",
+      "stiffness": 500,
+      "damping": 60,
+      "mass": 1,
+      "delay": 0.0
+    }
+  },
+  "home.hero.left.appear": {
+    "kind": "appear",
+    "element": "Hero heading left ('Andrei Zavo' / 'Video')",
+    "page": "home",
+    "section": "hero",
+    "framerNodeId": "ylmXIg_32",
+    "trigger": "load",
+    "threshold": 0.5,
+    "replay": false,
+    "from": {
+      "opacity": 0,
+      "x": 150,
+      "y": 0,
+      "scale": 1,
+      "rotateX": 0,
+      "rotateY": 0,
+      "skewX": 0,
+      "skewY": 0,
+      "rotate": 0
+    },
+    "to": {
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "scale": 1,
+      "rotate": 0,
+      "rotateX": 0,
+      "rotateY": 0,
+      "skewX": 0,
+      "skewY": 0
+    },
+    "transition": {
+      "type": "spring",
+      "bounce": 0,
+      "duration": 1.0,
+      "delay": 0.3
+    }
+  },
+  "home.hero.right.appear": {
+    "kind": "appear",
+    "element": "Hero heading right ('Producer' + tagline)",
+    "page": "home",
+    "section": "hero",
+    "framerNodeId": "Ln0cv0Auo",
+    "trigger": "load",
+    "threshold": 0.5,
+    "replay": false,
+    "from": {
+      "opacity": 0,
+      "x": -150,
+      "y": 0,
+      "scale": 1,
+      "rotateX": 0,
+      "rotateY": 0,
+      "skewX": 0,
+      "skewY": 0,
+      "rotate": 0
+    },
+    "to": {
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "scale": 1,
+      "rotate": 0,
+      "rotateX": 0,
+      "rotateY": 0,
+      "skewX": 0,
+      "skewY": 0
+    },
+    "transition": {
+      "type": "spring",
+      "bounce": 0,
+      "duration": 1.0,
+      "delay": 0.3
+    }
+  },
+  "home.badge.scroll": {
+    "kind": "scroll",
+    "element": "Purple 'Hi' circle badge on the hero avatar card (Circle Badge Ib7Yaza05). The contact-section badge (mYSICkfKR) has no section targets set, so it stays static.",
+    "page": "home",
+    "section": "hero",
+    "framerNodeId": "Ib7Yaza05",
+    "trigger": "scrollTarget",
+    "viewport": "end",
+    "sections": [
+      {
+        "at": "start",
+        "pose": {
+          "opacity": 1,
+          "x": 0,
+          "y": 0,
+          "scale": 1,
+          "skewX": 0,
+          "skewY": 0,
+          "rotate": 0
+        }
+      },
+      {
+        "at": "target",
+        "target": {
+          "framerNodeId": "Rd4N98ip7",
+          "description": "Home 'Service' section (#service)"
+        },
+        "pose": {
+          "opacity": 0,
+          "x": 0,
+          "y": 0,
+          "scale": 0,
+          "skewX": 0,
+          "skewY": 0,
+          "rotate": 0
+        }
+      },
+      {
+        "at": "target",
+        "target": {
+          "framerNodeId": "fsscpsFUj",
+          "description": "MISSING in Framer (node no longer exists)"
+        },
+        "pose": {
+          "opacity": 1,
+          "x": 0,
+          "y": 0,
+          "scale": 1,
+          "skewX": 0,
+          "skewY": 0,
+          "rotate": 0
+        }
+      }
+    ],
+    "transition": {
+      "type": "spring",
+      "stiffness": 500,
+      "damping": 60,
+      "mass": 1,
+      "delay": 0.0
+    }
+  },
+  "home.badge.cycle": {
+    "kind": "variant",
+    "element": "Circle Badge Animate: 60px window that slides between the text 'Hi' (top) and the waving-hand Lottie (bottom)",
+    "page": "home",
+    "section": "hero",
+    "framerNodeId": "XNap6uYIo",
+    "cycle": [
+      {
+        "variant": "Hi",
+        "shows": "text",
+        "stackDistribution": "start",
+        "holdSeconds": 2.0
+      },
+      {
+        "variant": "Hand Waving",
+        "shows": "lottie",
+        "stackDistribution": "end",
+        "holdSeconds": 4.0
+      }
+    ],
+    "loop": true,
+    "lottie": {
+      "src": "/lottie/hand-wave.json",
+      "loop": true,
+      "speed": 1,
+      "color1": "var(--color-white-dark)",
+      "color2": "var(--color-purple-green)"
+    },
+    "transition": {
+      "type": "spring",
+      "stiffness": 500,
+      "damping": 60,
+      "mass": 1,
+      "delay": 0.0
+    },
+    "trigger": "timer"
+  },
+  "home.counter": {
+    "kind": "counter",
+    "element": "Number Card counters (5 / 100+ / 20+) in the About section",
+    "page": "home",
+    "section": "about",
+    "framerNodeId": "urtqdFyEC",
+    "trigger": "inView",
+    "replay": true,
+    "start": 0,
+    "decimals": 0,
+    "commas": true,
+    "font": {
+      "desktop": {
+        "fontSelector": "GF;Antonio-700",
+        "fontSize": 60,
+        "letterSpacing": [
+          0,
+          "em"
+        ],
+        "lineHeight": [
+          1,
+          "em"
+        ],
+        "openTypeFontFeatures": [
+          "zero",
+          "tnum"
+        ]
+      },
+      "phone": {
+        "fontSelector": "GF;Antonio-700",
+        "fontSize": "48px",
+        "letterSpacing": [
+          0,
+          "em"
+        ],
+        "lineHeight": [
+          1.1,
+          "em"
+        ],
+        "openTypeFontFeatures": [
+          "zero",
+          "tnum"
+        ]
+      }
+    },
+    "color": "var(--color-purple-green)",
+    "transition": {
+      "type": "spring",
+      "bounce": 0,
+      "duration": 1.0,
+      "delay": 0.0
+    }
+  },
+  "home.services.accordion": {
+    "kind": "variant",
+    "element": "Service Accordion items (one open at a time; click toggles)",
+    "page": "home",
+    "section": "service",
+    "framerNodeId": "rJrFn94Y9",
+    "states": {
+      "desktop": {
+        "Desktop / Closed": {
+          "borderColor": [
+            "var(--color-grey-100)",
+            "var(--color-purple-green)"
+          ],
+          "padding": [
+            "0px",
+            "0px 0px 20px 0px"
+          ],
+          "paddingBottom": [
+            "0px",
+            "20px"
+          ]
+        },
+        "Desktop / Closed/Top/RichText": {
+          "textColor": [
+            "var(--color-grey-200-white)",
+            "var(--color-purple-green)"
+          ]
+        },
+        "Desktop / Closed/Top/ComponentInstance": {
+          "rotateZ": [
+            "180deg",
+            "0deg"
+          ],
+          "rotation": [
+            "180deg",
+            "0deg"
+          ]
+        },
+        "Desktop / Closed/Bottom": {
+          "height": [
+            "1px",
+            "auto"
+          ]
+        },
+        "Desktop / Closed/Bottom/ComponentInstance": {
+          "visible": [
+            true,
+            false
+          ]
+        }
+      },
+      "tabletPhone": {
+        "Tablet & Phone / Closed": {
+          "borderColor": [
+            "var(--color-grey-100)",
+            "var(--color-purple-green)"
+          ],
+          "padding": [
+            "0px",
+            "0px 0px 20px 0px"
+          ],
+          "paddingBottom": [
+            "0px",
+            "20px"
+          ]
+        },
+        "Tablet & Phone / Closed/Top/RichText": {
+          "textColor": [
+            "var(--color-grey-200-white)",
+            "var(--color-purple-green)"
+          ]
+        },
+        "Tablet & Phone / Closed/Top/ComponentInstance": {
+          "rotateZ": [
+            "180deg",
+            "0deg"
+          ],
+          "rotation": [
+            "180deg",
+            "0deg"
+          ]
+        },
+        "Tablet & Phone / Closed/Bottom": {
+          "height": [
+            "1px",
+            "auto"
+          ]
+        },
+        "Tablet & Phone / Closed/Bottom/ComponentInstance": {
+          "visible": [
+            true,
+            false
+          ]
+        }
+      }
+    },
+    "hover": {
+      "Desktop / Closed/Top/RichText": {
+        "textColor": [
+          "var(--color-grey-200-white)",
+          "var(--color-purple-green)"
+        ]
+      }
+    },
+    "transition": {
+      "type": "spring",
+      "stiffness": 500,
+      "damping": 60,
+      "mass": 1,
+      "delay": 0.0
+    },
+    "trigger": "click"
+  },
+  "home.logos.marquee": {
+    "kind": "marquee",
+    "element": "Logo Carrousel (Ticker) in 'Some of my collaborators'",
+    "page": "home",
+    "section": "collaborators",
+    "framerNodeId": "sRZTe4NZj",
+    "speed": 60,
+    "direction": "left",
+    "gap": 180,
+    "padding": "30px",
+    "alignment": "center",
+    "hoverFactor": 1,
+    "fade": {
+      "fadeContent": true,
+      "overflow": false,
+      "fadeWidth": 25,
+      "fadeInset": 0,
+      "fadeAlpha": 0
+    },
+    "height": "150px",
+    "phone": {
+      "width": "350px",
+      "speed": 60,
+      "gap": 180
+    },
+    "transition": {
+      "type": "instant"
+    },
+    "trigger": "always"
+  },
+  "pricing.timeline.lineFill": {
+    "kind": "scroll",
+    "element": "Purple 'Line Fill' inside each grey timeline line; slides from y -180px to 0 as its row reaches the viewport middle",
+    "page": "pricing",
+    "section": "process",
+    "framerNodeId": "x2tDqmICZ",
+    "trigger": "scrollTarget",
+    "viewport": "middle",
+    "sections": [
+      {
+        "at": "start",
+        "pose": {
+          "opacity": 1,
+          "x": 0,
+          "y": -180,
+          "scale": 1,
+          "skewX": 0,
+          "skewY": 0,
+          "rotate": 0
+        }
+      },
+      {
+        "at": "target",
+        "target": {
+          "framerNodeId": "D5Jb3fIsM",
+          "description": "Pricing timeline row 01 (#process-step-1)"
+        },
+        "pose": {
+          "opacity": 1,
+          "x": 0,
+          "y": 0,
+          "scale": 1,
+          "skewX": 0,
+          "skewY": 0,
+          "rotate": 0
+        }
+      }
+    ],
+    "rows": [
+      {
+        "row": "Pricing timeline row 01 (#process-step-1)",
+        "framerNodeId": "x2tDqmICZ",
+        "sections": [
+          {
+            "at": "start",
+            "pose": {
+              "opacity": 1,
+              "x": 0,
+              "y": -180,
+              "scale": 1,
+              "skewX": 0,
+              "skewY": 0,
+              "rotate": 0
+            }
+          },
+          {
+            "at": "target",
+            "target": {
+              "framerNodeId": "D5Jb3fIsM",
+              "description": "Pricing timeline row 01 (#process-step-1)"
+            },
+            "pose": {
+              "opacity": 1,
+              "x": 0,
+              "y": 0,
+              "scale": 1,
+              "skewX": 0,
+              "skewY": 0,
+              "rotate": 0
+            }
+          }
+        ]
+      },
+      {
+        "row": "Pricing timeline row 02 (#process-step-2)",
+        "framerNodeId": "fKgEDWlJl",
+        "sections": [
+          {
+            "at": "start",
+            "pose": {
+              "opacity": 1,
+              "x": 0,
+              "y": -180,
+              "scale": 1,
+              "skewX": 0,
+              "skewY": 0,
+              "rotate": 0
+            }
+          },
+          {
+            "at": "target",
+            "target": {
+              "framerNodeId": "soZnxaBEC",
+              "description": "Pricing timeline row 02 (#process-step-2)"
+            },
+            "pose": {
+              "opacity": 1,
+              "x": 0,
+              "y": 0,
+              "scale": 1,
+              "skewX": 0,
+              "skewY": 0,
+              "rotate": 0
+            }
+          }
+        ]
+      },
+      {
+        "row": "Pricing timeline row 03 (#process-step-3)",
+        "framerNodeId": "jwq8ngyIS",
+        "sections": [
+          {
+            "at": "start",
+            "pose": {
+              "opacity": 1,
+              "x": 0,
+              "y": -180,
+              "scale": 1,
+              "skewX": 0,
+              "skewY": 0,
+              "rotate": 0
+            }
+          },
+          {
+            "at": "target",
+            "target": {
+              "framerNodeId": "u_jraBzMP",
+              "description": "Pricing timeline row 03 (#process-step-3)"
+            },
+            "pose": {
+              "opacity": 1,
+              "x": 0,
+              "y": 0,
+              "scale": 1,
+              "skewX": 0,
+              "skewY": 0,
+              "rotate": 0
+            }
+          }
+        ]
+      },
+      {
+        "row": "Pricing timeline row 04 (#process-step-4)",
+        "framerNodeId": "aV6Pw2CGc",
+        "sections": [
+          {
+            "at": "start",
+            "pose": {
+              "opacity": 1,
+              "x": 0,
+              "y": -180,
+              "scale": 1,
+              "skewX": 0,
+              "skewY": 0,
+              "rotate": 0
+            }
+          },
+          {
+            "at": "target",
+            "target": {
+              "framerNodeId": "UDJZoUjQt",
+              "description": "Pricing timeline row 04 (#process-step-4)"
+            },
+            "pose": {
+              "opacity": 1,
+              "x": 0,
+              "y": 0,
+              "scale": 1,
+              "skewX": 0,
+              "skewY": 0,
+              "rotate": 0
+            }
+          }
+        ]
+      }
+    ],
+    "transition": {
+      "type": "instant"
+    },
+    "note": "Scroll-linked (no spring set in Framer). Row 05 has no visible line. On /pricing-ro Framer's section targets still point at the EN page rows; use the RO page's own rows. lineFollow (owner request, R14): on phone each line fills as the viewport middle passes along it, one continuous fill down the timeline; Framer fills a row's two phone lines together.",
+    "lineFollow": [
+      "phone"
+    ]
+  },
+  "pricing.timeline.row.appear": {
+    "kind": "appear",
+    "element": "Timeline row text block (title + body)",
+    "page": "pricing",
+    "section": "process",
+    "framerNodeId": "NXKlKLn2_",
+    "trigger": "sectionInView",
+    "threshold": 0.5,
+    "replay": true,
+    "from": {
+      "opacity": 0,
+      "x": -150,
+      "y": 0,
+      "scale": 1,
+      "rotateX": 0,
+      "rotateY": 0,
+      "skewX": 0,
+      "skewY": 0,
+      "rotate": 0
+    },
+    "to": {
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "scale": 1,
+      "rotate": 0,
+      "rotateX": 0,
+      "rotateY": 0,
+      "skewX": 0,
+      "skewY": 0
+    },
+    "transition": {
+      "type": "spring",
+      "bounce": 0.2,
+      "duration": 0.5,
+      "delay": 0.15
+    },
+    "rows": [
+      {
+        "row": 1,
+        "framerNodeId": "NXKlKLn2_",
+        "from": {
+          "opacity": 0,
+          "x": -150,
+          "y": 0,
+          "scale": 1,
+          "rotateX": 0,
+          "rotateY": 0,
+          "skewX": 0,
+          "skewY": 0,
+          "rotate": 0
+        },
+        "threshold": 0.5
+      },
+      {
+        "row": 2,
+        "framerNodeId": "xd6qseZA2",
+        "from": {
+          "opacity": 0,
+          "x": 150,
+          "y": 0,
+          "scale": 1,
+          "rotateX": 0,
+          "rotateY": 0,
+          "skewX": 0,
+          "skewY": 0,
+          "rotate": 0
+        },
+        "threshold": 0.8
+      },
+      {
+        "row": 3,
+        "framerNodeId": "h4e4GuWXD",
+        "from": {
+          "opacity": 0,
+          "x": -150,
+          "y": 0,
+          "scale": 1,
+          "rotateX": 0,
+          "rotateY": 0,
+          "skewX": 0,
+          "skewY": 0,
+          "rotate": 0
+        },
+        "threshold": 0.8
+      },
+      {
+        "row": 4,
+        "framerNodeId": "ociXa5Zz4",
+        "from": {
+          "opacity": 0,
+          "x": 150,
+          "y": 0,
+          "scale": 1,
+          "rotateX": 0,
+          "rotateY": 0,
+          "skewX": 0,
+          "skewY": 0,
+          "rotate": 0
+        },
+        "threshold": 0.8
+      },
+      {
+        "row": 5,
+        "framerNodeId": "zIoEwZZJn",
+        "from": {
+          "opacity": 0,
+          "x": -150,
+          "y": 0,
+          "scale": 1,
+          "rotateX": 0,
+          "rotateY": 0,
+          "skewX": 0,
+          "skewY": 0,
+          "rotate": 0
+        },
+        "threshold": 0.8
+      }
+    ]
+  },
+  "pricing.timeline.dot.appear": {
+    "kind": "appear",
+    "element": "Timeline numbered dot (48px circle)",
+    "page": "pricing",
+    "section": "process",
+    "framerNodeId": "jc3EGQNxk",
+    "trigger": "sectionInView",
+    "threshold": 0.8,
+    "replay": true,
+    "from": {
+      "opacity": 0,
+      "x": 0,
+      "y": 0,
+      "scale": 0.5,
+      "rotateX": 0,
+      "rotateY": 0,
+      "skewX": 0,
+      "skewY": 0,
+      "rotate": 0
+    },
+    "to": {
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "scale": 1,
+      "rotate": 0,
+      "rotateX": 0,
+      "rotateY": 0,
+      "skewX": 0,
+      "skewY": 0
+    },
+    "transition": {
+      "type": "spring",
+      "bounce": 0.2,
+      "duration": 0.4,
+      "delay": 0.0
+    },
+    "rows": [
+      {
+        "row": 1,
+        "framerNodeId": "jc3EGQNxk"
+      },
+      {
+        "row": 2,
+        "framerNodeId": "eHfWXARFh"
+      },
+      {
+        "row": 3,
+        "framerNodeId": "iLXa6KmLn"
+      },
+      {
+        "row": 4,
+        "framerNodeId": "zSO704EZ3"
+      },
+      {
+        "row": 5,
+        "framerNodeId": "dqZTM93fl"
+      }
+    ]
+  },
+  "pricing.card.hover": {
+    "kind": "hover",
+    "element": "Pricing cards Test / Starter / Premium",
+    "page": "pricing",
+    "section": "packages",
+    "framerNodeId": "Gw029DfQI",
+    "to": {
+      "opacity": 1,
+      "x": 0,
+      "y": -4,
+      "scale": 1,
+      "skewX": 0,
+      "skewY": 0,
+      "rotate": 0,
+      "boxShadow": "0px 14px 30px 0px rgba(32, 31, 26, 0.08)"
+    },
+    "transition": {
+      "type": "spring",
+      "bounce": 0.2,
+      "duration": 0.3,
+      "delay": 0.0
+    },
+    "trigger": "hover"
+  },
+  "pricing.card.featured.hover": {
+    "kind": "hover",
+    "element": "Featured pricing card Growth",
+    "page": "pricing",
+    "section": "packages",
+    "framerNodeId": "ULqUKZBS0",
+    "to": {
+      "opacity": 1,
+      "x": 0,
+      "y": -4,
+      "scale": 1,
+      "skewX": 0,
+      "skewY": 0,
+      "rotate": 0,
+      "boxShadow": "0px 16px 34px 0px rgba(32, 31, 26, 0.22)"
+    },
+    "transition": {
+      "type": "spring",
+      "bounce": 0.2,
+      "duration": 0.3,
+      "delay": 0.0
+    },
+    "trigger": "hover"
+  },
+  "pricing.button.hover": {
+    "kind": "hover",
+    "element": "Outline 'Book …' buttons (Test / Starter / Premium)",
+    "page": "pricing",
+    "section": "packages",
+    "framerNodeId": "aGVY9xAz5",
+    "to": {
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "scale": 1,
+      "skewX": 0,
+      "skewY": 0,
+      "rotate": 0,
+      "backgroundColor": "rgba(32, 31, 26, 0.06)"
+    },
+    "transition": {
+      "type": "tween",
+      "duration": 0.2,
+      "ease": [
+        0.44,
+        0,
+        0.56,
+        1
+      ],
+      "delay": 0.0
+    },
+    "trigger": "hover"
+  },
+  "pricing.button.featured.hover": {
+    "kind": "hover",
+    "element": "Filled 'Book Growth' button",
+    "page": "pricing",
+    "section": "packages",
+    "framerNodeId": "LCQtzSPI6",
+    "to": {
+      "opacity": 0.85,
+      "x": 0,
+      "y": 0,
+      "scale": 1,
+      "skewX": 0,
+      "skewY": 0,
+      "rotate": 0
+    },
+    "transition": {
+      "type": "tween",
+      "duration": 0.2,
+      "ease": [
+        0.44,
+        0,
+        0.56,
+        1
+      ],
+      "delay": 0.0
+    },
+    "trigger": "hover"
+  },
+  "pricing.faq.accordion": {
+    "kind": "variant",
+    "element": "FAQ accordion (Questions Accordion Wrap / RO); same Service Accordion items",
+    "page": "pricing",
+    "section": "faq",
+    "framerNodeId": "ubjPQnPS8",
+    "states": {
+      "desktop": {
+        "Desktop / Closed": {
+          "borderColor": [
+            "var(--color-grey-100)",
+            "var(--color-purple-green)"
+          ],
+          "padding": [
+            "0px",
+            "0px 0px 20px 0px"
+          ],
+          "paddingBottom": [
+            "0px",
+            "20px"
+          ]
+        },
+        "Desktop / Closed/Top/RichText": {
+          "textColor": [
+            "var(--color-grey-200-white)",
+            "var(--color-purple-green)"
+          ]
+        },
+        "Desktop / Closed/Top/ComponentInstance": {
+          "rotateZ": [
+            "180deg",
+            "0deg"
+          ],
+          "rotation": [
+            "180deg",
+            "0deg"
+          ]
+        },
+        "Desktop / Closed/Bottom": {
+          "height": [
+            "1px",
+            "auto"
+          ]
+        },
+        "Desktop / Closed/Bottom/ComponentInstance": {
+          "visible": [
+            true,
+            false
+          ]
+        }
+      },
+      "tabletPhone": {
+        "Tablet & Phone / Closed": {
+          "borderColor": [
+            "var(--color-grey-100)",
+            "var(--color-purple-green)"
+          ],
+          "padding": [
+            "0px",
+            "0px 0px 20px 0px"
+          ],
+          "paddingBottom": [
+            "0px",
+            "20px"
+          ]
+        },
+        "Tablet & Phone / Closed/Top/RichText": {
+          "textColor": [
+            "var(--color-grey-200-white)",
+            "var(--color-purple-green)"
+          ]
+        },
+        "Tablet & Phone / Closed/Top/ComponentInstance": {
+          "rotateZ": [
+            "180deg",
+            "0deg"
+          ],
+          "rotation": [
+            "180deg",
+            "0deg"
+          ]
+        },
+        "Tablet & Phone / Closed/Bottom": {
+          "height": [
+            "1px",
+            "auto"
+          ]
+        },
+        "Tablet & Phone / Closed/Bottom/ComponentInstance": {
+          "visible": [
+            true,
+            false
+          ]
+        }
+      }
+    },
+    "hover": {
+      "Desktop / Closed/Top/RichText": {
+        "textColor": [
+          "var(--color-grey-200-white)",
+          "var(--color-purple-green)"
+        ]
+      }
+    },
+    "transition": {
+      "type": "spring",
+      "stiffness": 500,
+      "damping": 60,
+      "mass": 1,
+      "delay": 0.0
+    },
+    "trigger": "click"
+  },
+  "button.primary.hover": {
+    "kind": "hover",
+    "element": "Primary Button (pricing CTA 'Let’s work together'): purple circle grows from the bottom-left corner, label turns white",
+    "page": "pricing",
+    "section": "cta",
+    "framerNodeId": "QtnGPi4Hi",
+    "states": {
+      "Desktop/Color BG": {
+        "bottom": [
+          "-15px",
+          "-58px"
+        ],
+        "height": [
+          "15px",
+          "234px"
+        ],
+        "left": [
+          "-19px",
+          "-26px"
+        ],
+        "right": [
+          null,
+          "-27px"
+        ],
+        "width": [
+          "15px",
+          "234px"
+        ]
+      },
+      "Desktop/RichText": {
+        "textColor": [
+          "var(--color-purple-green)",
+          "var(--color-white-dark)"
+        ]
+      }
+    },
+    "transition": {
+      "type": "spring",
+      "stiffness": 500,
+      "damping": 60,
+      "mass": 1,
+      "delay": 0.0
+    },
+    "trigger": "hover"
+  },
+  "button.secondary.hover": {
+    "kind": "hover",
+    "element": "Secondary Button (nav 'Contact')",
+    "page": "all",
+    "section": "nav",
+    "framerNodeId": "l1lRiQK3K",
+    "states": {
+      "Desktop/Color BG": {
+        "bottom": [
+          "-20px",
+          "-75px"
+        ],
+        "height": [
+          "20px",
+          "180px"
+        ],
+        "width": [
+          "20px",
+          "180px"
+        ]
+      }
+    },
+    "transition": {
+      "type": "spring",
+      "stiffness": 500,
+      "damping": 60,
+      "mass": 1,
+      "delay": 0.0
+    },
+    "trigger": "hover"
+  },
+  "button.submit.hover": {
+    "kind": "hover",
+    "element": "Contact form Submit button (hover)",
+    "page": "home",
+    "section": "contact",
+    "framerNodeId": "CXG4KfCnd",
+    "states": {
+      "Desktop/Color BG": {
+        "height": [
+          "19px",
+          "81px"
+        ],
+        "width": [
+          "15px",
+          "182px"
+        ]
+      },
+      "Desktop/RichText": {
+        "textColor": [
+          "var(--color-purple-green)",
+          "var(--color-white-dark)"
+        ]
+      }
+    },
+    "pressed": {
+      "Desktop": {
+        "fill": [
+          null,
+          "var(--color-purple-green)"
+        ]
+      },
+      "Desktop/RichText": {
+        "textColor": [
+          "var(--color-purple-green)",
+          "var(--color-white-dark)"
+        ]
+      }
+    },
+    "transition": {
+      "type": "spring",
+      "stiffness": 500,
+      "damping": 60,
+      "mass": 1,
+      "delay": 0.0
+    },
+    "trigger": "hover"
+  },
+  "button.submit.spinner": {
+    "kind": "loop",
+    "element": "Submit button loading spinner (conic gradient, masked ring)",
+    "page": "home",
+    "section": "contact",
+    "framerNodeId": "EKlpffxntm2_RmyTVm",
+    "to": {
+      "rotate": 360
+    },
+    "repeat": "loop",
+    "transition": {
+      "type": "tween",
+      "duration": 1.0,
+      "ease": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "delay": 0.0
+    },
+    "trigger": "always"
+  },
+  "nav.link.hover": {
+    "kind": "hover",
+    "element": "Nav Link (Home / About / Collabs / Projects / Available for work)",
+    "page": "all",
+    "section": "nav",
+    "framerNodeId": "nvfIJTuv1",
+    "states": {
+      "Desktop": {
+        "overflow": [
+          "hidden",
+          "visible"
+        ]
+      },
+      "Desktop/Link Wrap": {
+        "rotateX": [
+          "0deg",
+          "-90deg"
+        ]
+      }
+    },
+    "transition": {
+      "type": "spring",
+      "bounce": 0,
+      "duration": 0.4,
+      "delay": 0.0
+    },
+    "trigger": "hover"
+  },
+  "nav.scroll": {
+    "kind": "scrollVariant",
+    "element": "Floating nav pill: collapses to avatar + status when scrolling down (desktop); tap avatar to reopen",
+    "page": "all",
+    "section": "nav",
+    "framerNodeId": "thwdkYYsh",
+    "trigger": "onScrollDirection",
+    "direction": "down",
+    "replay": true,
+    "states": {
+      "desktop": {
+        "Desktop / Open": {
+          "gap": [
+            "40px",
+            "0px"
+          ],
+          "padding": [
+            "8px 10px 8px 10px",
+            "8px 20px 8px 10px"
+          ],
+          "paddingRight": [
+            "10px",
+            "20px"
+          ]
+        },
+        "Desktop / Open/Scroll Hide Wrap": {
+          "opacity": [
+            1,
+            0
+          ],
+          "width": [
+            "auto",
+            "1px"
+          ]
+        }
+      },
+      "tabletPhone": {
+        "Tablet & Phone / Closed": {
+          "gap": [
+            "0px",
+            "40px"
+          ],
+          "padding": [
+            "8px 10px 8px 10px",
+            "10px 10px 20px 10px"
+          ],
+          "paddingBottom": [
+            "8px",
+            "20px"
+          ],
+          "paddingTop": [
+            "8px",
+            "10px"
+          ],
+          "stackDistribution": [
+            "center",
+            "end"
+          ],
+          "width": [
+            "auto",
+            "300px"
+          ]
+        },
+        "Tablet & Phone / Closed/Avatar & Button Wrap": {
+          "gap": [
+            "20px",
+            "10px"
+          ],
+          "stackDistribution": [
+            "center",
+            "space-between"
+          ]
+        },
+        "Tablet & Phone / Closed/Avatar & Button Wrap/Toggle Button/Line / Top": {
+          "top": [
+            "16px",
+            "19px"
+          ],
+          "rotateZ": [
+            "0deg",
+            "45deg"
+          ],
+          "rotation": [
+            "0deg",
+            "45deg"
+          ],
+          "width": [
+            "12px",
+            "20px"
+          ]
+        },
+        "Tablet & Phone / Closed/Avatar & Button Wrap/Toggle Button/Line / Bottom": {
+          "bottom": [
+            "16px",
+            "19px"
+          ],
+          "rotateZ": [
+            "0deg",
+            "-45deg"
+          ],
+          "rotation": [
+            "0deg",
+            "-45deg"
+          ],
+          "width": [
+            "12px",
+            "20px"
+          ]
+        },
+        "Tablet & Phone / Closed/Scroll Hide Wrap": {
+          "height": [
+            "1px",
+            "auto"
+          ],
+          "visible": [
+            false,
+            true
+          ],
+          "width": [
+            "1px",
+            "1fr"
+          ]
+        },
+        "Tablet & Phone / Closed/Scroll Hide Wrap/Nav Link Wrap": {
+          "gap": [
+            "20px",
+            "40px"
+          ],
+          "overflow": [
+            "hidden",
+            "visible"
+          ],
+          "width": [
+            "auto",
+            "1fr"
+          ]
+        }
+      }
+    },
+    "note": "Desktop starts Open and switches to Closed on scroll down. Tablet/phone start in 'Tablet & Phone / Closed' (links hidden) and have no scroll effect.",
+    "transition": {
+      "type": "spring",
+      "stiffness": 500,
+      "damping": 60,
+      "mass": 1,
+      "delay": 0.0
+    }
+  },
+  "nav.status.glow": {
+    "kind": "variant",
+    "element": "Green availability dot glow next to 'Available for work' (Avatar Status)",
+    "page": "all",
+    "section": "nav",
+    "framerNodeId": "Zpq26dbNS",
+    "loop": true,
+    "states": {
+      "Desktop / Available/Status/Glowing": {
+        "opacity": [
+          0.5,
+          0
+        ],
+        "width": [
+          "6px",
+          "40px"
+        ]
+      }
+    },
+    "holdSeconds": 1.0,
+    "transition": {
+      "type": "tween",
+      "duration": 0.7,
+      "ease": [
+        0.12,
+        0.23,
+        0.5,
+        1
+      ],
+      "delay": 0.0
+    },
+    "returnTransition": {
+      "type": "instant"
+    },
+    "trigger": "timer"
+  },
+  "link.hover": {
+    "kind": "hover",
+    "element": "Inline text links (phone / email cards)",
+    "page": "home",
+    "section": "about",
+    "framerNodeId": "ZRloE2uUu",
+    "to": {
+      "color": "var(--color-purple-green)"
+    },
+    "transition": {
+      "type": "tween",
+      "duration": 0.2,
+      "ease": [
+        0.5,
+        0,
+        0.88,
+        0.77
+      ],
+      "delay": 0.0
+    },
+    "trigger": "hover"
+  },
+  "cursor": {
+    "kind": "cursor",
+    "element": "Custom cursor (desktop breakpoint only)",
+    "page": "all",
+    "section": "page",
+    "framerNodeId": "WbNejK37I",
+    "default": {
+      "size": 16,
+      "fill": "var(--color-purple-green)",
+      "radius": "99px"
+    },
+    "blending": {
+      "size": 16,
+      "fill": "var(--color-purple-green)",
+      "blendMode": "color-burn",
+      "usedOn": [
+        "nav pill",
+        "footer",
+        "contact form submit button"
+      ]
+    },
+    "follow": true,
+    "offsetX": 20,
+    "offsetY": 20,
+    "placement": "right",
+    "alignment": "center",
+    "transition": {
+      "type": "spring",
+      "bounce": 0.2,
+      "duration": 0.4,
+      "delay": 0.0
+    },
+    "trigger": "pointerMove"
+  }
+}

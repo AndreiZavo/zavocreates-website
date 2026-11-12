@@ -1,0 +1,228 @@
+---
+/** Site footer (Framer "Footer", layout template). Shared by every page. */
+import { getSite } from "../content/load";
+import { svgMarkup } from "../content/images";
+
+const site = getSite();
+const { footer } = site;
+const social = footer.social.map((s) => ({ ...s, svg: svgMarkup(s.icon) }));
+const emailText = site.email;
+const phoneText = site.phone;
+---
+
+<footer class="footer" data-cursor="blend">
+  <div class="footer__container">
+    <div class="footer__top">
+      <div class="footer__col footer__col--left">
+        <div class="footer__item">
+          <p class="t-body-small footer__label">{footer.emailLabel}</p>
+          <a class="t-body-medium-bold footer__link" href={footer.emailHref}>{emailText}</a>
+        </div>
+      </div>
+      <div class="footer__col footer__col--center">
+        <div class="footer__item">
+          <p class="t-body-small footer__label">{footer.phoneLabel}</p>
+          <a class="t-body-medium-bold footer__link" href={footer.phoneHref}>{phoneText}</a>
+        </div>
+      </div>
+      <div class="footer__col footer__col--right">
+        <div class="footer__item footer__item--social">
+          <p class="t-body-small footer__label">{footer.socialLabel}</p>
+          <div class="footer__icons">
+            {
+              social.map((s) => (
+                <a class="footer__icon" href={s.href} aria-label={s.network} target="_blank" rel="noopener noreferrer" set:html={s.svg} />
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer__divider"></div>
+    <div class="footer__bottom">
+      <div class="footer__copy">
+        <p class="t-body-small footer__label">{footer.copyright}</p>
+      </div>
+      <div class="footer__credit">
+        <p class="t-body-small footer__label">{footer.createdByLabel}</p>
+        <a class="t-body-small footer__link footer__link--underline" href={footer.createdByHref} target="_blank" rel="noopener noreferrer">
+          {footer.createdByName}
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style is:global>
+  .footer {
+    position: relative;
+    z-index: 9;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    overflow: hidden;
+    background: var(--color-purple-green);
+  }
+
+  .footer__container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 20px;
+    width: 100%;
+    max-width: 1200px;
+    padding: 40px;
+  }
+
+  .footer__label {
+    color: var(--color-white-dark);
+  }
+
+  .footer__link,
+  .footer__link:hover {
+    color: var(--link-footer-color);
+    text-decoration: var(--link-footer-decoration);
+  }
+
+  .footer__link--underline,
+  .footer__link--underline:hover {
+    color: var(--link-footer-underline-color);
+    text-decoration: var(--link-footer-underline-decoration);
+  }
+
+  .footer__top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .footer__col {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .footer__col--left {
+    align-items: flex-start;
+  }
+
+  .footer__col--center,
+  .footer__col--right {
+    align-items: flex-end;
+  }
+
+  .footer__col--right {
+    height: 100px;
+  }
+
+  .footer__item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .footer__item--social {
+    height: 100%;
+  }
+
+  .footer__icons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .footer__icon {
+    display: flex;
+    width: 24px;
+    height: 24px;
+    color: var(--color-white-dark);
+  }
+
+  .footer__icon svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .footer__divider {
+    height: 1px;
+    background: var(--color-white-dark);
+  }
+
+  .footer__bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .footer__copy,
+  .footer__credit {
+    flex: 1 1 0;
+    max-width: 50%;
+  }
+
+  /* Auto-width texts in Framer do not wrap. */
+  .footer__copy p,
+  .footer__credit > * {
+    white-space: nowrap;
+  }
+
+  .footer__credit {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 5px;
+  }
+
+  @media (max-width: 809.98px) {
+    .footer__container {
+      gap: 40px;
+      max-width: 390px;
+      padding: 40px 20px;
+    }
+
+    .footer__top {
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .footer__col,
+    .footer__col--right {
+      flex: none;
+      height: auto;
+    }
+
+    .footer__item {
+      flex-direction: row;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .footer__item--social {
+      gap: 16px;
+    }
+
+    .footer__bottom {
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 20px;
+    }
+
+    .footer__copy p {
+      white-space: normal;
+    }
+
+    .footer__copy {
+      width: 100%;
+      max-width: 350px;
+      text-align: center;
+      text-wrap: balance;
+    }
+
+    .footer__credit {
+      flex: none;
+      width: 50%;
+    }
+  }
+</style>

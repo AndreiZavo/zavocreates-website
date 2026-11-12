@@ -1,0 +1,213 @@
+---
+/** "About me" section (Framer "About"): definition, counters and the phone / email cards. */
+import { getHome } from "../content/load";
+import InfoCard from "./InfoCard.astro";
+import NumberCard from "./NumberCard.astro";
+
+const { about } = getHome();
+---
+
+<section id="about" class="about" data-motion-target="z940ZBfKS">
+  <div class="about__container">
+    <div class="about__wrap">
+      <div class="about__text">
+        <h2 class="t-heading-2">{about.heading}</h2>
+        <div class="about__word">
+          <div class="about__name">
+            <h3 class="t-heading-3">{about.word}</h3>
+            <span class="about__underline"></span>
+          </div>
+          <p class="t-body-medium about__phonetic">{about.phonetic} <em>{about.partOfSpeech}</em></p>
+        </div>
+        <div class="t-paragraphs about__paras">
+          <p class="t-body-medium">{about.definition}</p>
+          <p class="t-body-medium">
+            {about.line.map((run) => (run.bold ? <strong>{run.text}</strong> : run.italic ? <em>{run.text}</em> : run.text))}
+          </p>
+        </div>
+      </div>
+      <div class="about__numbers">
+        {about.counters.map((counter) => <NumberCard counter={counter} />)}
+      </div>
+      <div class="about__contact">
+        <InfoCard {...about.phoneCard} />
+        <InfoCard {...about.emailCard} />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style is:global>
+  .about {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .about__container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    padding: 0 40px;
+    overflow: hidden;
+  }
+
+  .about__wrap {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 40px;
+    flex: 1 1 0;
+    max-width: 600px;
+    overflow: hidden;
+  }
+
+  .about__text {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow: hidden;
+  }
+
+  .about__word {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    overflow: clip;
+  }
+
+  .about__name {
+    position: relative;
+    flex: none;
+    width: 56px;
+    height: 42px;
+    overflow: clip;
+  }
+
+  .about__name h3 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    white-space: nowrap;
+  }
+
+  .about__underline {
+    position: absolute;
+    bottom: 0;
+    left: 1px;
+    width: 30px;
+    height: 2px;
+    background: var(--color-purple-green);
+  }
+
+  .about__phonetic {
+    color: var(--color-grey-150);
+    white-space: nowrap;
+  }
+
+  .about__paras p {
+    max-width: 500px;
+  }
+
+  /* Bold runs render in Inter Medium on the Framer site. */
+  .about__paras strong {
+    font-weight: 500;
+  }
+
+  .about__numbers {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(50px, 1fr));
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .about__contact {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(50px, 1fr));
+    align-items: center;
+    overflow: hidden;
+  }
+
+  @media (min-width: 810px) and (max-width: 1199.98px) {
+    .about__container {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 60px;
+    }
+
+    .about__wrap {
+      flex: none;
+      width: 100%;
+      max-width: 55%;
+    }
+
+    .about__text {
+      width: 365px;
+    }
+
+    .about__word {
+      gap: 10px;
+    }
+
+    .about__numbers,
+    .about__contact {
+      grid-template-columns: repeat(2, minmax(50px, 1fr));
+      gap: 20px;
+    }
+  }
+
+  @media (max-width: 809.98px) {
+    .about {
+      height: auto;
+    }
+
+    .about__container {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 40px;
+      padding: 80px 20px;
+    }
+
+    .about__wrap {
+      flex: none;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .about__word {
+      gap: 0;
+    }
+
+    .about__name {
+      width: 50px;
+      height: 30px;
+    }
+
+    .about__underline {
+      top: 29px;
+      bottom: auto;
+      width: 20px;
+    }
+
+    .about__numbers {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 40px;
+    }
+
+    .about__contact {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+  }
+</style>

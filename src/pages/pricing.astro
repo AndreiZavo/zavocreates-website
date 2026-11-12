@@ -1,0 +1,6 @@
+---
+import PricingPage from "../components/PricingPage.astro";
+import { getPricing } from "../content/load";
+---
+
+<PricingPage content={getPricing("en")} />

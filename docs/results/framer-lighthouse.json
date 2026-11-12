@@ -1,0 +1,89 @@
+{
+  "source": "https://zavocreates.com (live Framer site)",
+  "capturedAt": "2026-11-10",
+  "tool": "@lhci/cli collect, Lighthouse 13.6.0",
+  "runsPerUrl": 3,
+  "aggregation": "median of each value across the runs, taken independently per value",
+  "presets": {
+    "mobile": {
+      "https://zavocreates.com/": {
+        "runs": 3,
+        "scores": {
+          "performance": 82,
+          "accessibility": 92,
+          "best-practices": 100,
+          "seo": 100
+        },
+        "metrics": {
+          "firstContentfulPaintMs": 1189,
+          "largestContentfulPaintMs": 1191,
+          "speedIndexMs": 2784,
+          "totalBlockingTimeMs": 614,
+          "cumulativeLayoutShift": 0.003,
+          "timeToInteractiveMs": 11674,
+          "totalTransferBytes": 1989224
+        },
+        "requests": 59
+      },
+      "https://zavocreates.com/pricing": {
+        "runs": 3,
+        "scores": {
+          "performance": 93,
+          "accessibility": 89,
+          "best-practices": 100,
+          "seo": 100
+        },
+        "metrics": {
+          "firstContentfulPaintMs": 1178,
+          "largestContentfulPaintMs": 1178,
+          "speedIndexMs": 2978,
+          "totalBlockingTimeMs": 295,
+          "cumulativeLayoutShift": 0,
+          "timeToInteractiveMs": 9949,
+          "totalTransferBytes": 1741809
+        },
+        "requests": 43
+      }
+    },
+    "desktop": {
+      "https://zavocreates.com/": {
+        "runs": 3,
+        "scores": {
+          "performance": 100,
+          "accessibility": 92,
+          "best-practices": 100,
+          "seo": 100
+        },
+        "metrics": {
+          "firstContentfulPaintMs": 498,
+          "largestContentfulPaintMs": 498,
+          "speedIndexMs": 989,
+          "totalBlockingTimeMs": 12,
+          "cumulativeLayoutShift": 0.002,
+          "timeToInteractiveMs": 600,
+          "totalTransferBytes": 2124523
+        },
+        "requests": 61
+      },
+      "https://zavocreates.com/pricing": {
+        "runs": 3,
+        "scores": {
+          "performance": 100,
+          "accessibility": 89,
+          "best-practices": 100,
+          "seo": 100
+        },
+        "metrics": {
+          "firstContentfulPaintMs": 481,
+          "largestContentfulPaintMs": 481,
+          "speedIndexMs": 538,
+          "totalBlockingTimeMs": 12,
+          "cumulativeLayoutShift": 0,
+          "timeToInteractiveMs": 581,
+          "totalTransferBytes": 1741837
+        },
+        "requests": 43
+      }
+    }
+  }
+}

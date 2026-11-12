@@ -1,0 +1,185 @@
+/*
+ * Service Accordion items (Framer "Service Accordion"), shared by the home services list and the
+ * pricing FAQ. Markup: <details class="acc__item"> with <summary class="acc__top"> and a
+ * [data-motion-panel] .acc__panel (see ServiceAccordion.astro / FaqAccordion.astro).
+ * Below the desktop breakpoint the "Tablet & Phone" variant applies; .acc--desktop keeps the
+ * "Desktop" variant on tablet (Framer uses it there on /pricing). The rules are repeated per range.
+ */
+.acc {
+  display: flex;
+  flex-direction: column;
+}
+
+.acc__item {
+  --acc-color: var(--color-grey-100);
+  --acc-title: var(--color-grey-200-white);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Framer draws the bottom border over the box (no layout space). */
+.acc__item::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 1px;
+  background: var(--acc-color);
+  pointer-events: none;
+}
+
+.acc__item[open],
+.acc__item[data-state="open"] {
+  --acc-color: var(--color-purple-green);
+  --acc-title: var(--color-purple-green);
+}
+
+.acc__item[data-state="closed"] {
+  --acc-color: var(--color-grey-100);
+  --acc-title: var(--color-grey-200-white);
+}
+
+.acc__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 82px;
+  list-style: none;
+  cursor: pointer;
+}
+
+.acc__top::-webkit-details-marker {
+  display: none;
+}
+
+/* Closed, Framer keeps the bullets in a 1px-high panel; a closed <details> renders no panel. */
+.acc__item:not([open]) > .acc__top {
+  margin-bottom: 1px;
+}
+
+.acc__title {
+  margin: 0;
+  font-family: var(--text-heading-3-family);
+  font-weight: var(--text-heading-3-weight);
+  font-size: var(--text-heading-3-size);
+  line-height: var(--text-heading-3-line);
+  letter-spacing: var(--text-heading-3-tracking);
+  text-transform: var(--text-heading-3-transform);
+  color: var(--acc-title);
+}
+
+.acc__top:hover .acc__title {
+  color: var(--color-purple-green);
+}
+
+.acc__chevron {
+  display: flex;
+  width: 30px;
+  height: 30px;
+  color: var(--color-grey-200-white);
+  rotate: 180deg;
+}
+
+.acc__item[open] .acc__chevron,
+.acc__item[data-state="open"] .acc__chevron {
+  rotate: 0deg;
+}
+
+.acc__item[data-state="closed"] .acc__chevron {
+  rotate: 180deg;
+}
+
+.acc__chevron svg {
+  width: 100%;
+  height: 100%;
+}
+
+.acc__panel {
+  overflow: hidden;
+}
+
+/* Framer's open item has padding-bottom 20px. It lives inside the panel here, so it opens and closes
+   with the animated panel height instead of snapping when the item's state flips. */
+.acc__bullets {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin: 0;
+  padding: 0 0 20px;
+  list-style: none;
+}
+
+.acc__bullet {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.acc__check {
+  display: flex;
+  flex: none;
+  width: 20px;
+  height: 27px;
+  color: var(--color-grey-200-white);
+}
+
+.acc__check svg {
+  width: 100%;
+  height: 100%;
+}
+
+.acc__bullet-text {
+  flex: 1 1 0;
+}
+
+@media (min-width: 810px) and (max-width: 1199.98px) {
+  .acc:not(.acc--desktop) .acc__top {
+    height: auto;
+    padding: 20px 0;
+  }
+
+  .acc:not(.acc--desktop) .acc__title {
+    font-family: var(--text-heading-4-family);
+    font-weight: var(--text-heading-4-weight);
+    font-size: var(--text-heading-4-size);
+    line-height: var(--text-heading-4-line);
+    letter-spacing: var(--text-heading-4-tracking);
+    text-transform: var(--text-heading-4-transform);
+  }
+
+  .acc:not(.acc--desktop) .acc__chevron {
+    width: 24px;
+    height: 24px;
+  }
+
+  .acc:not(.acc--desktop) .acc__check {
+    width: 16px;
+    height: 24px;
+  }
+}
+
+@media (max-width: 809.98px) {
+  .acc .acc__top {
+    height: auto;
+    padding: 20px 0;
+  }
+
+  .acc .acc__title {
+    font-family: var(--text-heading-4-family);
+    font-weight: var(--text-heading-4-weight);
+    font-size: var(--text-heading-4-size);
+    line-height: var(--text-heading-4-line);
+    letter-spacing: var(--text-heading-4-tracking);
+    text-transform: var(--text-heading-4-transform);
+  }
+
+  .acc .acc__chevron {
+    width: 24px;
+    height: 24px;
+  }
+
+  .acc .acc__check {
+    width: 16px;
+    height: 24px;
+  }
+}

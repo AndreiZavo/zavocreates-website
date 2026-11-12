@@ -1,0 +1,117 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+# A newer push to the same branch or PR cancels the run it supersedes.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # No secrets: Worker tests stub Workers AI, Resend and Turnstile; the preview reads dummy
+  # values from .dev.vars, copied from .dev.vars.example below.
+  WRANGLER_SEND_METRICS: "false"
+
+jobs:
+  test:
+    name: Build, tests, links and Lighthouse
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: Dummy local secrets for wrangler dev
+        run: cp .dev.vars.example .dev.vars
+
+      - run: npm run build
+
+      # Type-check: .astro files (astro check) and every TypeScript file in tsconfig.json.
+      - run: npm run check
+
+      - run: npm run test:unit
+
+      - run: npm run test:worker
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      # Playwright starts its own build + wrangler preview on :8787 (playwright.config.ts).
+      - run: npm run test:e2e
+
+      # linkinator over ./dist, external links included (.linkinator.config.json).
+      - run: npm run check:links
+
+      # Lighthouse CI against the Worker preview (lighthouserc.json). Uses the Google Chrome
+      # preinstalled on the ubuntu runner.
+      - run: npm run lhci
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report-e2e
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14
+
+      - name: Upload Lighthouse results
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: lighthouse
+          path: .lighthouseci/
+          include-hidden-files: true
+          retention-days: 14
+
+  # The visual baselines (tests/visual/baseline) were captured on macOS from the Framer site.
+  # Linux rasterises the self-hosted fonts differently (hinting, anti-aliasing), so every
+  # screenshot would differ from the baselines on ubuntu. This job therefore runs on macOS,
+  # the platform the baselines come from; baselines are never regenerated.
+  # Cost: macOS runner minutes are free for public repositories. For a private repository
+  # they are billed at 10x the Linux rate against the 2,000 free minutes/month, so this
+  # project's "free plans only" rule requires the GitHub repository to be public.
+  visual:
+    name: Visual regression (macOS)
+    runs-on: macos-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: Dummy local secrets for wrangler dev
+        run: cp .dev.vars.example .dev.vars
+
+      - name: Install Playwright Chromium
+        run: npx playwright install chromium
+
+      # Playwright builds the site and starts the wrangler preview itself.
+      - run: npm run test:visual
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report-visual
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14

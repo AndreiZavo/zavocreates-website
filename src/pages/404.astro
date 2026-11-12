@@ -1,0 +1,47 @@
+---
+/**
+ * Not-found page, served with status 404 by the Worker's assets binding (wrangler.jsonc
+ * not_found_handling "404-page"). The Framer project has no 404 page of its own (Framer serves a
+ * built-in one), so there is no 404 copy in content/: the page shows the status code as its heading
+ * and a link home labelled with the nav's own "Home" link text. Kept out of the sitemap
+ * (routes.ts PAGE_PATHS) and out of search results (noindex).
+ */
+import Footer from "../components/Footer.astro";
+import Nav from "../components/Nav.astro";
+import Noise from "../components/Noise.astro";
+import { getSite } from "../content/load";
+import Base from "../layouts/Base.astro";
+
+const site = getSite();
+const STATUS = "404";
+const home = site.nav.links[0];
+if (!home) throw new Error("site.nav.links is empty");
+---
+
+<Base lang="en" title={`${STATUS} | ${site.title}`} description={site.description} path="/404" noindex>
+  <Noise />
+  <Nav />
+  <main class="not-found">
+    <h1 class="t-heading-1">{STATUS}</h1>
+    <a class="t-heading-4 not-found__home" href="/">{home.label}</a>
+  </main>
+  <Footer />
+</Base>
+
+<style is:global>
+  .not-found {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    min-height: 100vh;
+    padding: 160px 40px;
+  }
+
+  .not-found__home {
+    color: var(--color-purple-green);
+  }
+</style>

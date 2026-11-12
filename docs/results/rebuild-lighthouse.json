@@ -1,0 +1,89 @@
+{
+  "source": "rebuild: ./dist served by the Worker preview (wrangler dev --local, http://localhost:8787)",
+  "capturedAt": "2026-11-11",
+  "tool": "@lhci/cli collect, Lighthouse 13.6.0",
+  "runsPerUrl": 3,
+  "aggregation": "median of each value across the runs, taken independently per value",
+  "presets": {
+    "mobile": {
+      "http://localhost:8787/": {
+        "runs": 3,
+        "scores": {
+          "performance": 94,
+          "accessibility": 100,
+          "best-practices": 100,
+          "seo": 100
+        },
+        "metrics": {
+          "firstContentfulPaintMs": 916,
+          "largestContentfulPaintMs": 3108,
+          "speedIndexMs": 920,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0.001,
+          "timeToInteractiveMs": 3130,
+          "totalTransferBytes": 1423999
+        },
+        "requests": 35
+      },
+      "http://localhost:8787/pricing": {
+        "runs": 3,
+        "scores": {
+          "performance": 100,
+          "accessibility": 100,
+          "best-practices": 100,
+          "seo": 100
+        },
+        "metrics": {
+          "firstContentfulPaintMs": 916,
+          "largestContentfulPaintMs": 916,
+          "speedIndexMs": 916,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0,
+          "timeToInteractiveMs": 916,
+          "totalTransferBytes": 943786
+        },
+        "requests": 14
+      }
+    },
+    "desktop": {
+      "http://localhost:8787/": {
+        "runs": 3,
+        "scores": {
+          "performance": 100,
+          "accessibility": 100,
+          "best-practices": 100,
+          "seo": 100
+        },
+        "metrics": {
+          "firstContentfulPaintMs": 257,
+          "largestContentfulPaintMs": 562,
+          "speedIndexMs": 339,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0,
+          "timeToInteractiveMs": 562,
+          "totalTransferBytes": 1376050
+        },
+        "requests": 38
+      },
+      "http://localhost:8787/pricing": {
+        "runs": 3,
+        "scores": {
+          "performance": 100,
+          "accessibility": 100,
+          "best-practices": 100,
+          "seo": 100
+        },
+        "metrics": {
+          "firstContentfulPaintMs": 254,
+          "largestContentfulPaintMs": 254,
+          "speedIndexMs": 254,
+          "totalBlockingTimeMs": 0,
+          "cumulativeLayoutShift": 0,
+          "timeToInteractiveMs": 254,
+          "totalTransferBytes": 942601
+        },
+        "requests": 14
+      }
+    }
+  }
+}

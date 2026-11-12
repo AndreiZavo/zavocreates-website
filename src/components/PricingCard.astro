@@ -1,0 +1,208 @@
+---
+/**
+ * One pricing package card (Framer "Card Test" / "Card Starter" / "Card Growth" / "Card Premium").
+ * The featured card (Growth) is the dark variant with the badge pill and the filled button.
+ * Hover: the card lifts (pricing.card.hover / pricing.card.featured.hover); the button tints
+ * (pricing.button.hover) or fades (pricing.button.featured.hover). The button opens Calendly in a new tab.
+ */
+import type { Package } from "../content/schema";
+
+interface Props {
+  pkg: Package;
+}
+
+const { pkg } = Astro.props;
+const featured = pkg.featured;
+---
+
+<article
+  class:list={["card", featured && "card--featured"]}
+  data-motion={featured ? "pricing.card.featured.hover" : "pricing.card.hover"}
+>
+  <div class="card__tier">
+    <h3 class="t-heading-4 card__name">{pkg.name}</h3>
+    {pkg.badge && <span class="card__pill">{pkg.badge}</span>}
+  </div>
+  <div class="card__track"><div class="card__fill" style={`width:${pkg.progress}`}></div></div>
+  <p class="card__count">{pkg.videos}</p>
+  <p class="card__price">{pkg.price}</p>
+  <p class:list={["card__blurb", !featured && "t-body-small"]}>{pkg.blurb}</p>
+  <div class="card__spacer"></div>
+  <a
+    class="card__btn"
+    href={pkg.href}
+    target="_blank"
+    rel="noopener noreferrer"
+    data-motion={featured ? "pricing.button.featured.hover" : "pricing.button.hover"}
+  >
+    <span class="card__btn-label">{pkg.cta}</span>
+  </a>
+</article>
+
+<style is:global>
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    min-width: 0;
+    padding: 28px 24px 24px;
+    overflow: clip;
+    border-radius: 18px;
+    background: var(--color-grey-50-dark);
+    /* Resting value of the hover shadow (no shadow), so it animates from a shadow of the same shape. */
+    box-shadow: 0px 0px 0px 0px rgba(32, 31, 26, 0);
+  }
+
+  /* Framer borders are drawn over the box and take no space. */
+  .card::after,
+  .card__btn::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 1px solid var(--color-grey-100);
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  .card--featured {
+    background: var(--color-grey-200-white);
+  }
+
+  .card--featured::after {
+    border-color: var(--color-grey-200-white);
+  }
+
+  .card__tier {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    overflow: clip;
+  }
+
+  .card__name {
+    flex: 1 1 0;
+  }
+
+  .card--featured .card__name {
+    flex: none;
+    color: var(--color-white-dark);
+  }
+
+  .card__pill {
+    flex: none;
+    padding: 5px 12px;
+    border-radius: 100px;
+    background: var(--color-purple-green);
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    line-height: 1em;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-white-dark);
+  }
+
+  .card__track {
+    display: flex;
+    width: 100%;
+    height: 4px;
+    overflow: clip;
+    border-radius: 4px;
+    background: var(--color-grey-100);
+  }
+
+  .card__fill {
+    height: 4px;
+    border-radius: 4px;
+    background: var(--color-purple-green);
+  }
+
+  .card__count,
+  .card__price,
+  .card__blurb {
+    width: 100%;
+    margin: 0;
+  }
+
+  .card__count {
+    font-family: "Inter", sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 1.2em;
+    letter-spacing: 0.02em;
+    font-feature-settings: "tnum" on;
+    color: var(--color-grey-150);
+  }
+
+  .card__price {
+    font-family: "Antonio", sans-serif;
+    font-weight: 700;
+    font-size: 34px;
+    line-height: 1.2em;
+    font-feature-settings: "tnum" on;
+    color: var(--color-grey-200-white);
+  }
+
+  .card--featured .card__count {
+    color: var(--color-grey-100);
+  }
+
+  .card--featured .card__price {
+    color: var(--color-white-dark);
+  }
+
+  .card--featured .card__blurb {
+    font-family: "Inter", sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.55em;
+    color: var(--color-grey-100);
+  }
+
+  .card__spacer {
+    flex: 1 1 0;
+    width: 100%;
+    min-height: 8px;
+  }
+
+  .card__btn {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 12px 20px;
+    border-radius: 100px;
+    text-decoration: none;
+  }
+
+  .card__btn::after {
+    border-color: var(--color-grey-200-white);
+  }
+
+  .card__btn-label {
+    font-family: "Inter", sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 1em;
+    text-align: center;
+    color: var(--color-grey-200-white);
+  }
+
+  .card--featured .card__btn {
+    background: var(--color-purple-green);
+  }
+
+  .card--featured .card__btn::after {
+    content: none;
+  }
+
+  .card--featured .card__btn-label {
+    font-weight: 600;
+    color: var(--color-white-dark);
+  }
+</style>

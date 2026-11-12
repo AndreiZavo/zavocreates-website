@@ -1,0 +1,165 @@
+{
+  "lang": "en",
+  "title": "Andrei Zavo | Promo & Social Media Videographer for Growing Brands",
+  "description": "I’m Andrei Zavo, a promo and social media videographer creating short-form videos, reels, and TikTok content that help brands grow, engage audiences, and stand out online.",
+  "intro": {
+    "eyebrow": "Services",
+    "heading": "Let’s tell your story, month after month.",
+    "text": "You focus on your craft. I’ll handle the camera, the edit, and the delivery."
+  },
+  "points": [
+    {
+      "number": "01",
+      "title": "Shot on site, always",
+      "body": "Every frame is filmed at your place — nothing stock, nothing generic."
+    },
+    {
+      "number": "02",
+      "title": "A steady creative rhythm",
+      "body": "A fixed set of videos each month, so your story keeps unfolding."
+    },
+    {
+      "number": "03",
+      "title": "Just you and me",
+      "body": "I film, edit, and deliver everything myself, from first shot to final cut."
+    }
+  ],
+  "processIntro": {
+    "eyebrow": "How we’ll work together",
+    "heading": "From first call to final cut."
+  },
+  "process": [
+    {
+      "number": "01",
+      "title": "We talk",
+      "body": "We talk about what you want your brand to say, then set up your shooting schedule. I usually film in batches of 3–4 videos per session.",
+      "side": "left"
+    },
+    {
+      "number": "02",
+      "title": "Scripts and ideas",
+      "body": "Before each shoot, I send you the scripts and ideas we’re going to film. No surprises on shooting day.",
+      "side": "right"
+    },
+    {
+      "number": "03",
+      "title": "We film",
+      "body": "I come to you and we film the batch in one relaxed session. You show up as yourself, I handle the rest.",
+      "side": "left"
+    },
+    {
+      "number": "04",
+      "title": "I edit",
+      "body": "I edit, and we fine-tune together until every video feels right.",
+      "side": "right"
+    },
+    {
+      "number": "05",
+      "title": "Delivery and posting",
+      "body": "You get the finished videos. Post them yourself, or let me help you publish them.",
+      "side": "left"
+    }
+  ],
+  "faqIntro": {
+    "eyebrow": "Good to know",
+    "heading": "Questions I get asked a lot."
+  },
+  "faq": [
+    {
+      "q": "1. What kind of videos do you make?",
+      "lines": [
+        "Short, story-driven videos of your product and people",
+        "Shot on site. Your space, your team",
+        "Edited for where your audience watches"
+      ]
+    },
+    {
+      "q": "2. How does the monthly rhythm work?",
+      "lines": [
+        "One, two or three shoot days per month depending on your package",
+        "I edit and deliver on a steady schedule",
+        "New content is always ready to post"
+      ],
+      "tabletPhone": {
+        "q": "2. How does the schedule work?",
+        "lines": [
+          "One, two or three shoot days per month depending on your  package",
+          "I edit and deliver on a steady schedule",
+          "New content is always ready to post"
+        ]
+      }
+    },
+    {
+      "q": "3. Do I need to prepare anything?",
+      "lines": [
+        "Not much. You bring your story",
+        "I bring the camera and the plan",
+        "No surprises on shooting day"
+      ]
+    },
+    {
+      "q": "4. Can we do a custom package?",
+      "lines": [
+        "The packages are a starting point",
+        "Tell me what you need",
+        "We’ll shape something together"
+      ]
+    }
+  ],
+  "packagesIntro": {
+    "eyebrow": "Pricing",
+    "heading": "Pick the rhythm that fits you."
+  },
+  "packages": [
+    {
+      "name": "Test",
+      "videos": "1 video",
+      "price": "500 RON",
+      "blurb": "One video, zero pressure. A simple way to see if we click.",
+      "cta": "Book Test",
+      "href": "https://calendly.com/zavocreates/discovery-call?a1=Test%20-%201%20test%20video",
+      "progress": "8%",
+      "featured": false
+    },
+    {
+      "name": "Starter",
+      "videos": "4 videos",
+      "price": "1400 RON",
+      "blurb": "A gentle monthly rhythm, perfect if you’re just starting to share your story.",
+      "cta": "Book Starter",
+      "href": "https://calendly.com/zavocreates/discovery-call?a1=Starter%20-%204%20videos%20subscription",
+      "progress": "33%",
+      "featured": false
+    },
+    {
+      "name": "Growth",
+      "videos": "8 videos",
+      "price": "2400 RON",
+      "blurb": "Where most of my clients land. Enough videos to build a real presence.",
+      "cta": "Book Growth",
+      "href": "https://calendly.com/zavocreates/discovery-call?a1=Growth%20-%208%20videos%20subscription",
+      "progress": "67%",
+      "featured": true,
+      "badge": "Most booked"
+    },
+    {
+      "name": "Premium",
+      "videos": "12 videos",
+      "price": "3300 RON",
+      "blurb": "Fresh footage every week, so you always have something worth sharing.",
+      "cta": "Book Premium",
+      "href": "https://calendly.com/zavocreates/discovery-call?a1=Premium%20-%2012%20videos%20subscription",
+      "progress": "100%",
+      "featured": false
+    }
+  ],
+  "footnote": "Every package includes filming, editing, and delivery.",
+  "vatNote": "Prices do not include VAT.",
+  "cta": {
+    "heading": "Not sure where to start?",
+    "text": "Tell me what you’re making, and we’ll find the rhythm that fits.",
+    "label": "Let’s work together",
+    "href": "/#contact"
+  },
+  "footnotePhone": "Every package includes filming, editing, and delivery.\nPosting can be managed by you or by me too."
+}

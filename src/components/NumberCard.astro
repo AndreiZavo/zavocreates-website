@@ -1,0 +1,70 @@
+---
+/**
+ * Number Card: an animated counter (home.counter) and its label. The HTML holds the real final value
+ * with its suffix, so it reads right without JS; the counter's font is the one in content/motion.json.
+ */
+import type { Counter } from "../content/schema";
+import { getMotion } from "../content/load";
+
+interface Props {
+  counter: Counter;
+}
+
+const { counter } = Astro.props;
+const effect = getMotion("home.counter");
+if (effect.kind !== "counter") throw new Error('motion "home.counter" must be a counter');
+const px = (v: number | string): string => (typeof v === "number" ? `${v}px` : v);
+const { desktop, phone } = effect.font;
+const vars = [
+  `--num-color:${effect.color}`,
+  `--num-size:${px(desktop.fontSize)}`,
+  `--num-line:${desktop.lineHeight.join("")}`,
+  `--num-tracking:${desktop.letterSpacing.join("")}`,
+  `--num-size-phone:${px(phone.fontSize)}`,
+  `--num-line-phone:${phone.lineHeight.join("")}`,
+  `--num-tracking-phone:${phone.letterSpacing.join("")}`,
+  `--num-features:${desktop.openTypeFontFeatures.map((f) => `"${f}"`).join(", ")}`,
+].join(";");
+---
+
+<div class="num" style={vars}>
+  <p class="num__value" data-motion="home.counter">{`${counter.value}${counter.suffix}`}</p>
+  <p class="t-body-medium-bold">{counter.label}</p>
+</div>
+
+<style is:global>
+  .num {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+    overflow: hidden;
+  }
+
+  /* fontSelector "GF;Antonio-700": Antonio 700. */
+  .num__value {
+    margin: 0;
+    font-family: "Antonio", sans-serif;
+    font-weight: 700;
+    font-size: var(--num-size);
+    line-height: var(--num-line);
+    letter-spacing: var(--num-tracking);
+    font-feature-settings: var(--num-features);
+    color: var(--num-color);
+    white-space: nowrap;
+  }
+
+  @media (max-width: 809.98px) {
+    .num {
+      flex-direction: row;
+      align-items: flex-end;
+      gap: 10px;
+    }
+
+    .num__value {
+      font-size: var(--num-size-phone);
+      line-height: var(--num-line-phone);
+      letter-spacing: var(--num-tracking-phone);
+    }
+  }
+</style>

@@ -1,0 +1,94 @@
+{
+  "url": "https://zavocreates.com",
+  "title": "Andrei Zavo | Promo & Social Media Videographer for Growing Brands",
+  "description": "I’m Andrei Zavo, a promo and social media videographer creating short-form videos, reels, and TikTok content that help brands grow, engage audiences, and stand out online.",
+  "ogImage": {
+    "src": "/images/og-image.png",
+    "width": 1263,
+    "height": 688,
+    "alt": "Andrei Zavo, promo and social media videographer"
+  },
+  "favicon": {
+    "src": "/images/favicon.png",
+    "width": 2731,
+    "height": 2731,
+    "alt": ""
+  },
+  "phone": "+40 799 853 625",
+  "email": "zavocreates@gmail.com",
+  "instagram": "https://www.instagram.com/zavocreates",
+  "tiktok": "https://www.tiktok.com/@zavocreates",
+  "threads": "https://www.threads.com/@zavocreates",
+  "noise": {
+    "src": "/images/noise.gif",
+    "width": 500,
+    "height": 700,
+    "alt": "",
+    "opacity": 0.12,
+    "blendMode": "color-dodge",
+    "repeat": "repeat",
+    "size": "250px auto"
+  },
+  "nav": {
+    "avatar": {
+      "src": "/images/andrei-portrait-hero.jpg",
+      "width": 4000,
+      "height": 6000,
+      "alt": ""
+    },
+    "status": {
+      "label": "Available for work",
+      "href": "/#contact"
+    },
+    "links": [
+      {
+        "label": "Home",
+        "href": "/#home"
+      },
+      {
+        "label": "About",
+        "href": "/#about"
+      },
+      {
+        "label": "Collabs",
+        "href": "/#collabs"
+      },
+      {
+        "label": "Projects",
+        "href": "/#projects"
+      }
+    ],
+    "cta": {
+      "label": "Contact",
+      "href": "/#contact"
+    }
+  },
+  "footer": {
+    "emailLabel": "Email :",
+    "emailHref": "mailto:zavocreates@gmail.com",
+    "phoneLabel": "Call Today :",
+    "phoneHref": "tel:+40799853625",
+    "socialLabel": "Social :",
+    "social": [
+      {
+        "network": "instagram",
+        "href": "https://www.instagram.com/zavocreates",
+        "icon": "/icons/phosphor-instagram-logo-fill.svg"
+      },
+      {
+        "network": "tiktok",
+        "href": "https://www.tiktok.com/@zavocreates",
+        "icon": "/icons/phosphor-tiktok-logo-fill.svg"
+      },
+      {
+        "network": "threads",
+        "href": "https://www.threads.com/@zavocreates",
+        "icon": "/icons/phosphor-threads-logo-fill.svg"
+      }
+    ],
+    "copyright": "© Copyright 2025. All Rights Reserved by Andrei Zavorodnic",
+    "createdByLabel": "Created by",
+    "createdByName": "Andrei Zavo",
+    "createdByHref": "https://www.instagram.com/zavocreates"
+  }
+}

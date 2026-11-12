@@ -1,0 +1,383 @@
+---
+/**
+ * Contact form (Framer "Contact Form" + "Submit Button"). src/scripts/contact-form.ts enhances it:
+ * Turnstile widget, JSON POST to /api/contact, the Framer button variants (Loading spinner, Success,
+ * Error) and the [data-form-status] announcement. Without JS the form posts natively; the Worker
+ * redirects to /#contact-sent or /#contact-error and CSS :target shows the matching message
+ * (Ruling R2). Turnstile needs JS, so a no-JS post always ends on #contact-error, which, like the
+ * <noscript> note, gives the email address and phone number (Ruling R10).
+ *
+ * Contract: #contact-form, fields name / email / service (options from content) / message,
+ * div.cf-turnstile, a submit button and the [data-form-status] live region.
+ */
+import { getHome, getSite } from "../content/load";
+import { svgMarkup } from "../content/images";
+
+const { fields, serviceOptions, success, error } = getHome().contact;
+const site = getSite();
+const chevron = svgMarkup("/icons/iconoir-nav-arrow-down.svg");
+
+/**
+ * Cloudflare's documented always-pass test sitekey (visible widget), used when
+ * PUBLIC_TURNSTILE_SITE_KEY is unset (local dev, tests). Source:
+ * https://developers.cloudflare.com/turnstile/troubleshooting/testing/
+ * Production builds must set PUBLIC_TURNSTILE_SITE_KEY (see .env.example).
+ */
+const TURNSTILE_TEST_SITE_KEY = "1x00000000000000000000AA";
+const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || TURNSTILE_TEST_SITE_KEY;
+---
+
+<form id="contact-form" class="form" action="/api/contact" method="post">
+  <div class="form__row">
+    <label class="field">
+      <span class="t-body-small field__label">{fields.name.label}</span>
+      <input class="field__control" type="text" name="name" placeholder={fields.name.placeholder} autocomplete="name" maxlength="100" required />
+    </label>
+    <label class="field">
+      <span class="t-body-small field__label">{fields.email.label}</span>
+      <input class="field__control" type="email" name="email" placeholder={fields.email.placeholder} autocomplete="email" maxlength="254" required />
+    </label>
+  </div>
+  <label class="field">
+    <span class="t-body-small field__label">{fields.service.label}</span>
+    <span class="field__select">
+      <select class="field__control" name="service" required>
+        <option value="" disabled selected>{fields.service.placeholder}</option>
+        {serviceOptions.map((option) => <option value={option}>{option}</option>)}
+      </select>
+      <span class="field__chevron" aria-hidden="true" set:html={chevron} />
+    </span>
+  </label>
+  <label class="field">
+    <span class="t-body-small field__label">{fields.message.label}</span>
+    <textarea class="field__control field__control--area" name="message" placeholder={fields.message.placeholder} maxlength="5000" required></textarea>
+  </label>
+  <div class="cf-turnstile" data-sitekey={siteKey}></div>
+  <button class="submit" type="submit" data-motion="button.submit.hover" data-cursor="blend">
+    <span class="submit__bg" data-motion-layer="Desktop/Color BG"></span>
+    <span class="submit__text submit__text--idle" data-motion-layer="Desktop/RichText" data-label="idle">{fields.submit}</span>
+    <span class="submit__text submit__text--success" data-label="success">{success}</span>
+    <span class="submit__text submit__text--error" data-label="error">{error}</span>
+    <span class="submit__spinner" data-form-spinner aria-hidden="true"><span class="submit__dot"></span></span>
+  </button>
+  <p class="t-body-small form__status" data-form-status role="status" aria-live="polite"></p>
+  <div class="form__notice" id="contact-sent" tabindex="-1">
+    <p class="t-body-small form__notice-title">{success}</p>
+  </div>
+  <div class="form__notice" id="contact-error" tabindex="-1">
+    <p class="t-body-small form__notice-title">{error}</p>
+    <p class="t-body-small">{site.footer.emailLabel} <a class="form__link" href={site.footer.emailHref}>{site.email}</a></p>
+    <p class="t-body-small">{site.footer.phoneLabel} <a class="form__link" href={site.footer.phoneHref}>{site.phone}</a></p>
+  </div>
+  <noscript>
+    <div class="form__notice form__notice--noscript" data-form-noscript>
+      <p class="t-body-small">{site.footer.emailLabel} <a class="form__link" href={site.footer.emailHref}>{site.email}</a></p>
+      <p class="t-body-small">{site.footer.phoneLabel} <a class="form__link" href={site.footer.phoneHref}>{site.phone}</a></p>
+    </div>
+  </noscript>
+</form>
+
+<script>
+  import "../scripts/contact-form";
+</script>
+
+<style is:global>
+  .form {
+    --form-gap: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--form-gap);
+    width: 100%;
+  }
+
+  .form__row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .form__row > .field {
+    flex: 1 1 0;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .field__label {
+    color: var(--color-purple-green);
+  }
+
+  .field__control {
+    width: 100%;
+    margin: 0;
+    padding: 12px 20px;
+    border: 0;
+    border-radius: 99px;
+    outline: none;
+    background: var(--color-grey-50-dark);
+    font-family: "Inter", sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 1.2em;
+    letter-spacing: 0em;
+    color: var(--color-grey-200-white);
+    appearance: none;
+  }
+
+  .field__control::placeholder {
+    color: var(--color-grey-150);
+    opacity: 1;
+  }
+
+  /* Framer's focused border is drawn inside the field. */
+  .field__control:focus-visible {
+    box-shadow: inset 0 0 0 1px var(--color-purple-green);
+  }
+
+  .field__select {
+    position: relative;
+    display: flex;
+    width: 100%;
+    padding-right: 20px;
+    border-radius: 99px;
+    background: var(--color-grey-50-dark);
+  }
+
+  .field__select select {
+    cursor: pointer;
+  }
+
+  .field__select select:invalid {
+    color: var(--color-grey-150);
+  }
+
+  .field__chevron {
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    display: flex;
+    width: 16px;
+    height: 16px;
+    color: var(--color-grey-200-white);
+    translate: 0 -50%;
+    pointer-events: none;
+  }
+
+  .field__chevron svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .field__control--area {
+    min-height: 140px;
+    padding: 20px;
+    border-radius: 20px;
+    resize: vertical;
+  }
+
+  /* Turnstile renders with appearance "interaction-only": a 0px-high box unless Cloudflare asks the
+     visitor to interact (contact-form.ts sets data-interactive then). The negative margin cancels the
+     form gap of that empty box, so the form keeps the Framer layout (Framer has no captcha). The box
+     is never display:none, which would stop the widget from showing its challenge. */
+  .cf-turnstile:empty {
+    display: none;
+  }
+
+  .cf-turnstile:not(:empty, [data-interactive]) {
+    margin-top: calc(-1 * var(--form-gap));
+  }
+
+  .field__control[aria-invalid="true"] {
+    box-shadow: inset 0 0 0 1px var(--color-red);
+  }
+
+  /* Announced to screen readers; sighted visitors see the result on the button (Framer variants). */
+  .form__status {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* No-JS result messages (shown by :target) and the <noscript> note. */
+  .form__notice {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    outline: none;
+  }
+
+  .form__notice:target,
+  .form__notice--noscript {
+    display: flex;
+  }
+
+  .form__notice-title {
+    color: var(--color-purple-green);
+  }
+
+  .form__link {
+    color: var(--color-grey-200-white);
+    text-decoration: underline;
+  }
+
+  .submit {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 40px 10px;
+    overflow: hidden;
+    border: 0;
+    border-radius: 99px;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .submit::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 1px solid var(--color-purple-green);
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  .submit__bg {
+    position: absolute;
+    bottom: -15px;
+    left: -19px;
+    z-index: 1;
+    width: 15px;
+    height: 19px;
+    border-radius: 99px;
+    background: var(--color-purple-green);
+  }
+
+  .submit__text {
+    position: relative;
+    z-index: 1;
+    font-family: var(--text-heading-4-family);
+    font-weight: var(--text-heading-4-weight);
+    font-size: var(--text-heading-4-size);
+    line-height: var(--text-heading-4-line);
+    letter-spacing: var(--text-heading-4-tracking);
+    text-transform: var(--text-heading-4-transform);
+    color: var(--color-purple-green);
+  }
+
+  .submit__text--success,
+  .submit__text--error,
+  .submit__spinner {
+    display: none;
+  }
+
+  /* Framer "Loading", "Success" and "Error" variants, set by contact-form.ts as data-state.
+     !important: the hover/pressed runtime writes inline colours on these layers. */
+  .submit[data-state="loading"],
+  .submit[data-state="success"],
+  .submit[data-state="error"] {
+    cursor: default;
+  }
+
+  .submit[data-state="loading"] {
+    background-color: var(--color-purple-green) !important;
+  }
+
+  .submit[data-state="success"] {
+    background-color: var(--color-green) !important;
+  }
+
+  .submit[data-state="error"] {
+    background-color: var(--color-red) !important;
+  }
+
+  .submit[data-state="loading"]::after,
+  .submit[data-state="success"]::after,
+  .submit[data-state="error"]::after,
+  .submit[data-state="loading"] .submit__bg,
+  .submit[data-state="success"] .submit__bg,
+  .submit[data-state="error"] .submit__bg {
+    display: none;
+  }
+
+  /* Loading shows only the spinner; the label stays in place (and in the accessible name). */
+  .submit[data-state="loading"] .submit__text--idle {
+    color: transparent !important;
+  }
+
+  .submit[data-state="success"] .submit__text--idle,
+  .submit[data-state="error"] .submit__text--idle {
+    display: none;
+  }
+
+  .submit[data-state="success"] .submit__text--success,
+  .submit[data-state="error"] .submit__text--error {
+    display: inline;
+    color: var(--color-white-dark) !important;
+  }
+
+  .submit[data-state="loading"] .submit__spinner {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: block;
+    width: 20px;
+    height: 20px;
+    margin: auto;
+    background: conic-gradient(from 0deg at 50% 50%, var(--color-loading-circle) 7.2deg, var(--color-white) 342deg);
+    border-radius: 50%;
+    /* Framer's ring mask SVG is not downloadable (docs/extraction/README.md): a 2px CSS ring instead. */
+    mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
+  }
+
+  .submit__dot {
+    position: absolute;
+    top: 0;
+    left: 9px;
+    width: 2px;
+    height: 2px;
+    border-radius: 1px;
+    background: var(--color-white);
+  }
+
+  /* Tablet & phone: the filled "Tablet & Phone" variant. */
+  @media (max-width: 1199.98px) {
+    .submit {
+      background: var(--color-purple-green);
+    }
+
+    .submit::after {
+      content: none;
+    }
+
+    .submit__text {
+      color: var(--color-white-dark);
+    }
+  }
+
+  @media (max-width: 809.98px) {
+    .form__row {
+      flex-direction: column;
+    }
+
+    .form__row > .field {
+      flex: none;
+    }
+
+    .submit {
+      width: 100%;
+    }
+  }
+</style>
