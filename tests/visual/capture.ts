@@ -61,10 +61,14 @@ export const HIDE_SELECTORS = [
   "[data-baseline-hide]",
 ];
 
+/** Rebuild-only content the owner added after the Framer baselines (e.g. the VAT line): taken out of layout. */
+const REMOVE_SELECTOR = "[data-baseline-remove]";
+
 // Descendants are listed too: a child with its own `visibility: visible` would otherwise show.
 const HIDE_CSS = `
 ${HIDE_SELECTORS.flatMap((s) => [s, `${s} *`]).join(",\n")} { visibility: hidden !important; }
 *, *::before, *::after { caret-color: transparent !important; }
+${REMOVE_SELECTOR} { display: none !important; }
 `;
 
 /**

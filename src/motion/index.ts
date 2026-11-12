@@ -22,7 +22,7 @@
  * - data-form-spinner                submit button spinner: "button.submit.spinner" loop, started by
  *                                    src/scripts/contact-form.ts only while a submission is pending
  * Written by the runtime (style these in CSS):
- * - html.motion-ready                runtime started; html.lenis* (Lenis); html.motion-cursor (native cursor hidden)
+ * - html.motion-ready                runtime started; html.lenis* (Lenis)
  * - data-state                       accordions "open|closed"; nav "open|closed" (tablet/phone "open" is
  *                                    set by Nav.astro's toggle script); badge cycle "<variant name>"
  * - data-shows="text|lottie"         badge cycle: which face is showing (start/stop the Lottie on it)

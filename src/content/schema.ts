@@ -185,6 +185,8 @@ export const PricingContent = z.strictObject({
   packagesIntro: EyebrowIntro,
   packages: z.tuple([Package, Package, Package, Package]),
   footnote: text,
+  /** Owner addition, not on Framer: shown under the footnote at every breakpoint. */
+  vatNote: text,
   /** The phone breakpoint adds a second line to the footnote. */
   footnotePhone: text.optional(),
   cta: z.strictObject({ heading: text, text, label: text, href }),

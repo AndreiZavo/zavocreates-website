@@ -1232,6 +1232,10 @@
           "15px",
           "234px"
         ],
+        "left": [
+          "-19px",
+          "-26px"
+        ],
         "right": [
           null,
           "-27px"
@@ -1460,6 +1464,10 @@
           ]
         },
         "Tablet & Phone / Closed/Avatar & Button Wrap/Toggle Button/Line / Top": {
+          "top": [
+            "16px",
+            "19px"
+          ],
           "rotateZ": [
             "0deg",
             "45deg"

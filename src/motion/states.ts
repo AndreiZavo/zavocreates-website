@@ -80,9 +80,25 @@ export function layerFrames(root: HTMLElement, diff: StateDiff): LayerFrames[] {
       rest[property] = from === null ? computedOf(el, property) : from;
       active[property] = to;
     }
+    pinEdges(el, rest, active);
     if (Object.keys(active).length > 0) out.push({ el, frames: [rest, active] });
   }
   return out;
+}
+
+/**
+ * A Framer layer pinned on both sides (left and right set) takes its width from its parent, not from
+ * its `width` value (Primary Button "Color BG": left -26px, right -27px stretches the circle across the
+ * whole button). Motion can't animate to an edge-derived width, so it becomes px from the parent's size.
+ */
+function pinEdges(el: HTMLElement, rest: Keyframes, active: Keyframes): void {
+  const left = parseFloat(String(active["left"]));
+  const right = parseFloat(String(active["right"]));
+  const parent = el.offsetParent ?? el.parentElement;
+  if (Number.isNaN(left) || Number.isNaN(right) || !parent) return;
+  active["width"] = `${parent.clientWidth - left - right}px`;
+  delete active["right"];
+  delete rest["right"];
 }
 
 /** Drop the inline values the runtime wrote for these layers (used when the breakpoint changes). */

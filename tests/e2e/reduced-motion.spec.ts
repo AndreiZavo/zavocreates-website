@@ -129,15 +129,14 @@ test.describe("site-wide effects with motion allowed", () => {
       .toBe(6);
   });
 
-  test("the custom cursor follows the mouse and hides the native cursor on desktop", async ({ page }) => {
+  test("the custom cursor follows the mouse and keeps the native cursor on desktop", async ({ page }) => {
     await page.goto("/", { waitUntil: "load" });
     await expect(page.locator("[data-motion-cursor]")).toHaveCount(1);
     await expect(page.locator("[data-motion-cursor]")).toBeHidden();
     await page.mouse.move(400, 300);
     await page.mouse.move(410, 310);
     await expect(page.locator("[data-motion-cursor]")).toBeVisible();
-    await expect(page.locator("html")).toHaveClass(/motion-cursor/);
-    await expect(page.locator("body")).toHaveCSS("cursor", "none");
+    await expect(page.locator("body")).toHaveCSS("cursor", "auto");
   });
 
   test("the noise layer is the animated GIF", async ({ page }) => {

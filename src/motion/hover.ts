@@ -34,6 +34,13 @@ export function hover(effect: Hover, elements: HTMLElement[]): void {
 
     onHover(el, () => {
       el.toggleAttribute("data-hover", true);
+      // Hover targets are re-read now: edge-pinned widths (states.ts pinEdges) follow the element's
+      // current size, which web fonts or the viewport may have changed since load.
+      const fresh = [...poseLayer(effect, el), ...layerFrames(el, effect.states ?? {})];
+      fresh.forEach((layer, i) => {
+        const known = hoverLayers[i];
+        if (known && known.el === layer.el) known.frames[1] = layer.frames[1];
+      });
       play(hoverLayers, 1);
       return () => {
         el.toggleAttribute("data-hover", false);

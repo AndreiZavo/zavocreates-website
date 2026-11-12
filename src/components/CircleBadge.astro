@@ -96,10 +96,12 @@ const { lottie } = cycle;
   }
 
   /**
-   * Framer's Lottie Icon recolours the animation: its fills, in document order, take color1, color2.
-   * (The mapping order is the component's; the icon has exactly two fills.)
+   * Framer's Lottie Icon recolours the animation in paint order: the first fill drawn takes color1,
+   * the next color2. Lottie paints layers bottom-up (last in the JSON first), so in document order the
+   * fills take the colours reversed. Checked against the live site: the hand is drawn in color1.
    */
   function recolor(data: unknown, colors: Rgba[]): void {
+    colors = [...colors].reverse();
     let index = 0;
     const walk = (node: unknown): void => {
       if (Array.isArray(node)) return node.forEach(walk);

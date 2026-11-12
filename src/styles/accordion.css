@@ -32,7 +32,6 @@
 .acc__item[data-state="open"] {
   --acc-color: var(--color-purple-green);
   --acc-title: var(--color-purple-green);
-  padding-bottom: 20px;
 }
 
 .acc__item[data-state="closed"] {
@@ -99,12 +98,14 @@
   overflow: hidden;
 }
 
+/* Framer's open item has padding-bottom 20px. It lives inside the panel here, so it opens and closes
+   with the animated panel height instead of snapping when the item's state flips. */
 .acc__bullets {
   display: flex;
   flex-direction: column;
   gap: 20px;
   margin: 0;
-  padding: 0;
+  padding: 0 0 20px;
   list-style: none;
 }
 

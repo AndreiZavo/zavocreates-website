@@ -1,7 +1,7 @@
 /**
  * Custom cursor (desktop breakpoint, fine hover-capable pointers only). A dot follows the pointer
  * with the effect's spring at its offset and placement; over [data-cursor="blend"] it switches to the
- * blending style. The native cursor is hidden (html.motion-cursor) only while the dot is shown.
+ * blending style. The native cursor stays visible, as on Framer: the dot trails it.
  */
 import { motionValue, springValue, styleEffect } from "motion";
 import { toSpringOptions, type EffectOf } from "./transition";
@@ -62,7 +62,6 @@ export function cursor(effect: Cursor, desktopMedia: string | undefined): void {
   };
   const hide = (): void => {
     dot.style.display = "none";
-    document.documentElement.classList.remove("motion-cursor");
   };
 
   window.addEventListener("pointermove", (event) => {
@@ -75,7 +74,6 @@ export function cursor(effect: Cursor, desktopMedia: string | undefined): void {
       x.jump(at.x);
       y.jump(at.y);
       dot.style.display = "block";
-      document.documentElement.classList.add("motion-cursor");
     }
     x.set(at.x);
     y.set(at.y);

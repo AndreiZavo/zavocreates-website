@@ -86,13 +86,20 @@ const T = "Tablet & Phone / Closed";
     };
     new MutationObserver(sync).observe(nav, { attributes: true, attributeFilter: ["data-state"] });
     sync();
-    head.addEventListener("click", () => {
-      if (getComputedStyle(toggle).display === "none") return;
-      const open = nav.dataset["state"] !== "open";
+    const setOpen = (open: boolean): void => {
       // Closed is the CSS default below the desktop breakpoint, so closing drops the attribute.
       if (open) nav.dataset["state"] = "open";
       else delete nav.dataset["state"];
       nav.dispatchEvent(new CustomEvent("nav-toggle", { detail: { open } }));
+    };
+    head.addEventListener("click", () => {
+      if (getComputedStyle(toggle).display === "none") return;
+      setOpen(nav.dataset["state"] !== "open");
+    });
+    // Choosing a link in the open menu closes it (owner request; the menu otherwise covers the section).
+    nav.querySelector("#nav-menu")?.addEventListener("click", (event) => {
+      const link = event.target instanceof Element ? event.target.closest("a") : null;
+      if (link && nav.dataset["state"] === "open" && getComputedStyle(toggle).display !== "none") setOpen(false);
     });
   }
 </script>
@@ -241,6 +248,22 @@ const T = "Tablet & Phone / Closed";
 
   .nav__line--bottom {
     bottom: 16px;
+  }
+
+  /* Open menu without the motion runtime (reduced motion): the lines show the X at once, at the
+     positions nav.scroll animates them to. */
+  html:not(.motion-ready) .nav[data-state="open"] .nav__line {
+    width: 20px;
+  }
+
+  html:not(.motion-ready) .nav[data-state="open"] .nav__line--top {
+    top: 19px;
+    rotate: 45deg;
+  }
+
+  html:not(.motion-ready) .nav[data-state="open"] .nav__line--bottom {
+    bottom: 19px;
+    rotate: -45deg;
   }
 
   .nav__hide {
