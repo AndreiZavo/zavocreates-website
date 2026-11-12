@@ -65,7 +65,7 @@ Captured from the built site (`npm run preview`).
 ![Request path: visitor, Cloudflare edge, one Worker serving static assets and POST /api/contact, which calls Turnstile, Workers AI and Resend, delivering to Andrei's Gmail. Build path: Framer project read through MCP into content JSON, Astro build into ./dist. CI on GitHub Actions, ubuntu and macOS.](docs/architecture.svg)
 
 - **Build.** `content/*.json` holds every visible string, design token and animation value from the Framer project. Zod schemas validate it during `astro build`, which writes static HTML to `./dist`.
-- **Runtime.** One Worker (`worker/index.ts`) serves `./dist` as static assets and handles `POST /api/contact`: validate the fields, verify the Turnstile token, ask Workers AI for a structured label, send the email through Resend. If the AI call fails, the email still goes out, marked "Triage unavailable". Messages are never stored.
+- **Runtime.** One Worker (`worker/index.ts`) serves `./dist` as static assets and handles `POST /api/contact`: validate the fields, verify the Turnstile token, ask Workers AI for a structured label, send it through Resend as two emails in one Gmail conversation: first private notes (the AI's summary, budget and suggested reply, Reply-To Andrei), then the visitor's message (Reply-To the visitor), threaded under the notes by Message-ID. Gmail's Reply answers the newest email, so a reply quotes only what the visitor wrote. If the AI call fails, only the visitor's message is sent. Messages are never stored.
 - **Motion.** Motion (motion.dev) and Lenis, driven only by `content/motion.json`. Nothing moves under `prefers-reduced-motion: reduce`, and every element is visible without JavaScript. The tablet and phone menu opens with reduced motion too, and without JavaScript it is shown open.
 
 Why each piece was chosen: [docs/decisions.md](docs/decisions.md).
@@ -92,8 +92,8 @@ Before anything changed, screenshots of the live Framer site were captured for 3
 - A missing `TURNSTILE_SECRET` or `RESEND_API_KEY` returns 503 and logs only the variable name. Cloudflare's Turnstile test secret is refused (503) on any host but localhost.
 - Invalid fields return 400; a body over 20 KB returns 413, including a streamed body without `Content-Length`; other content types return 415; `GET` returns 405.
 - The visitor's message is sent to the model as JSON data inside a delimited block, in JSON mode. Output that fails the schema is retried once.
-- If the AI throws or returns invalid output twice, the email is still sent with the original message and a "Triage unavailable" note.
-- HTML in the message and in the AI's text is escaped in the email; CR and LF are stripped from the subject; `reply_to` is the visitor's address.
+- If the AI throws or returns invalid output twice, no notes email is sent; the visitor's message still goes out. A failed notes email or Message-ID lookup is logged and the message goes out unthreaded. A Resend 429 is retried once.
+- HTML in the message and in the AI's text is escaped in the email; CR and LF are stripped from the subject, which carries no triage (the visitor sees it as "Re:"); `reply_to` is the visitor's address on the message and Andrei's on the notes.
 - A 5,000-character Romanian message with emoji arrives intact.
 - The no-JS form path answers with a 303 redirect to `/#contact-sent` or `/#contact-error`.
 
