@@ -11,8 +11,9 @@
  * server answered, it only refused the bot. The link is still requested, so a 404 or a dead host
  * fails the check. linkinator's own "statusCodes" setting cannot do this per host.
  *
- * The skip for https://zavocreates.com/ covers canonical/hreflang/og:image URLs that point at the
- * live Framer site until go-live; remove it at go-live.
+ * Nothing is skipped: the canonical, hreflang and og:image URLs on https://zavocreates.com/ are
+ * checked against the live site (served by this Worker since go-live). A "skip" pattern list is
+ * still read from the config if one is ever needed.
  *
  * Usage: node --experimental-strip-types scripts/check-links.ts [glob ...]   (relative to serverRoot "dist"; default: *.html)
  */

@@ -1,7 +1,6 @@
 {
   "serverRoot": "dist",
   "recurse": true,
-  "skip": ["^https://zavocreates\\.com/"],
   "retry": true,
   "retryErrors": true,
   "retryErrorsCount": 3,
