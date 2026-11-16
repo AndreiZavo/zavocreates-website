@@ -10,6 +10,7 @@
   "concurrency": 10,
   "botBlocks": {
     "www.instagram.com": [429, 999],
+    "www.threads.com": [429, 999],
     "calendly.com": [429, 999]
   }
 }

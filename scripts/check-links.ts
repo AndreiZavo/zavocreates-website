@@ -4,7 +4,7 @@
  *
  *   botBlocks: { host: [status, ...] }
  *
- * Instagram and Calendly answer automated clients (especially from datacenter IPs such as CI
+ * Instagram, Threads and Calendly answer automated clients (especially from datacenter IPs such as CI
  * runners) with 429 or the non-standard 999 instead of the page. linkinator first retries a 429
  * that carries retry-after ("retry") and retries 5xx/network errors ("retryErrors"). A link that
  * still fails with one of its host's listed codes is reported as a warning, not a failure: the
