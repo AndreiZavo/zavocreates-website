@@ -20,7 +20,7 @@ Task 13 of the [plan](superpowers/plans/2026-11-10-zavocreates-framer-to-cloudfl
 - [ ] Turnstile: add a widget for `zavocreates.com` (and the `workers.dev` hostname for testing). Widget mode: **Managed** (the form renders it with `appearance: "interaction-only"`, which applies to the visible modes, Managed and Non-Interactive: [widget configurations](https://developers.cloudflare.com/turnstile/get-started/client-side-rendering/widget-configurations/)).
 - [ ] Worker secrets: `RESEND_API_KEY` (the Resend key) and `TURNSTILE_SECRET` = the widget's secret key, never the test secret from `.dev.vars.example`. The Worker answers 503 to every form submission if a secret is missing, or if the test secret is used on any host other than localhost.
 - [ ] Build variable `PUBLIC_TURNSTILE_SITE_KEY` = the real sitekey. **Must be set.** Unset, the build ships Cloudflare's test key and every real submission gets 403.
-- [ ] Web Analytics: add the site, copy the token, set build variable `PUBLIC_CF_ANALYTICS_TOKEN`.
+- [x] Web Analytics: add the site, copy the token, set build variable `PUBLIC_CF_ANALYTICS_TOKEN`.
 - [ ] Retry the build. In the page source, check the real sitekey and the `static.cloudflareinsights.com/beacon.min.js` script are there.
 - [ ] Enable the production `workers.dev` URL.
 
