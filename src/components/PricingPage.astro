@@ -8,7 +8,7 @@
  * - tablet: principles gap 24px, FAQ and CTA button use their "Tablet & Phone" variants
  *   (/pricing keeps the "Desktop" variants on tablet and phone);
  * - phone: intro padding 160/160 (not 140/120), principles stacked with gap 24, timeline rows
- *   horizontal (dot column left), cards in a stack with their natural height, the Growth heading
+ *   horizontal (dot column left; not kept: both pages use the /pricing timeline, R19), cards in a stack with their natural height, the Growth heading
  *   wraps, footnote body-medium at 55% (/pricing: body-small plus a second line, footnotePhone).
  * Those are CSS on .pricing--en / .pricing--ro below.
  */
@@ -302,39 +302,40 @@ const motion = [
       grid-template-columns: minmax(230px, 1fr);
     }
 
-    /* /pricing: rows stack (dot column, card, spacer), with a line above dots 2–5 and under dot 5. */
     .pricing--en .pr-hero {
       padding: 140px 40px 120px;
     }
 
-    .pricing--en .tl-row {
+    /* Both pages: timeline rows stack (dot column, card, spacer), centred, with a line above dots 2–5
+       and under dot 5. Framer's /pricing-ro keeps rows horizontal; the owner wants it like /pricing (R19). */
+    .tl-row {
       flex-direction: column;
       align-items: center;
     }
 
-    .pricing--en .tl-row .tl-progress {
+    .tl-row .tl-progress {
       order: 1;
     }
 
-    .pricing--en .tl-row .tl-card {
+    .tl-row .tl-card {
       order: 2;
       width: 100%;
     }
 
-    .pricing--en .tl-row .tl-spacer {
+    .tl-row .tl-spacer {
       order: 3;
     }
 
-    .pricing--en .tl-row--right .tl-spacer {
+    .tl-row--right .tl-spacer {
       order: 0;
     }
 
-    .pricing--en .tl-line {
+    .tl-line {
       height: 120px;
     }
 
-    .pricing--en .tl-line--before,
-    .pricing--en .tl-line--last {
+    .tl-line--before,
+    .tl-line--last {
       display: block;
     }
 
@@ -356,7 +357,7 @@ const motion = [
       margin-top: var(--text-body-small-paragraph);
     }
 
-    /* /pricing-ro: rows stay horizontal with the dot column first; principles and cards stack. */
+    /* /pricing-ro: principles and cards stack. */
     .pricing--ro .pr-points {
       display: flex;
       flex-direction: column;
@@ -366,21 +367,6 @@ const motion = [
 
     .pricing--ro .pr-point {
       width: 100%;
-    }
-
-    .pricing--ro .tl-row .tl-progress {
-      order: 1;
-    }
-
-    .pricing--ro .tl-row .tl-card {
-      order: 2;
-      flex: 1 1 0;
-      width: auto;
-      min-width: 0;
-    }
-
-    .pricing--ro .tl-spacer {
-      display: none;
     }
 
     .pricing--ro .pr-grid {

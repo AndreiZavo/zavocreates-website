@@ -30,7 +30,7 @@ Same pages, text and animations as the Framer site. Full Lighthouse data: [docs/
   </tr>
   <tr>
     <td><img src="docs/img/contact-desktop.webp" alt="Contact form"></td>
-    <td align="center"><img src="docs/img/process-phone.webp" alt="The same timeline in Romanian on a phone" width="45%"></td>
+    <td align="center"><img src="docs/img/process-phone.webp" alt="The same timeline on a phone: each step centred under its number" width="45%"></td>
   </tr>
 </table>
 
