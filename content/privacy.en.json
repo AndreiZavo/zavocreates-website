@@ -1,0 +1,111 @@
+{
+  "lang": "en",
+  "title": "Privacy | Andrei Zavo",
+  "description": "How zavocreates.com handles the name, email address and message you send through the contact form.",
+  "heading": "Privacy",
+  "updated": "Last updated: 16 November 2026",
+  "sections": [
+    {
+      "heading": "Who is responsible",
+      "paragraphs": [
+        [
+          "Andrei Zavorodnic (Andrei Zavo), videographer, runs this website and is responsible for the personal data described here. Contact: ",
+          {
+            "label": "zavocreates@gmail.com",
+            "href": "mailto:zavocreates@gmail.com"
+          },
+          "."
+        ]
+      ]
+    },
+    {
+      "heading": "What I collect",
+      "paragraphs": [
+        [
+          "Only what you type into the contact form: your name, email address, the service you choose and your message."
+        ],
+        [
+          "While you use the site, Cloudflare, which hosts it, processes your IP address and basic browser details to deliver the pages and to check that the form is sent by a person, not a bot (Cloudflare Turnstile)."
+        ]
+      ]
+    },
+    {
+      "heading": "Why",
+      "paragraphs": [
+        [
+          "To answer your enquiry and, if we work together, to prepare and carry out that work (GDPR Article 6(1)(b))."
+        ],
+        [
+          "The spam check protects the site and my inbox, which is my legitimate interest (Article 6(1)(f))."
+        ]
+      ]
+    },
+    {
+      "heading": "How your message travels",
+      "paragraphs": [
+        [
+          "When you send the form, Cloudflare checks it for spam. An automated tool (Cloudflare Workers AI) then reads it to write me a short summary and sort it by type. Resend delivers it to my Gmail inbox."
+        ],
+        [
+          "The summary only helps me sort messages. No decision about you is made automatically. The website itself does not store your message."
+        ]
+      ]
+    },
+    {
+      "heading": "Who else handles it",
+      "paragraphs": [
+        [
+          "Cloudflare (hosting, spam check, the automated summary), Resend (email delivery) and Google (Gmail, where messages are kept). They process the data on my behalf and only to provide these services."
+        ],
+        [
+          "Some of them are based in the United States. Those transfers rely on the safeguards the providers use, such as the EU–US Data Privacy Framework or the European Commission’s standard contractual clauses."
+        ]
+      ]
+    },
+    {
+      "heading": "How long",
+      "paragraphs": [
+        [
+          "Messages stay in my inbox while we are in contact and for up to 3 years after the last message, unless the law requires longer (for example for invoices). Then I delete them."
+        ]
+      ]
+    },
+    {
+      "heading": "Cookies and statistics",
+      "paragraphs": [
+        [
+          "This site sets no cookies. It counts visits with Cloudflare Web Analytics, which works without cookies and does not build a profile of you."
+        ]
+      ]
+    },
+    {
+      "heading": "Your rights",
+      "paragraphs": [
+        [
+          "You can ask to see, correct or delete your data, to restrict or object to its use, or to receive a copy of it. Write to ",
+          {
+            "label": "zavocreates@gmail.com",
+            "href": "mailto:zavocreates@gmail.com"
+          },
+          "."
+        ],
+        [
+          "You can also complain to the Romanian data protection authority, ",
+          {
+            "label": "ANSPDCP",
+            "href": "https://www.dataprotection.ro/"
+          },
+          "."
+        ]
+      ]
+    },
+    {
+      "heading": "Other sites",
+      "paragraphs": [
+        [
+          "Links to Instagram, TikTok, Threads and Calendly take you to services with their own privacy policies."
+        ]
+      ]
+    }
+  ]
+}

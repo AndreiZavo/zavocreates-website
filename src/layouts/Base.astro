@@ -18,9 +18,11 @@ interface Props {
   motion?: string[];
   /** Keep the page out of search results (404): robots noindex and no canonical link. */
   noindex?: boolean;
+  /** schema.org data for search engines, rendered as one application/ld+json script (Ruling R18). */
+  jsonLd?: Record<string, unknown>;
 }
 
-const { lang, title, description, path, alternates = [], motion = [], noindex = false } = Astro.props;
+const { lang, title, description, path, alternates = [], motion = [], noindex = false, jsonLd } = Astro.props;
 const site = getSite();
 const abs = (p: string): string => new URL(p, site.url).href;
 const canonical = abs(path);
@@ -33,6 +35,13 @@ const faviconMeta = rasterOf(site.favicon.src);
 const favicon = faviconMeta
   ? (await getImage({ src: faviconMeta, width: FAVICON_SIZE, height: FAVICON_SIZE, format: "png" })).src
   : site.favicon.src;
+// iOS home-screen icon (Ruling R18). The favicon is a round photo on transparency; iOS fills
+// transparency with black and rounds the corners itself, so it sits on white here.
+const TOUCH_ICON_SIZE = 180;
+const touchIcon = faviconMeta
+  ? (await getImage({ src: faviconMeta, width: TOUCH_ICON_SIZE, height: TOUCH_ICON_SIZE, format: "jpg", background: "#ffffff" })).src
+  : undefined;
+const jsonLdText = jsonLd ? JSON.stringify(jsonLd).replaceAll("<", "\\u003c") : undefined;
 
 // Page fade: every number comes from the "page" effect in content/motion.json.
 const pageEffect = getMotion("page");
@@ -90,6 +99,7 @@ const cfAnalyticsToken = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN;
     {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
     {alternates.map((a) => <link rel="alternate" hreflang={a.lang} href={abs(a.path)} />)}
     <link rel="icon" type="image/png" sizes={`${FAVICON_SIZE}x${FAVICON_SIZE}`} href={favicon} />
+    {touchIcon && <link rel="apple-touch-icon" sizes={`${TOUCH_ICON_SIZE}x${TOUCH_ICON_SIZE}`} href={touchIcon} />}
     {/* The noise GIF (756 KB, decorative CSS background in Noise.astro) is requested here at low
         priority. Left to the background, Chrome fetches it at High priority because it is in the
         viewport, and it competes with the hero portrait, the LCP image. */}
@@ -110,6 +120,7 @@ const cfAnalyticsToken = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN;
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+    {jsonLdText && <script is:inline type="application/ld+json" set:html={jsonLdText} />}
     <style is:inline set:html={`:root{${pageVars}}`} />
   </head>
   <body>

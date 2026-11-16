@@ -13,7 +13,7 @@
 import { getHome, getSite } from "../content/load";
 import { svgMarkup } from "../content/images";
 
-const { fields, serviceOptions, success, error } = getHome().contact;
+const { fields, serviceOptions, success, error, privacyNote } = getHome().contact;
 const site = getSite();
 const chevron = svgMarkup("/icons/iconoir-nav-arrow-down.svg");
 
@@ -60,6 +60,10 @@ const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || TURNSTILE_TEST_SITE
     <span class="submit__text submit__text--error" data-label="error">{error}</span>
     <span class="submit__spinner" data-form-spinner aria-hidden="true"><span class="submit__dot"></span></span>
   </button>
+  {/* Owner addition (Ruling R18): taken out of layout in the Framer-baseline visual tests. */}
+  <p class="t-body-small form__privacy" data-baseline-remove>
+    {privacyNote.text} <a class="form__link" href={privacyNote.link.href}>{privacyNote.link.label}</a>
+  </p>
   <p class="t-body-small form__status" data-form-status role="status" aria-live="polite"></p>
   <div class="form__notice" id="contact-sent" tabindex="-1">
     <p class="t-body-small form__notice-title">{success}</p>

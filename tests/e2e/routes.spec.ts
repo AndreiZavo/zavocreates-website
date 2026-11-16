@@ -15,7 +15,7 @@ const homeLabel = site.nav.links[0]?.label ?? "";
 test("every sitemap URL answers 200 without a redirect", async ({ request }) => {
   const xml = await (await request.get("/sitemap.xml")).text();
   const paths = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => new URL(m[1] ?? "").pathname);
-  expect(paths.sort()).toEqual(["/", "/pricing", "/pricing-ro"]);
+  expect(paths.sort()).toEqual(["/", "/pricing", "/pricing-ro", "/privacy", "/privacy-ro"]);
   for (const path of paths) {
     const res = await request.get(path, { maxRedirects: 0 });
     expect(res.status(), path).toBe(200);

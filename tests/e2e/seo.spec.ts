@@ -9,18 +9,27 @@ const read = (file: string): Record<string, unknown> =>
 const site = read("site.json");
 const pricingEn = read("pricing.en.json");
 const pricingRo = read("pricing.ro.json");
+const privacyEn = read("privacy.en.json");
+const privacyRo = read("privacy.ro.json");
 const ogImage = site["ogImage"] as { src: string };
 
 const pages = [
   { path: "/", lang: "en", title: site["title"], description: site["description"] },
   { path: "/pricing", lang: "en", title: pricingEn["title"], description: pricingEn["description"] },
   { path: "/pricing-ro", lang: "ro", title: pricingRo["title"], description: pricingRo["description"] },
+  { path: "/privacy", lang: "en", title: privacyEn["title"], description: privacyEn["description"] },
+  { path: "/privacy-ro", lang: "ro", title: privacyRo["title"], description: privacyRo["description"] },
 ] as const;
 
-const pricingAlternates = [
-  { hreflang: "en", href: `${ORIGIN}/pricing` },
-  { hreflang: "ro", href: `${ORIGIN}/pricing-ro` },
-  { hreflang: "x-default", href: `${ORIGIN}/pricing` },
+test("every page has its own title and description", () => {
+  expect(new Set(pages.map((p) => p.title)).size).toBe(pages.length);
+  expect(new Set(pages.map((p) => p.description)).size).toBe(pages.length);
+});
+
+const alternatesOf = (base: string) => [
+  { hreflang: "en", href: `${ORIGIN}${base}` },
+  { hreflang: "ro", href: `${ORIGIN}${base}-ro` },
+  { hreflang: "x-default", href: `${ORIGIN}${base}` },
 ];
 
 for (const p of pages) {
@@ -38,13 +47,13 @@ for (const p of pages) {
   });
 }
 
-for (const path of ["/pricing", "/pricing-ro"]) {
+for (const path of ["/pricing", "/pricing-ro", "/privacy", "/privacy-ro"]) {
   test(`${path} links the en, ro and x-default alternates`, async ({ page }) => {
     await page.goto(path);
     const links = await page
       .locator('head link[rel="alternate"][hreflang]')
       .evaluateAll((els) => els.map((el) => ({ hreflang: el.getAttribute("hreflang"), href: el.getAttribute("href") })));
-    expect(links).toEqual(pricingAlternates);
+    expect(links).toEqual(alternatesOf(path.replace(/-ro$/, "")));
   });
 }
 
@@ -59,12 +68,38 @@ test("the og:image file is served", async ({ request }) => {
   expect(res.headers()["content-type"]).toContain("image/png");
 });
 
-test("sitemap.xml lists exactly the three pages", async ({ request }) => {
+test("home describes Andrei Zavo as schema.org Person data", async ({ page }) => {
+  await page.goto("/");
+  const json = await page.locator('script[type="application/ld+json"]').textContent();
+  const data = JSON.parse(json ?? "{}") as Record<string, unknown>;
+  expect(data["@type"]).toBe("Person");
+  expect(data["url"]).toBe(`${ORIGIN}/`);
+  expect(data["sameAs"]).toEqual((site["footer"] as { social: { href: string }[] }).social.map((s) => s.href));
+});
+
+test("every page links an apple-touch-icon that is served", async ({ page, request }) => {
+  for (const path of ["/", "/pricing", "/privacy"]) {
+    await page.goto(path);
+    const href = await page.locator('head link[rel="apple-touch-icon"]').getAttribute("href");
+    expect(href, path).toBeTruthy();
+    const res = await request.get(href ?? "");
+    expect(res.status(), path).toBe(200);
+  }
+});
+
+test("the footer links the privacy page in the page language", async ({ page }) => {
+  for (const [path, href] of [["/", "/privacy"], ["/pricing", "/privacy"], ["/pricing-ro", "/privacy-ro"], ["/privacy-ro", "/privacy-ro"]] as const) {
+    await page.goto(path);
+    await expect(page.locator(`footer a[href="${href}"]`), path).toHaveCount(1);
+  }
+});
+
+test("sitemap.xml lists exactly the five pages", async ({ request }) => {
   const res = await request.get("/sitemap.xml");
   expect(res.status()).toBe(200);
   expect(res.headers()["content-type"]).toContain("xml");
   const locs = [...(await res.text()).matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
-  expect(locs.sort()).toEqual([`${ORIGIN}/`, `${ORIGIN}/pricing`, `${ORIGIN}/pricing-ro`]);
+  expect(locs.sort()).toEqual([`${ORIGIN}/`, `${ORIGIN}/pricing`, `${ORIGIN}/pricing-ro`, `${ORIGIN}/privacy`, `${ORIGIN}/privacy-ro`]);
 });
 
 test("robots.txt points at the sitemap", async ({ request }) => {
@@ -77,7 +112,7 @@ test("robots.txt points at the sitemap", async ({ request }) => {
 // test environment states which build it expects: unset (local builds, CI) -> no beacon; set (e.g. when
 // run with BASE_URL against production, with the same token exported) -> the beacon with that token.
 const analyticsToken = process.env["PUBLIC_CF_ANALYTICS_TOKEN"];
-for (const path of ["/", "/pricing", "/pricing-ro", "/nope"]) {
+for (const path of ["/", "/pricing", "/pricing-ro", "/privacy", "/nope"]) {
   if (analyticsToken) {
     test(`${path} loads the analytics beacon with PUBLIC_CF_ANALYTICS_TOKEN`, async ({ page }) => {
       await page.goto(path);

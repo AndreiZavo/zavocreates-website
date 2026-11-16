@@ -71,6 +71,8 @@ export const Site = z.strictObject({
     createdByLabel: text,
     createdByName: text,
     createdByHref: url,
+    // Owner addition (Ruling R18): the footer link to the privacy page, per page language.
+    privacy: z.strictObject({ en: Link, ro: Link }),
   }),
 });
 export type Site = z.infer<typeof Site>;
@@ -106,6 +108,8 @@ export const ContactCopy = z.strictObject({
   serviceOptions: z.tuple([text, text, text, text, text]),
   success: text,
   error: text,
+  // Owner addition (Ruling R18): the line under the form that links the privacy page.
+  privacyNote: z.strictObject({ text, link: Link }),
 });
 export type ContactCopy = z.infer<typeof ContactCopy>;
 
@@ -495,3 +499,16 @@ export const Layout = z.strictObject({
   components: z.record(text, z.record(text, LayoutNode)),
 });
 export type Layout = z.infer<typeof Layout>;
+
+// ------------------------------------------------------------------ privacy
+// Owner addition (Ruling R18), not from Framer. A paragraph is a list of runs: plain text or a link.
+const Paragraph = z.array(z.union([text, Link])).min(1);
+export const PrivacyContent = z.strictObject({
+  lang: z.enum(["en", "ro"]),
+  title: text,
+  description: text,
+  heading: text,
+  updated: text,
+  sections: z.array(z.strictObject({ heading: text, paragraphs: z.array(Paragraph).min(1) })).min(1),
+});
+export type PrivacyContent = z.infer<typeof PrivacyContent>;
