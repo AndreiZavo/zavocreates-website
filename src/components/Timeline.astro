@@ -4,9 +4,9 @@
  *
  * Each row holds the step card, the progress column (numbered dot + grey line with a purple
  * "Line Fill") and an empty spacer. Desktop and tablet: cards alternate left/right of the centre
- * column. Phone: /pricing stacks each row vertically and adds a second line above the dot (rows 2–5)
- * and a line under dot 5; /pricing-ro keeps rows horizontal with the dot column on the left. Those
- * per-page differences are CSS on .pricing--en / .pricing--ro (PricingPage.astro).
+ * column. Phone: both pages stack each row vertically, centred, and add a second line above the dot
+ * (rows 2–5) and a line under dot 5 (PricingPage.astro). Framer's /pricing-ro keeps phone rows
+ * horizontal; the owner wants it like /pricing (R19 in docs/decisions.md).
  *
  * Motion (content/motion.json):
  * - pricing.timeline.lineFill: scroll-linked; data-motion-row picks the row whose section target
