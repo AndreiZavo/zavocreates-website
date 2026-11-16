@@ -13,23 +13,24 @@ Andrei Zavo's videographer portfolio, moved from Framer to code by AI agents (Cl
 
 ## Results
 
-| | Framer | Now |
-| --- | --- | --- |
-| Hosting cost | $15 a month | **$0** (free plans only) |
-| Lighthouse performance, mobile `/` | 82 | **94** |
-| Lighthouse accessibility, `/` and `/pricing` | 92 and 89 | **100** |
-| Data per page load, mobile `/` | 1.90 MiB | **1.36 MiB** |
+<table width="100%">
+  <tr><th width="50%" align="left"></th><th width="25%" align="left">Framer</th><th width="25%" align="left">Now</th></tr>
+  <tr><td>Hosting cost</td><td>$15 a month</td><td><b>$0</b> (free plans only)</td></tr>
+  <tr><td>Lighthouse performance, mobile <code>/</code></td><td>82</td><td><b>94</b></td></tr>
+  <tr><td>Lighthouse accessibility, <code>/</code> and <code>/pricing</code></td><td>92 and 89</td><td><b>100</b></td></tr>
+  <tr><td>Data per page load, mobile <code>/</code></td><td>1.90 MiB</td><td><b>1.36 MiB</b></td></tr>
+</table>
 
 Same pages, text and animations as the Framer site. Full Lighthouse data: [docs/results](docs/results/README.md).
 
 <table>
   <tr>
     <td><img src="docs/img/projects-desktop.webp" alt="Featured projects section"></td>
-    <td><img src="docs/img/pricing-desktop.webp" alt="Pricing page with four packages"></td>
+    <td><img src="docs/img/process-desktop.webp" alt="How we'll work together: a timeline from first call to final cut"></td>
   </tr>
   <tr>
     <td><img src="docs/img/contact-desktop.webp" alt="Contact form"></td>
-    <td align="center"><img src="docs/img/pricing-phone.webp" alt="Romanian pricing page on a phone" width="45%"></td>
+    <td align="center"><img src="docs/img/process-phone.webp" alt="The same timeline in Romanian on a phone" width="45%"></td>
   </tr>
 </table>
 
@@ -50,14 +51,4 @@ Same pages, text and animations as the Framer site. Full Lighthouse data: [docs/
 
 The agents worked from a written [spec](docs/superpowers/specs/2026-11-10-zavocreates-framer-to-cloudflare-design.md) and [plan](docs/superpowers/plans/2026-11-10-zavocreates-framer-to-cloudflare.md), one reviewed task at a time. Why each choice was made: [docs/decisions.md](docs/decisions.md).
 
-## Run locally
-
-Node 22.23.4+.
-
-```sh
-npm install
-npm run build && npm run preview   # http://localhost:8787
-npm run test:e2e
-```
-
-All commands and setup: [CLAUDE.md](CLAUDE.md). Go-live steps: [docs/go-live.md](docs/go-live.md).
+Commands and setup: [CLAUDE.md](CLAUDE.md). Go-live steps: [docs/go-live.md](docs/go-live.md).
