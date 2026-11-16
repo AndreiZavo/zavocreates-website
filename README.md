@@ -14,7 +14,7 @@ Andrei Zavo's videographer portfolio, moved from Framer to code by AI agents (Cl
 ## Results
 
 <table width="100%">
-  <tr><th width="50%" align="left"></th><th width="25%" align="left">Framer</th><th width="25%" align="left">Now</th></tr>
+  <tr><th align="left"><img src="docs/img/spacer.png" width="2000" height="1" alt=""></th><th align="left">Framer<br><img src="docs/img/spacer.png" width="1000" height="1" alt=""></th><th align="left">Now<br><img src="docs/img/spacer.png" width="1000" height="1" alt=""></th></tr>
   <tr><td>Hosting cost</td><td>$15 a month</td><td><b>$0</b> (free plans only)</td></tr>
   <tr><td>Lighthouse performance, mobile <code>/</code></td><td>82</td><td><b>94</b></td></tr>
   <tr><td>Lighthouse accessibility, <code>/</code> and <code>/pricing</code></td><td>92 and 89</td><td><b>100</b></td></tr>
