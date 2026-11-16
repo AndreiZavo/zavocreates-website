@@ -8,7 +8,7 @@ The work was done by AI agents (Claude Code) from a written spec and plan, and c
 
 **Problem.** The site is three pages (`/`, `/pricing`, `/pricing-ro`) on a paid Framer plan. Andrei wanted the same look and motion, free hosting, and a contact form that does not depend on Framer.
 
-**Result.** The rebuild is complete and tested locally and in CI. It is not live yet: the domain still points at Framer until the [go-live checklist](docs/go-live.md) is done.
+**Result.** The rebuild is live at https://zavocreates.com since 2026-11-12, tested locally, in CI and against the live domain. Remaining go-live steps are in the [go-live checklist](docs/go-live.md).
 
 - Same pages, text and animations as the Framer site. Every animation value is taken from the Framer project and checked by unit tests; the pages are compared with screenshots of the live site in their settled state, with moving parts hidden. Animations are not compared frame by frame.
 - Lighthouse category scores equal to or higher than Framer's on every page and preset, and 28% to 46% less data transferred per page load ([docs/results](docs/results/README.md)).
@@ -18,7 +18,7 @@ The work was done by AI agents (Claude Code) from a written spec and plan, and c
 
 | | Before | After |
 | --- | --- | --- |
-| Site | Framer plan: <owner to fill> | 0: free plans only (below) |
+| Site | Framer plan: $15 a month ($180 a year) | 0: free plans only (below) |
 | Domain | renewal at GoDaddy | unchanged |
 
 Free plans used after the move:
