@@ -3,8 +3,15 @@
 import { getSite } from "../content/load";
 import { svgMarkup } from "../content/images";
 
+interface Props {
+  /** Page language: picks the privacy link (Ruling R18). */
+  lang?: "en" | "ro";
+}
+
+const { lang = "en" } = Astro.props;
 const site = getSite();
 const { footer } = site;
+const privacy = footer.privacy[lang];
 const social = footer.social.map((s) => ({ ...s, svg: svgMarkup(s.icon) }));
 const emailText = site.email;
 const phoneText = site.phone;
@@ -41,7 +48,13 @@ const phoneText = site.phone;
     <div class="footer__divider"></div>
     <div class="footer__bottom">
       <div class="footer__copy">
-        <p class="t-body-small footer__label">{footer.copyright}</p>
+        <p class="t-body-small footer__label">
+          {footer.copyright}
+          {/* Owner addition (Ruling R18): taken out of layout in the Framer-baseline visual tests. */}
+          <span data-baseline-remove>
+            {" · "}<a class="footer__link footer__link--underline" href={privacy.href}>{privacy.label}</a>
+          </span>
+        </p>
       </div>
       <div class="footer__credit">
         <p class="t-body-small footer__label">{footer.createdByLabel}</p>

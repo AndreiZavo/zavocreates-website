@@ -1,6 +1,7 @@
 {
   "serverRoot": "dist",
   "recurse": true,
+  "cleanUrls": true,
   "retry": true,
   "retryErrors": true,
   "retryErrorsCount": 3,

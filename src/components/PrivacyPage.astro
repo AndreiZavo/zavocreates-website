@@ -1,0 +1,92 @@
+---
+/**
+ * The privacy page, /privacy (en) and /privacy-ro (ro). Owner addition (Ruling R18): not from Framer,
+ * so it has no Framer baseline and uses the site's own type styles. Text: content/privacy.<lang>.json.
+ */
+import type { PrivacyContent } from "../content/schema";
+import { PRIVACY_ALTERNATES } from "../content/routes";
+import Base from "../layouts/Base.astro";
+import Footer from "./Footer.astro";
+import Nav from "./Nav.astro";
+import Noise from "./Noise.astro";
+
+interface Props {
+  content: PrivacyContent;
+}
+
+const { content } = Astro.props;
+const { lang } = content;
+const path = PRIVACY_ALTERNATES.find((a) => a.lang === lang)?.path;
+if (!path) throw new Error(`No privacy route for language "${lang}"`);
+---
+
+<Base lang={lang} title={content.title} description={content.description} path={path} alternates={PRIVACY_ALTERNATES}>
+  <Noise />
+  <Nav />
+  <main class="privacy">
+    <div class="privacy__inner">
+      <h1 class="t-heading-2">{content.heading}</h1>
+      <p class="t-body-small privacy__updated">{content.updated}</p>
+      {
+        content.sections.map((section) => (
+          <section class="privacy__section">
+            <h2 class="t-heading-4">{section.heading}</h2>
+            {section.paragraphs.map((runs) => (
+              <p class="t-body-medium">
+                {runs.map((run) =>
+                  typeof run === "string" ? (
+                    run
+                  ) : (
+                    <a class="privacy__link" href={run.href} {...(run.href.startsWith("https://") ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
+                      {run.label}
+                    </a>
+                  ),
+                )}
+              </p>
+            ))}
+          </section>
+        ))
+      }
+    </div>
+  </main>
+  <Footer lang={lang} />
+</Base>
+
+<style is:global>
+  .privacy {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    padding: 160px 40px 120px;
+  }
+
+  .privacy__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    width: 100%;
+    max-width: 720px;
+  }
+
+  .privacy__updated {
+    margin-top: -24px;
+  }
+
+  .privacy__section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .privacy__link {
+    color: var(--color-purple-green);
+    text-decoration: underline;
+  }
+
+  @media (max-width: 809.98px) {
+    .privacy {
+      padding: 140px 20px 80px;
+    }
+  }
+</style>

@@ -1,0 +1,111 @@
+{
+  "lang": "ro",
+  "title": "Confidențialitate | Andrei Zavo",
+  "description": "Cum folosește zavocreates.com numele, adresa de email și mesajul trimise prin formularul de contact.",
+  "heading": "Confidențialitate",
+  "updated": "Ultima actualizare: 16 noiembrie 2026",
+  "sections": [
+    {
+      "heading": "Cine răspunde de date",
+      "paragraphs": [
+        [
+          "Andrei Zavorodnic (Andrei Zavo), videograf, administrează acest site și răspunde de datele personale descrise aici. Contact: ",
+          {
+            "label": "zavocreates@gmail.com",
+            "href": "mailto:zavocreates@gmail.com"
+          },
+          "."
+        ]
+      ]
+    },
+    {
+      "heading": "Ce date colectez",
+      "paragraphs": [
+        [
+          "Doar ce scrieți în formularul de contact: numele, adresa de email, serviciul ales și mesajul."
+        ],
+        [
+          "Cât folosiți site-ul, Cloudflare, care îl găzduiește, prelucrează adresa IP și date de bază despre browser, ca să afișeze paginile și să verifice că formularul e trimis de o persoană, nu de un robot (Cloudflare Turnstile)."
+        ]
+      ]
+    },
+    {
+      "heading": "De ce",
+      "paragraphs": [
+        [
+          "Ca să vă răspund la mesaj și, dacă lucrăm împreună, ca să pregătesc și să realizez proiectul (GDPR, articolul 6 alineatul (1) litera (b))."
+        ],
+        [
+          "Verificarea anti-spam protejează site-ul și căsuța mea de email, interesul meu legitim (articolul 6 alineatul (1) litera (f))."
+        ]
+      ]
+    },
+    {
+      "heading": "Drumul mesajului",
+      "paragraphs": [
+        [
+          "Când trimiteți formularul, Cloudflare îl verifică pentru spam. Apoi un instrument automat (Cloudflare Workers AI) îl citește ca să-mi scrie un scurt rezumat și să-l încadreze pe tipuri. Resend îl livrează în căsuța mea Gmail."
+        ],
+        [
+          "Rezumatul mă ajută doar să sortez mesajele. Nu se ia automat nicio decizie despre dumneavoastră. Site-ul în sine nu vă păstrează mesajul."
+        ]
+      ]
+    },
+    {
+      "heading": "Cine mai are acces",
+      "paragraphs": [
+        [
+          "Cloudflare (găzduire, verificare anti-spam, rezumatul automat), Resend (livrarea emailului) și Google (Gmail, unde sunt păstrate mesajele). Ei prelucrează datele în numele meu și doar pentru aceste servicii."
+        ],
+        [
+          "Unii dintre ei au sediul în Statele Unite. Transferurile se bazează pe garanțiile folosite de acești furnizori, cum ar fi Cadrul UE–SUA privind protecția datelor sau clauzele contractuale standard ale Comisiei Europene."
+        ]
+      ]
+    },
+    {
+      "heading": "Cât timp",
+      "paragraphs": [
+        [
+          "Mesajele rămân în căsuța mea cât timp suntem în contact și cel mult 3 ani după ultimul mesaj, cu excepția cazurilor în care legea cere mai mult (de exemplu pentru facturi). Apoi le șterg."
+        ]
+      ]
+    },
+    {
+      "heading": "Cookie-uri și statistici",
+      "paragraphs": [
+        [
+          "Site-ul nu folosește cookie-uri. Numără vizitele cu Cloudflare Web Analytics, care funcționează fără cookie-uri și nu vă creează un profil."
+        ]
+      ]
+    },
+    {
+      "heading": "Drepturile dumneavoastră",
+      "paragraphs": [
+        [
+          "Puteți cere să vedeți, să corectați sau să ștergeți datele, să restricționați folosirea lor sau să vă opuneți, ori să primiți o copie a lor. Scrieți-mi la ",
+          {
+            "label": "zavocreates@gmail.com",
+            "href": "mailto:zavocreates@gmail.com"
+          },
+          "."
+        ],
+        [
+          "Puteți depune și o plângere la autoritatea română pentru protecția datelor, ",
+          {
+            "label": "ANSPDCP",
+            "href": "https://www.dataprotection.ro/"
+          },
+          "."
+        ]
+      ]
+    },
+    {
+      "heading": "Alte site-uri",
+      "paragraphs": [
+        [
+          "Link-urile către Instagram, TikTok, Threads și Calendly duc la servicii cu propriile politici de confidențialitate."
+        ]
+      ]
+    }
+  ]
+}

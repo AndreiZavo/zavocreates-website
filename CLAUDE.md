@@ -5,8 +5,8 @@ Astro static site (built to `./dist`) served by one Cloudflare Worker (`worker/i
 ## Global Constraints
 
 - Content rule: the site shows exactly what a visitor sees on the live Framer site today. Text comes from Framer node/control values, never from scraped HTML; hidden layers and template defaults are excluded.
-- Pages: `/`, `/pricing`, `/pricing-ro`, `404`. `/timeline-demo` is not built.
-- `/pricing-ro` has `<html lang="ro">`, Romanian title/description; `/pricing` and `/pricing-ro` link each other with `hreflang` (`en`, `ro`, `x-default` -> `/pricing`).
+- Pages: `/`, `/pricing`, `/pricing-ro`, `/privacy`, `/privacy-ro`, `404`. `/timeline-demo` is not built. The privacy pages, their footer and form links, the pricing titles and descriptions, the touch icon and the home JSON-LD are owner additions (Ruling R18 in `docs/decisions.md`), not Framer content.
+- `/pricing-ro` and `/privacy-ro` have `<html lang="ro">`, Romanian title/description; each pair links the other with `hreflang` (`en`, `ro`, `x-default` -> the English page).
 - Fonts: Antonio and Inter only, self-hosted. No Palmore, Inkbleed, STRUKO, no "Logo Crystal" shader.
 - Every animation value comes from `content/motion.json`; no hand-tuned numbers in components.
 - All motion is disabled under `prefers-reduced-motion: reduce`, and content is fully visible without JavaScript.

@@ -15,8 +15,12 @@
  * checked against the live site (served by this Worker since go-live). A "skip" pattern list is
  * still read from the config if one is ever needed.
  *
+ * A link to a page of this site that the live site does not have yet (a page added in the change
+ * being checked, before it deploys) counts as fine when the build has that page: dist/<path>.html.
+ *
  * Usage: node --experimental-strip-types scripts/check-links.ts [glob ...]   (relative to serverRoot "dist"; default: *.html)
  */
+import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { check, LinkState, type CheckOptions } from "linkinator";
 
@@ -44,12 +48,20 @@ const allowedBlock = (url: string, status: number | undefined) => {
   return botBlocks[host]?.includes(status) ?? false;
 };
 
-const broken = result.links.filter((link) => link.state === LinkState.BROKEN);
+const SITE_ORIGIN = "https://zavocreates.com";
+const builtHere = (url: string) => {
+  if (!url.startsWith(`${SITE_ORIGIN}/`)) return false;
+  const path = new URL(url).pathname.replace(/\/$/, "") || "/index";
+  return existsSync(new URL(`../${options.serverRoot ?? "dist"}${path}.html`, import.meta.url));
+};
+const notDeployedYet = result.links.filter((link) => link.state === LinkState.BROKEN && link.status === 404 && builtHere(link.url));
+const broken = result.links.filter((link) => link.state === LinkState.BROKEN && !notDeployedYet.includes(link));
 const blocked = broken.filter((link) => allowedBlock(link.url, link.status));
 const failed = broken.filter((link) => !blocked.includes(link));
 const ok = result.links.filter((link) => link.state === LinkState.OK).length;
 const skipped = result.links.filter((link) => link.state === LinkState.SKIPPED).length;
 
+for (const link of notDeployedYet) console.warn(`WARN [404] not deployed yet, built in this change: ${link.url}`);
 for (const link of blocked) console.warn(`WARN [${link.status}] bot block, allowed for this host: ${link.url}`);
 for (const link of failed) console.error(`BROKEN [${link.status ?? "no response"}] ${link.url}  (on ${link.parent ?? "?"})`);
 console.log(`${result.links.length} links: ${ok} ok, ${skipped} skipped, ${blocked.length} bot-blocked (allowed), ${failed.length} broken.`);

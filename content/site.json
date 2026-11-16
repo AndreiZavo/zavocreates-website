@@ -89,6 +89,10 @@
     "copyright": "© Copyright 2025. All Rights Reserved by Andrei Zavorodnic",
     "createdByLabel": "Created by",
     "createdByName": "Andrei Zavo",
-    "createdByHref": "https://www.instagram.com/zavocreates"
+    "createdByHref": "https://www.instagram.com/zavocreates",
+    "privacy": {
+      "en": { "label": "Privacy", "href": "/privacy" },
+      "ro": { "label": "Confidențialitate", "href": "/privacy-ro" }
+    }
   }
 }

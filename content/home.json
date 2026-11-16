@@ -324,6 +324,7 @@
       "All of the above"
     ],
     "success": "Thank you",
-    "error": "Something went wrong"
+    "error": "Something went wrong",
+    "privacyNote": { "text": "How I handle your message:", "link": { "label": "Privacy", "href": "/privacy" } }
   }
 }

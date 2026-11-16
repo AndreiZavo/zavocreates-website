@@ -16,6 +16,21 @@ import Base from "../layouts/Base.astro";
 const site = getSite();
 const home = getHome();
 
+// Who the site is about, for search engines (Ruling R18). Every value is already shown on the page.
+// No location: the owner works across Romania and internationally.
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Andrei Zavo",
+  alternateName: "Andrei Zavorodnic",
+  jobTitle: "Promo & Social Media Videographer",
+  url: `${site.url}/`,
+  image: new URL(site.ogImage.src, site.url).href,
+  email: `mailto:${site.email}`,
+  telephone: site.footer.phoneHref.replace(/^tel:/, ""),
+  sameAs: site.footer.social.map((s) => s.href),
+};
+
 /** The content/motion.json effects with data-motion elements on this page (site-wide ones are added by Base). */
 const motion = [
   "home.avatar.appear",
@@ -33,7 +48,7 @@ const motion = [
 ];
 ---
 
-<Base lang="en" title={site.title} description={site.description} path="/" motion={motion}>
+<Base lang="en" title={site.title} description={site.description} path="/" motion={motion} jsonLd={jsonLd}>
   <Noise />
   <Nav />
   <main class="home">

@@ -6,6 +6,7 @@ import {
   Layout,
   Motion,
   PricingContent,
+  PrivacyContent,
   Site,
   Tokens,
 } from "../../src/content/schema";
@@ -20,6 +21,8 @@ const schemaFor: Record<string, { parse: (v: unknown) => unknown }> = {
   "home.json": HomeContent,
   "pricing.en.json": PricingContent,
   "pricing.ro.json": PricingContent,
+  "privacy.en.json": PrivacyContent,
+  "privacy.ro.json": PrivacyContent,
   "tokens.json": Tokens,
   "motion.json": Motion,
   "layout.json": Layout,

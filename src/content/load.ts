@@ -7,6 +7,8 @@ import layoutJson from "../../content/layout.json";
 import motionJson from "../../content/motion.json";
 import pricingEnJson from "../../content/pricing.en.json";
 import pricingRoJson from "../../content/pricing.ro.json";
+import privacyEnJson from "../../content/privacy.en.json";
+import privacyRoJson from "../../content/privacy.ro.json";
 import siteJson from "../../content/site.json";
 import tokensJson from "../../content/tokens.json";
 import {
@@ -16,6 +18,7 @@ import {
   Layout,
   Motion,
   PricingContent,
+  PrivacyContent,
   Site,
   Tokens,
 } from "./schema";
@@ -23,6 +26,7 @@ import {
 const site = Site.parse(siteJson);
 const home = HomeContent.parse(homeJson);
 const pricing = { en: PricingContent.parse(pricingEnJson), ro: PricingContent.parse(pricingRoJson) } as const;
+const privacy = { en: PrivacyContent.parse(privacyEnJson), ro: PrivacyContent.parse(privacyRoJson) } as const;
 const tokens = Tokens.parse(tokensJson);
 const motion = Motion.parse(motionJson);
 const layout = Layout.parse(layoutJson);
@@ -30,6 +34,7 @@ const layout = Layout.parse(layoutJson);
 export const getSite = (): Site => site;
 export const getHome = (): HomeContent => home;
 export const getPricing = (lang: "en" | "ro"): PricingContent => pricing[lang];
+export const getPrivacy = (lang: "en" | "ro"): PrivacyContent => privacy[lang];
 export const getTokens = (): Tokens => tokens;
 export const getLayout = (): Layout => layout;
 /** Every effect, keyed by id. */
